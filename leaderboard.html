@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IndieRanks | Leaderboard</title>
+    <meta
+      name="description"
+      content="Sort small indie projects by MRR and growth, then compare yourself against builders in your bracket."
+    />
+    <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+    <link rel="shortcut icon" href="./favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="IndieRanks" />
+    <link rel="manifest" href="./favicon/site.webmanifest" />
+    <meta name="theme-color" content="#f8faff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#060607" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./assets/js/theme-init.js"></script>
+    <script src="./assets/js/tailwind-theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script defer src="./assets/js/firebase-config.js"></script>
+    <script defer src="./assets/js/firestore.js"></script>
+    <script defer src="./assets/js/ui.js"></script>
+    <script defer src="./assets/js/app.js"></script>
+  </head>
+  <body data-page="leaderboard" class="bg-ink font-sans text-white antialiased">
+    <div data-site-header></div>
+
+    <main class="px-4 pb-20 pt-10 sm:px-6 sm:pt-16">
+      <div class="mx-auto max-w-[60rem]">
+        <div class="mb-8 flex items-center justify-between gap-4">
+          <a href="./index.html" class="flex items-center gap-3">
+            <span class="logo-mark flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+              <img src="./favicon/web-app-manifest-192x192.png" alt="" class="logo-mark__image" />
+            </span>
+            <span class="brand-pill__text text-[11px] uppercase tracking-[0.16em] text-white/58">IndieRanks</span>
+          </a>
+          <a href="./submit.html" class="theme-cta shrink-0 whitespace-nowrap rounded-full px-5 py-3 text-sm font-medium transition">
+            + Add Project
+          </a>
+        </div>
+
+        <section class="panel leaderboard-panel rounded-[2rem] p-5 sm:p-6">
+          <div class="flex flex-col gap-5 border-b border-[var(--leaderboard-line)] pb-5 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-2xl">
+              <p id="leaderboardCompetitionLabel" class="leaderboard-context-note mb-3">You're competing in: $100–$1k builders</p>
+              <h1 class="leaderboard-panel-title text-3xl font-semibold tracking-snugger sm:text-4xl">Leaderboard</h1>
+              <p id="leaderboardSummary" class="leaderboard-panel-copy mt-2 text-sm leading-7">
+                Small products. Real traction. Nothing else.
+              </p>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr),170px,170px]">
+              <label class="space-y-2 sm:min-w-[300px]">
+                <span class="leaderboard-panel-label text-[11px] uppercase tracking-[0.12em]">Search</span>
+                <input
+                  id="leaderboardSearch"
+                  type="search"
+                  placeholder='Search "Dev Tools", "Theo", or "BugPress"'
+                  class="search-input rounded-2xl px-4 py-3 text-sm"
+                />
+              </label>
+              <label class="space-y-2">
+                <span class="leaderboard-panel-label text-[11px] uppercase tracking-[0.12em]">Bracket</span>
+                <select id="leaderboardBracketFilter" class="select-dark rounded-2xl px-4 py-3 text-sm"></select>
+              </label>
+              <label class="space-y-2">
+                <span class="leaderboard-panel-label text-[11px] uppercase tracking-[0.12em]">Sort</span>
+                <select id="leaderboardSortFilter" class="select-dark rounded-2xl px-4 py-3 text-sm"></select>
+              </label>
+            </div>
+            <div class="flex flex-wrap items-center justify-end">
+              <label class="leaderboard-toggle inline-flex items-center gap-3 rounded-full px-3 py-2">
+                <span id="leaderboardBracketToggleLabel" class="text-sm">Show all projects</span>
+                <span class="leaderboard-toggle__switch">
+                  <input id="leaderboardBracketToggle" type="checkbox" class="leaderboard-toggle__input" />
+                  <span class="leaderboard-toggle__track" aria-hidden="true"></span>
+                  <span class="leaderboard-toggle__thumb" aria-hidden="true"></span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <p id="leaderboardResultsCount" class="leaderboard-panel-muted text-sm">Loading projects...</p>
+          </div>
+
+          <div id="leaderboardRows" class="mt-2"></div>
+        </section>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+  </body>
+</html>
