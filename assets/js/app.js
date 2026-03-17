@@ -1048,7 +1048,7 @@
       "</span>" +
       '<div>' +
       '<p class="text-[11px] uppercase tracking-[0.16em] text-white/45 brand-pill__text">IndieRanks</p>' +
-      '<p class="text-sm text-white/70 header-subtitle">Micro app leaderboard</p>' +
+      '<p class="text-sm text-white/70 header-subtitle">Small app leaderboard</p>' +
       "</div>" +
       "</a>" +
       '<div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap sm:gap-3">' +

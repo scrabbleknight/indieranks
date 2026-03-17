@@ -777,7 +777,7 @@
 
         return (
           '<div class="leaderboard-row grid gap-4 border-t py-4 md:grid-cols-[64px,1.9fr,1.2fr,1fr,120px] md:items-center ' +
-          (isLight ? "border-slate-200/90" : "border-white/8") +
+          (isLight ? "border-slate-200/90" : "border-white/5") +
           " " +
           (index === 0 ? " border-t-0" : "") +
           (isTopProject ? " leaderboard-row-top" : "") +
@@ -856,7 +856,7 @@
     var isLight = theme === "light";
     return (
       '<div class="leaderboard-head hidden items-center gap-4 border-b pb-4 text-[11px] uppercase tracking-[0.12em] md:grid md:grid-cols-[64px,1.9fr,1.2fr,1fr,120px] ' +
-      (isLight ? "border-slate-200 text-slate-400" : "border-white/8 text-white/32") +
+      (isLight ? "border-slate-200 text-slate-400" : "border-transparent text-white/32") +
       '">' +
       "<span>Rank</span>" +
       "<span>Project</span>" +
@@ -981,7 +981,7 @@
     for (var index = 0; index < count; index += 1) {
       output.push(
         '<div class="grid gap-4 border-t py-4 md:grid-cols-[64px,1.9fr,1.2fr,1fr,120px] md:items-center ' +
-          (isLight ? "border-slate-200/90" : "border-white/8") +
+          (isLight ? "border-slate-200/90" : "border-white/5") +
           (index === 0 ? " border-t-0" : "") +
           '">' +
           '<div class="skeleton h-8 rounded-full"></div>' +

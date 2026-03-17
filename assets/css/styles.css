@@ -2031,6 +2031,10 @@ html[data-theme="dark"] .submit-preview-card__stats dd[data-tone="down"] {
   backdrop-filter: blur(20px);
 }
 
+html[data-theme="dark"] .sticky-shell {
+  border-color: transparent;
+}
+
 .site-footer {
   margin-top: 4.25rem;
   padding: 0 1rem 2rem;
