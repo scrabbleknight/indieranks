@@ -1,23 +1,185 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function hasExactKeys(fields) {
+      return request.resource.data.keys().hasAll(fields) &&
+        request.resource.data.keys().hasOnly(fields);
+    }
+
+    function stringBetween(value, minLength, maxLength) {
+      return value is string &&
+        value.size() >= minLength &&
+        value.size() <= maxLength;
+    }
+
+    function oneOf(value, allowed) {
+      return allowed.hasAny([value]);
+    }
+
+    function validMetricMap(metrics) {
+      return metrics is map &&
+        metrics.keys().hasAll(["mrr", "users", "downloads", "githubStars"]) &&
+        metrics.keys().hasOnly(["mrr", "users", "downloads", "githubStars"]) &&
+        metrics.mrr is number &&
+        metrics.users is number &&
+        metrics.downloads is number &&
+        metrics.githubStars is number;
+    }
+
+    function validProjectCreate(projectId) {
+      return hasExactKeys([
+          "slug",
+          "name",
+          "founderName",
+          "founderSlug",
+          "category",
+          "tagline",
+          "description",
+          "primaryMetricKey",
+          "metricType",
+          "metricValue",
+          "metricLabel",
+          "growthPercent",
+          "timeframe",
+          "verificationType",
+          "verificationReference",
+          "verified",
+          "websiteUrl",
+          "logoUrl",
+          "createdAt",
+          "tinyWins",
+          "featured",
+          "recent",
+          "momentum",
+          "metrics",
+          "history"
+        ]) &&
+        request.resource.data.slug == projectId &&
+        stringBetween(request.resource.data.slug, 1, 80) &&
+        stringBetween(request.resource.data.name, 1, 120) &&
+        stringBetween(request.resource.data.founderName, 1, 120) &&
+        stringBetween(request.resource.data.founderSlug, 1, 80) &&
+        stringBetween(request.resource.data.category, 1, 60) &&
+        stringBetween(request.resource.data.tagline, 1, 220) &&
+        stringBetween(request.resource.data.description, 1, 320) &&
+        oneOf(request.resource.data.primaryMetricKey, ["mrr", "users", "downloads", "githubStars"]) &&
+        stringBetween(request.resource.data.metricType, 1, 40) &&
+        stringBetween(request.resource.data.metricLabel, 1, 40) &&
+        request.resource.data.metricValue is number &&
+        request.resource.data.metricValue >= 0 &&
+        request.resource.data.growthPercent is number &&
+        request.resource.data.growthPercent >= -1000 &&
+        request.resource.data.growthPercent <= 1000 &&
+        request.resource.data.timeframe == "allTime" &&
+        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4"]) &&
+        request.resource.data.verificationReference is string &&
+        request.resource.data.verificationReference.size() <= 280 &&
+        stringBetween(request.resource.data.websiteUrl, 1, 300) &&
+        request.resource.data.logoUrl is string &&
+        request.resource.data.logoUrl.size() <= 300000 &&
+        request.resource.data.verified == false &&
+        request.resource.data.featured == false &&
+        request.resource.data.recent == true &&
+        request.resource.data.momentum is number &&
+        request.resource.data.momentum >= 0 &&
+        request.resource.data.momentum <= 2 &&
+        validMetricMap(request.resource.data.metrics) &&
+        request.resource.data.history is list &&
+        request.resource.data.history.size() <= 24 &&
+        request.resource.data.tinyWins is list &&
+        request.resource.data.tinyWins.size() <= 8 &&
+        request.resource.data.createdAt == request.time;
+    }
+
+    function validFounderCreate(founderId) {
+      return hasExactKeys([
+          "slug",
+          "name",
+          "bio",
+          "avatarUrl",
+          "projectSlugs",
+          "milestones",
+          "createdAt"
+        ]) &&
+        request.resource.data.slug == founderId &&
+        stringBetween(request.resource.data.slug, 1, 80) &&
+        stringBetween(request.resource.data.name, 1, 120) &&
+        stringBetween(request.resource.data.bio, 1, 320) &&
+        request.resource.data.avatarUrl is string &&
+        request.resource.data.avatarUrl.size() <= 300000 &&
+        request.resource.data.projectSlugs is list &&
+        request.resource.data.projectSlugs.size() <= 24 &&
+        request.resource.data.milestones is list &&
+        request.resource.data.milestones.size() <= 24 &&
+        request.resource.data.createdAt == request.time;
+    }
+
+    function validSubmissionCreate() {
+      return hasExactKeys([
+          "projectSlug",
+          "founderSlug",
+          "name",
+          "founderName",
+          "category",
+          "tagline",
+          "metricType",
+          "metricValue",
+          "growthPercent",
+          "verificationType",
+          "verificationReference",
+          "websiteUrl",
+          "logoUrl",
+          "status",
+          "submitterUid",
+          "createdAt"
+        ]) &&
+        stringBetween(request.resource.data.projectSlug, 1, 80) &&
+        stringBetween(request.resource.data.founderSlug, 1, 80) &&
+        stringBetween(request.resource.data.name, 1, 120) &&
+        stringBetween(request.resource.data.founderName, 1, 120) &&
+        stringBetween(request.resource.data.category, 1, 60) &&
+        stringBetween(request.resource.data.tagline, 1, 220) &&
+        stringBetween(request.resource.data.metricType, 1, 40) &&
+        request.resource.data.metricValue is number &&
+        request.resource.data.metricValue >= 0 &&
+        request.resource.data.growthPercent is number &&
+        request.resource.data.growthPercent >= -1000 &&
+        request.resource.data.growthPercent <= 1000 &&
+        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4"]) &&
+        request.resource.data.verificationReference is string &&
+        request.resource.data.verificationReference.size() <= 280 &&
+        stringBetween(request.resource.data.websiteUrl, 1, 300) &&
+        request.resource.data.logoUrl is string &&
+        request.resource.data.logoUrl.size() <= 300000 &&
+        request.resource.data.status == "received" &&
+        request.resource.data.submitterUid == request.auth.uid &&
+        request.resource.data.createdAt == request.time;
+    }
+
     match /projects/{projectId} {
       allow read: if true;
-      allow create, update: if true;
+      allow create: if isSignedIn() && validProjectCreate(projectId);
     }
 
     match /founders/{founderId} {
       allow read: if true;
-      allow create, update: if true;
+      allow create: if isSignedIn() && validFounderCreate(founderId);
     }
 
     match /submissions/{submissionId} {
-      allow read: if true;
-      allow create: if true;
+      allow create: if isSignedIn() && validSubmissionCreate();
     }
 
     match /tinyWins/{tinyWinId} {
       allow read: if true;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

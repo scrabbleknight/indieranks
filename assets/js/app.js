@@ -83,6 +83,14 @@
       authState.readyResolver = resolve;
     });
 
+    var services = IndieRanks.getFirebaseServices ? IndieRanks.getFirebaseServices() : null;
+    if (!services || !services.auth) {
+      authState.ready = true;
+      authState.user = null;
+      resolveAuthReady(null);
+      return authState.readyPromise;
+    }
+
     var authHooks = IndieRanks.authHooks;
     if (!authHooks || typeof authHooks.onChange !== "function") {
       authState.ready = true;
@@ -246,6 +254,14 @@
             "</span>" +
             "<span>Continue with X</span>" +
           "</button>" +
+          '<button type="button" class="auth-entry-modal__provider" data-auth-modal-anonymous>' +
+            '<span class="auth-entry-modal__provider-icon" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24" role="img" aria-hidden="true">' +
+                '<path fill="currentColor" d="M12 12a3.75 3.75 0 1 0-3.75-3.75A3.75 3.75 0 0 0 12 12Zm0 1.5c-3.3 0-6 2.01-6 4.5v.75a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75V18c0-2.49-2.7-4.5-6-4.5Z"></path>' +
+              '</svg>' +
+            "</span>" +
+            "<span>Continue as guest</span>" +
+          "</button>" +
         "</div>" +
         '<div class="auth-entry-modal__divider" aria-hidden="true">' +
           '<span class="auth-entry-modal__divider-line"></span>' +
@@ -254,7 +270,7 @@
         "</div>" +
         renderAuthEntryForm() +
         renderAuthGateError("auth-gate-modal__error--auth") +
-        '<p class="auth-entry-modal__legal">By continuing you agree to our <span class="auth-entry-modal__legal-link">Terms of Service</span>, <span class="auth-entry-modal__legal-link">Privacy Policy</span> and <span class="auth-entry-modal__legal-link">Cookies</span>.</p>' +
+        '<p class="auth-entry-modal__legal">By continuing you agree to our <a href="./legal/index.html" target="_blank" rel="noopener noreferrer" class="auth-entry-modal__legal-link">Terms of Service</a>, <a href="./legal/privacy-policy.html" target="_blank" rel="noopener noreferrer" class="auth-entry-modal__legal-link">Privacy Policy</a> and <a href="./legal/privacy-policy.html#cookies" target="_blank" rel="noopener noreferrer" class="auth-entry-modal__legal-link">Cookies</a>.</p>' +
       "</div>"
     );
   }
@@ -333,10 +349,82 @@
     if (signInButton) {
       signInButton.textContent = authGateModalState.busy ? "Loading..." : "Sign in";
     }
+  }
 
-    var googleLabel = modal.querySelector("[data-auth-modal-google-label]");
-    if (googleLabel) {
-      googleLabel.textContent = authGateModalState.busy ? "Connecting..." : "Continue with Google";
+  function getAuthErrorMessage(error, fallbackMessage) {
+    var code = error && error.code;
+
+    if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+      return "Sign-in was canceled.";
+    }
+    if (code === "auth/account-exists-with-different-credential") {
+      return "That email is already tied to a different sign-in method.";
+    }
+    if (code === "auth/email-already-in-use") {
+      return "That email is already in use. Sign in instead.";
+    }
+    if (code === "auth/invalid-email") {
+      return "Enter a valid email address.";
+    }
+    if (
+      code === "auth/invalid-credential" ||
+      code === "auth/invalid-login-credentials" ||
+      code === "auth/user-not-found" ||
+      code === "auth/wrong-password"
+    ) {
+      return "That email or password is incorrect.";
+    }
+    if (code === "auth/weak-password") {
+      return "Use a password with at least 6 characters.";
+    }
+    if (code === "auth/operation-not-allowed") {
+      return "That sign-in method is not enabled in Firebase yet.";
+    }
+    if (code === "auth/unauthorized-domain") {
+      return "This domain is not authorized for Firebase Auth yet.";
+    }
+    if (code === "auth/network-request-failed") {
+      return "Network error. Check your connection and try again.";
+    }
+
+    return (error && error.message) || fallbackMessage || "Could not sign you in yet. Try again.";
+  }
+
+  async function runAuthGateAction(action, options) {
+    var authAction = typeof action === "function" ? action : null;
+    var settings = options || {};
+
+    if (authGateModalState.busy) {
+      return null;
+    }
+
+    if (!authAction) {
+      setAuthGateError(settings.unavailableMessage || "Sign-in is not available yet.");
+      return null;
+    }
+
+    setAuthGateError("");
+    setAuthGateBusy(true);
+
+    try {
+      var result = await authAction();
+      var user = (result && result.user) || (await getCurrentUser());
+      if (!user) {
+        throw new Error(settings.emptyUserMessage || "Sign-in did not complete.");
+      }
+
+      authState.user = user;
+      var onSignedIn = authGateModalState.onSignedIn;
+      hideAuthGateModal();
+      if (typeof onSignedIn === "function") {
+        onSignedIn(user);
+      }
+      return user;
+    } catch (error) {
+      console.error(error);
+      setAuthGateError(getAuthErrorMessage(error, settings.errorMessage));
+      setAuthGateBusy(false);
+      return null;
     }
   }
 
@@ -389,49 +477,28 @@
   }
 
   async function handleAuthGateGoogleSignIn() {
-    if (authGateModalState.busy) {
-      return;
-    }
-
     var authHooks = IndieRanks.authHooks;
-    if (!authHooks || typeof authHooks.signInWithGoogle !== "function") {
-      setAuthGateError("Sign-in is not available yet.");
-      return;
-    }
-
-    setAuthGateError("");
-    setAuthGateBusy(true);
-
-    try {
-      var result = await authHooks.signInWithGoogle();
-      var user = (result && result.user) || (await getCurrentUser());
-      if (!user) {
-        throw new Error("Sign-in was canceled.");
-      }
-
-      authState.user = user;
-      var onSignedIn = authGateModalState.onSignedIn;
-      hideAuthGateModal();
-      if (typeof onSignedIn === "function") {
-        onSignedIn(user);
-      }
-    } catch (error) {
-      console.error(error);
-      var code = error && error.code;
-      setAuthGateError(
-        code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request"
-          ? "Sign-in was canceled."
-          : (error && error.message) || "Could not sign you in yet. Try again."
-      );
-      setAuthGateBusy(false);
-    }
+    return runAuthGateAction(authHooks && authHooks.signInWithGoogle, {
+      errorMessage: "Could not sign you in with Google. Try again.",
+    });
   }
 
-  function handleAuthProviderX() {
-    setAuthGateError("X sign-in is not wired yet.");
+  async function handleAuthProviderX() {
+    var authHooks = IndieRanks.authHooks;
+    return runAuthGateAction(authHooks && authHooks.signInWithX, {
+      errorMessage: "Could not sign you in with X. Try again.",
+    });
   }
 
-  function handleAuthEmailSubmit(form) {
+  async function handleAuthAnonymousSignIn() {
+    var authHooks = IndieRanks.authHooks;
+    return runAuthGateAction(authHooks && authHooks.signInAnonymously, {
+      errorMessage: "Could not start a guest session. Try again.",
+      emptyUserMessage: "Guest sign-in did not complete.",
+    });
+  }
+
+  async function handleAuthEmailSubmit(form) {
     if (!form) {
       return;
     }
@@ -439,7 +506,8 @@
     var values = new FormData(form);
     var isSignIn = authGateModalState.authMode === "signin";
     var email = String(values.get("email") || "").trim();
-    var password = String(values.get("password") || "").trim();
+    var password = String(values.get("password") || "");
+    var authHooks = IndieRanks.authHooks;
 
     if (isSignIn) {
       if (!email || !password) {
@@ -447,13 +515,16 @@
         return;
       }
 
-      setAuthGateError("Email sign-in is not wired yet.");
-      return;
+      return runAuthGateAction(authHooks && authHooks.signInWithEmail && function () {
+        return authHooks.signInWithEmail(email, password);
+      }, {
+        errorMessage: "Could not sign you in with email. Try again.",
+      });
     }
 
     var firstName = String(values.get("firstName") || "").trim();
     var lastName = String(values.get("lastName") || "").trim();
-    var confirmPassword = String(values.get("confirmPassword") || "").trim();
+    var confirmPassword = String(values.get("confirmPassword") || "");
 
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setAuthGateError("Fill out every field to continue.");
@@ -465,7 +536,22 @@
       return;
     }
 
-    setAuthGateError("Email sign-up is not wired yet.");
+    if (password.length < 6) {
+      setAuthGateError("Use a password with at least 6 characters.");
+      return;
+    }
+
+    return runAuthGateAction(authHooks && authHooks.signUpWithEmail && function () {
+      return authHooks.signUpWithEmail({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      });
+    }, {
+      errorMessage: "Could not create your account yet. Try again.",
+      emptyUserMessage: "Account creation did not complete.",
+    });
   }
 
   function ensureAuthGateModal() {
@@ -485,6 +571,7 @@
       var authTabTrigger = event.target.closest("[data-auth-modal-tab]");
       var authGoogleTrigger = event.target.closest("[data-auth-modal-google]");
       var authXTrigger = event.target.closest("[data-auth-modal-x]");
+      var authAnonymousTrigger = event.target.closest("[data-auth-modal-anonymous]");
       var authEmailTrigger = event.target.closest("[data-auth-modal-email]");
 
       if (authGoogleTrigger) {
@@ -494,6 +581,11 @@
 
       if (authXTrigger) {
         handleAuthProviderX();
+        return;
+      }
+
+      if (authAnonymousTrigger) {
+        handleAuthAnonymousSignIn();
         return;
       }
 
@@ -810,7 +902,50 @@
       return;
     }
 
-    setHtml(target, "");
+    setHtml(
+      target,
+      '<footer class="site-footer">' +
+        '<div class="site-footer__inner">' +
+          '<div class="site-footer__brand">' +
+            '<a href="./index.html" class="site-footer__brand-link">' +
+              '<span class="site-footer__brand-mark">' +
+                '<img src="./favicon/web-app-manifest-192x192.png" alt="" class="site-footer__brand-image">' +
+              "</span>" +
+              '<span class="site-footer__brand-copy">' +
+                '<span class="site-footer__brand-title">IndieRanks</span>' +
+                '<span class="site-footer__brand-text">The leaderboard for small indie apps.</span>' +
+              "</span>" +
+            "</a>" +
+          "</div>" +
+          '<div class="site-footer__groups">' +
+            '<div class="site-footer__group">' +
+              '<p class="site-footer__label">Product</p>' +
+              '<div class="site-footer__links">' +
+                '<a href="./index.html">Home</a>' +
+                '<a href="./leaderboard.html">Leaderboard</a>' +
+                '<a href="./submit.html">Add Project</a>' +
+              "</div>" +
+            "</div>" +
+            '<div class="site-footer__group">' +
+              '<p class="site-footer__label">Legal</p>' +
+              '<div class="site-footer__links">' +
+                '<a href="./legal/index.html">Terms of Service</a>' +
+                '<a href="./legal/privacy-policy.html">Privacy Policy</a>' +
+                '<a href="./legal/privacy-policy.html#cookies">Cookies</a>' +
+              "</div>" +
+            "</div>" +
+            '<div class="site-footer__group">' +
+              '<p class="site-footer__label">Company</p>' +
+              '<div class="site-footer__links">' +
+                '<span class="site-footer__text">SwiftBee Ltd</span>' +
+                '<a href="mailto:support@swiftbee.co.uk">support@swiftbee.co.uk</a>' +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+        '<p class="site-footer__bottom">© 2026 IndieRanks. Operated by SwiftBee Ltd.</p>' +
+      "</footer>"
+    );
   }
 
   function setSelectOptions(select, items, selectedValue) {
@@ -832,14 +967,14 @@
         { value: "Paddle", label: "Paddle" },
       ],
       users: [
-        { value: "GitHub verified", label: "GitHub verified" },
-        { value: "Firebase verified", label: "Firebase verified" },
+        { value: "GitHub", label: "GitHub" },
+        { value: "Firebase / GA4", label: "Firebase / GA4" },
       ],
       downloads: [
-        { value: "GitHub verified", label: "GitHub verified" },
-        { value: "Firebase verified", label: "Firebase verified" },
+        { value: "GitHub", label: "GitHub" },
+        { value: "Firebase / GA4", label: "Firebase / GA4" },
       ],
-      githubStars: [{ value: "GitHub verified", label: "GitHub verified" }],
+      githubStars: [{ value: "GitHub", label: "GitHub" }],
     };
   }
 
@@ -864,26 +999,26 @@
     if (metricKey === "mrr") {
       if (source.indexOf("lemon") >= 0) {
         return {
-          label: "Lemon Squeezy API key",
-          placeholder: "Paste your Lemon Squeezy API key",
-          helpText: "Frontend only for now. Later backend wiring can use a read-only Lemon Squeezy key.",
-          inputType: "text",
+          label: "Lemon Squeezy proof URL or note",
+          placeholder: "https://... or a short non-secret note",
+          helpText: "Do not paste API keys. Use a dashboard URL, public proof link, or a short verification note.",
+          inputType: "text"
         };
       }
 
       if (source.indexOf("paddle") >= 0) {
         return {
-          label: "Paddle API key",
-          placeholder: "Paste your Paddle API key",
-          helpText: "Frontend only for now. Later backend wiring can use a restricted Paddle key.",
-          inputType: "text",
+          label: "Paddle proof URL or note",
+          placeholder: "https://... or a short non-secret note",
+          helpText: "Do not paste API keys. Use a dashboard URL, public proof link, or a short verification note.",
+          inputType: "text"
         };
       }
 
       return {
-        label: "Stripe API key",
-        placeholder: "rk_live_...",
-        helpText: "Frontend only for now. Later backend wiring should use a restricted read-only Stripe key.",
+        label: "Stripe proof URL or note",
+        placeholder: "https://... or a short non-secret note",
+        helpText: "Do not paste API keys. Use a dashboard URL, public proof link, or a short verification note.",
         inputType: "text",
       };
     }
@@ -892,7 +1027,7 @@
       return {
         label: "GitHub repo URL",
         placeholder: "https://github.com/owner/repo",
-        helpText: "We can verify GitHub stars from the repo URL later.",
+        helpText: "Use the public repo URL used as the source of truth for the listing.",
         inputType: "url",
       };
     }
@@ -903,19 +1038,16 @@
         placeholder: "https://github.com/owner/repo",
         helpText:
           metricKey === "users"
-            ? "Reasonable only if the product's user signal comes from GitHub itself, like a GitHub App or OSS install surface."
-            : "Use the repo URL if downloads are tied to GitHub releases.",
+            ? "Use this only when GitHub is the clearest public proof for your product."
+            : "Use the public repo URL if downloads are tied to GitHub releases.",
         inputType: "url",
       };
     }
 
     return {
-      label: "Firebase project / GA4 property ID",
+      label: "Firebase project ID, GA4 property, or proof URL",
       placeholder: "my-firebase-project or 123456789",
-      helpText:
-        metricKey === "users"
-          ? "Project ID is fine for now. Real verification later will likely need Firebase Auth admin access for registered users, or GA4/BigQuery if you mean active users."
-          : "Project ID is fine for now. Real verification later will likely use GA4/Firebase Analytics first_open or a custom install/download event via GA4 or BigQuery.",
+      helpText: "Use a non-secret reference. Never paste private keys, service-account JSON, or admin credentials into the client.",
       inputType: "text",
     };
   }
@@ -1525,12 +1657,31 @@
         return;
       }
 
+      await ensureAuthReady();
+      if (!(await getCurrentUser())) {
+        setHtml(
+          status,
+          '<div class="rounded-[1.5rem] border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-white/80">Authenticate to submit your listing. You can use Google, X, email, or continue as a guest.</div>'
+        );
+        showAuthGateModal({
+          onSignedIn: function () {
+            if (typeof form.requestSubmit === "function") {
+              form.requestSubmit();
+              return;
+            }
+            submitButton.click();
+          },
+        });
+        openAuthEntryModal();
+        return;
+      }
+
       var values = getSubmitValues();
       submitButton.disabled = true;
       submitButton.textContent = "Listing...";
       setHtml(
         status,
-        '<div class="rounded-[1.5rem] border border-white/8 bg-white/4 px-4 py-3 text-sm text-white/65">Saving your submission and creating a project profile.</div>'
+        '<div class="rounded-[1.5rem] border border-white/8 bg-white/4 px-4 py-3 text-sm text-white/65">Saving your submission to Firestore and publishing the listing.</div>'
       );
 
       try {
@@ -1545,7 +1696,7 @@
               '<div>' +
                 '<p class="text-lg font-semibold text-white">Project listed</p>' +
                 '<p class="mt-2 text-sm leading-6 text-white/70">' +
-                  "Saved to Firestore and mirrored into the live project and founder collections." +
+                  "Saved to Firestore and added to the live leaderboard." +
                 "</p>" +
                 '<div class="mt-4 flex flex-wrap gap-3">' +
                   '<a href="./project.html?id=' + encodeURIComponent(result.project.slug) + '" class="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-accent">View project</a>' +

@@ -104,9 +104,9 @@
               </label>
 
               <label class="submit-field submit-field--wide">
-                <span id="verificationReferenceLabel">Stripe API key</span>
+                <span id="verificationReferenceLabel">Verification proof URL or note</span>
                 <input id="verificationReferenceInput" name="verificationReference" type="text" required
-                  autocomplete="off" spellcheck="false" placeholder="rk_live_..."
+                  autocomplete="off" spellcheck="false" placeholder="https://... or a short non-secret note"
                   class="search-input rounded-2xl px-4 py-2.5 text-sm" />
                 <small id="verificationReferenceHelp" class="submit-field__hint"></small>
               </label>
@@ -137,7 +137,7 @@
             <div class="submit-form__footer">
               <div class="submit-form__note">
                 <p>Eligible projects stay under $20k MRR. Keep the tagline plain and specific.</p>
-                <p>Writes directly to Firestore. If the database is empty, your project becomes the first live listing.</p>
+                <p>Submissions require Firebase Auth and write directly to Firestore.</p>
               </div>
               <button id="submitButton" type="submit"
                 class="submit-submit rounded-2xl px-5 py-3 text-sm font-medium transition hover:scale-[1.01]">
@@ -156,7 +156,7 @@
               <li>Name the project the way users already know it.</li>
               <li>Describe the product in one plain sentence, not a pitch.</li>
               <li>The live leaderboard is MRR-based for now.</li>
-              <li>Use a billing-provider verification source for submissions.</li>
+              <li>Use a non-secret proof link or note. Never paste API keys.</li>
               <li>Projects at $20k MRR or above graduate off the board.</li>
             </ul>
           </div>

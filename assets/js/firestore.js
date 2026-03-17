@@ -95,10 +95,10 @@
     }
 
     if (metricKey === "githubStars") {
-      return ["GitHub verified"];
+      return ["GitHub"];
     }
 
-    return ["GitHub verified", "Firebase verified"];
+    return ["GitHub", "Firebase / GA4"];
   }
 
   function normalizeVerificationType(metricType, verificationType) {
@@ -121,11 +121,11 @@
     if (current.indexOf("paddle") >= 0) {
       return "Paddle";
     }
-    if (current.indexOf("firebase") >= 0) {
-      return "Firebase verified";
+    if (current.indexOf("firebase") >= 0 || current.indexOf("ga4") >= 0 || current.indexOf("analytic") >= 0) {
+      return "Firebase / GA4";
     }
     if (current.indexOf("github") >= 0 || current.indexOf("star") >= 0) {
-      return "GitHub verified";
+      return "GitHub";
     }
 
     return options[0];
@@ -267,7 +267,7 @@
       timeframe: project.timeframe || "allTime",
       verificationType: normalizeVerificationType(primaryMetricKey, project.verificationType),
       verificationReference: String(project.verificationReference || "").trim(),
-      verified: typeof project.verified === "boolean" ? project.verified : true,
+      verified: typeof project.verified === "boolean" ? project.verified : false,
       websiteUrl: project.websiteUrl || "#",
       logoUrl: project.logoUrl || "",
       createdAt: toIsoDate(project.createdAt),
@@ -570,7 +570,7 @@
       growthPercent: growthPercent,
       verificationType: normalizeVerificationType(metricKey, formData.verificationType),
       verificationReference: String(formData.verificationReference || "").trim(),
-      verified: true,
+      verified: false,
       websiteUrl: String(formData.websiteUrl || "").trim(),
       logoUrl: String(formData.logoUrl || "").trim(),
       createdAt: nowIso,
@@ -607,64 +607,69 @@
       createdAt: project.createdAt,
     });
 
-    var services = IndieRanks.getFirebaseServices ? IndieRanks.getFirebaseServices() : { db: null };
+    var services = IndieRanks.getFirebaseServices ? IndieRanks.getFirebaseServices() : { db: null, auth: null };
     if (!services.db || !window.firebase || !window.firebase.firestore) {
       throw new Error("Firestore is not available. Check your Firebase config and try again.");
     }
+    if (!services.auth || !services.auth.currentUser) {
+      throw new Error("Sign in before submitting. Public Firestore rules only allow authenticated writes.");
+    }
 
     try {
-      var batch = services.db.batch();
       var projectRef = services.db.collection("projects").doc(project.slug);
       var founderRef = services.db.collection("founders").doc(founder.slug);
       var submissionRef = services.db.collection("submissions").doc();
+      var existingRefs = await Promise.all([projectRef.get(), founderRef.get()]);
+      var projectSnapshot = existingRefs[0];
+      var founderSnapshot = existingRefs[1];
+
+      if (projectSnapshot.exists) {
+        throw new Error("A listing with this project name already exists. Rename it or claim the existing project.");
+      }
+
+      var batch = services.db.batch();
       var serverTimestamp = window.firebase.firestore.FieldValue.serverTimestamp();
-      var arrayUnion = window.firebase.firestore.FieldValue.arrayUnion;
+      var currentUser = services.auth.currentUser;
 
-      batch.set(
-        projectRef,
-        {
-          slug: project.slug,
-          name: project.name,
-          founderName: project.founderName,
-          founderSlug: project.founderSlug,
-          category: project.category,
-          tagline: project.tagline,
-          description: project.description,
-          primaryMetricKey: project.primaryMetricKey,
-          metricType: project.metricType,
-          metricValue: project.metricValue,
-          metricLabel: project.metricLabel,
-          growthPercent: project.growthPercent,
-          timeframe: "allTime",
-          verificationType: project.verificationType,
-          verificationReference: project.verificationReference,
-          verified: project.verified,
-          websiteUrl: project.websiteUrl,
-          logoUrl: project.logoUrl || "",
-          createdAt: serverTimestamp,
-          tinyWins: project.tinyWins,
-          featured: false,
-          recent: true,
-          momentum: project.momentum,
-          metrics: project.metrics,
-          history: project.history,
-        },
-        { merge: true }
-      );
+      batch.set(projectRef, {
+        slug: project.slug,
+        name: project.name,
+        founderName: project.founderName,
+        founderSlug: project.founderSlug,
+        category: project.category,
+        tagline: project.tagline,
+        description: project.description,
+        primaryMetricKey: project.primaryMetricKey,
+        metricType: project.metricType,
+        metricValue: project.metricValue,
+        metricLabel: project.metricLabel,
+        growthPercent: project.growthPercent,
+        timeframe: "allTime",
+        verificationType: project.verificationType,
+        verificationReference: project.verificationReference,
+        verified: project.verified,
+        websiteUrl: project.websiteUrl,
+        logoUrl: project.logoUrl || "",
+        createdAt: serverTimestamp,
+        tinyWins: project.tinyWins,
+        featured: false,
+        recent: true,
+        momentum: project.momentum,
+        metrics: project.metrics,
+        history: project.history,
+      });
 
-      batch.set(
-        founderRef,
-        {
+      if (!founderSnapshot.exists) {
+        batch.set(founderRef, {
           slug: founder.slug,
           name: founder.name,
           bio: founder.bio,
           avatarUrl: "",
-          projectSlugs: arrayUnion(project.slug),
+          projectSlugs: [project.slug],
           milestones: founder.milestones,
           createdAt: serverTimestamp,
-        },
-        { merge: true }
-      );
+        });
+      }
 
       batch.set(submissionRef, {
         projectSlug: project.slug,
@@ -680,14 +685,20 @@
         verificationReference: project.verificationReference,
         websiteUrl: project.websiteUrl,
         logoUrl: project.logoUrl || "",
-        status: "listed",
+        status: "received",
+        submitterUid: currentUser.uid,
         createdAt: serverTimestamp,
       });
 
       await batch.commit();
     } catch (error) {
       console.error("Firestore submit failed.", error);
-      throw new Error("Could not save to Firestore. Check your Firebase rules and try again.");
+      if (error && error.code === "permission-denied") {
+        throw new Error("Submission blocked by Firestore rules. Make sure you are signed in and deploying your own rules.");
+      }
+      throw error && error.message
+        ? error
+        : new Error("Could not save to Firestore. Check your Firebase rules and try again.");
     }
 
     return {

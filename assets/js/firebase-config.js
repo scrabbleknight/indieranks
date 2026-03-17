@@ -87,23 +87,72 @@
     return IndieRanks.firebaseServices;
   };
 
+  function requireAuthServices() {
+    var services = IndieRanks.getFirebaseServices();
+    if (!services.auth || !window.firebase || !window.firebase.auth) {
+      throw new Error("Firebase Auth is not configured.");
+    }
+    return services;
+  }
+
+  function joinDisplayName(firstName, lastName) {
+    return [firstName, lastName]
+      .map(function (value) {
+        return String(value || "").trim();
+      })
+      .filter(Boolean)
+      .join(" ");
+  }
+
   IndieRanks.authHooks = {
     onChange: function (callback) {
       var services = IndieRanks.getFirebaseServices();
       if (!services.auth || typeof callback !== "function") {
+        if (typeof callback === "function") {
+          callback(null);
+        }
         return function () {};
       }
 
       return services.auth.onAuthStateChanged(callback);
     },
     signInWithGoogle: async function () {
-      var services = IndieRanks.getFirebaseServices();
-      if (!services.auth || !window.firebase || !window.firebase.auth) {
-        throw new Error("Firebase Auth is not configured.");
+      var services = requireAuthServices();
+      var provider = new window.firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      return services.auth.signInWithPopup(provider);
+    },
+    signInWithX: async function () {
+      var services = requireAuthServices();
+      var provider = new window.firebase.auth.TwitterAuthProvider();
+      return services.auth.signInWithPopup(provider);
+    },
+    signInWithEmail: async function (email, password) {
+      var services = requireAuthServices();
+      return services.auth.signInWithEmailAndPassword(String(email || "").trim(), String(password || ""));
+    },
+    signUpWithEmail: async function (options) {
+      var services = requireAuthServices();
+      var nextOptions = options || {};
+      var result = await services.auth.createUserWithEmailAndPassword(
+        String(nextOptions.email || "").trim(),
+        String(nextOptions.password || "")
+      );
+      var displayName = joinDisplayName(nextOptions.firstName, nextOptions.lastName);
+      var user = result && result.user;
+
+      if (displayName && user && typeof user.updateProfile === "function") {
+        await user.updateProfile({ displayName: displayName });
+        if (typeof user.reload === "function") {
+          await user.reload();
+        }
       }
 
-      var provider = new window.firebase.auth.GoogleAuthProvider();
-      return services.auth.signInWithPopup(provider);
+      return result;
+    },
+    signInAnonymously: async function () {
+      var services = requireAuthServices();
+      return services.auth.signInAnonymously();
     },
     signOut: async function () {
       var services = IndieRanks.getFirebaseServices();
