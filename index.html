@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IndieRanks | The leaderboard for small indie apps</title>
+  <meta name="description" content="Track traction, compare milestones, and compete with builders your size." />
+  <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+  <link rel="shortcut icon" href="./favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="IndieRanks" />
+  <link rel="manifest" href="./favicon/site.webmanifest" />
+  <meta name="theme-color" content="#f8faff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#060607" media="(prefers-color-scheme: dark)" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <script src="./assets/js/theme-init.js"></script>
+  <script src="./assets/js/tailwind-theme.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="./assets/js/firebase-config.js"></script>
+  <script defer src="./assets/js/firestore.js"></script>
+  <script defer src="./assets/js/ui.js"></script>
+  <script defer src="./assets/js/app.js"></script>
+</head>
+
+<body data-page="home" class="bg-ink font-sans text-white antialiased">
+  <div data-site-header></div>
+
+  <main class="px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
+    <section class="relative overflow-hidden">
+      <div class="mx-auto max-w-shell">
+        <div class="mx-auto max-w-4xl text-center">
+          <div class="brand-pill inline-flex items-center gap-3 rounded-full px-4 py-3">
+            <span
+              class="logo-mark flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+              <img src="./favicon/web-app-manifest-192x192.png" alt="" class="logo-mark__image" />
+            </span>
+            <span class="brand-pill__text text-[11px] uppercase tracking-[0.16em] text-white/58">IndieRanks</span>
+          </div>
+
+          <h1
+            class="theme-hero-title mx-auto mt-8 max-w-4xl text-5xl font-semibold leading-none tracking-snugger text-white sm:text-5xl lg:text-5xl">
+            The leaderboard for small indie apps
+          </h1>
+          <p class="theme-hero-copy mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/66 sm:text-xl">
+            Track traction, compare milestones, and compete with builders your size.
+          </p>
+          <p class="theme-hero-meta mt-6 text-sm text-white/40">
+            For indie projects under 10k users, under $20k MRR, or bootstrapped/tiny-team by design. Hit $20k MRR and
+            you graduate off the board.
+          </p>
+        </div>
+
+        <div class="mx-auto mt-10 max-w-3xl">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <input id="homeSearch" type="search" placeholder='Search "AI", "Maya Chen", or "SaaS"'
+              class="search-input rounded-2xl px-5 py-2 text-base" />
+            <a href="./submit.html"
+              class="theme-cta shrink-0 whitespace-nowrap rounded-2xl px-5 py-4 text-center text-sm font-medium transition">
+              + Add Project
+            </a>
+          </div>
+        </div>
+
+        <div class="mx-auto mt-14 max-w-[60rem]">
+          <div class="panel leaderboard-panel rounded-[2rem] p-5 sm:p-6">
+            <div
+              class="flex flex-col gap-5 border-b border-[var(--leaderboard-line)] pb-5 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p id="homeCompetitionLabel" class="leaderboard-context-note mb-3">You're competing in: $100–$1k builders</p>
+                <h2 class="leaderboard-panel-title text-2xl font-semibold tracking-tight sm:text-3xl">Leaderboard</h2>
+                <p id="homeLeaderboardSummary" class="leaderboard-panel-copy mt-2 text-sm">
+                  Ranked by traction, tuned for builders your size.
+                </p>
+              </div>
+              <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-3 sm:flex-row">
+                  <label class="space-y-2">
+                    <span class="leaderboard-panel-label text-[11px] uppercase tracking-[0.12em]">Bracket</span>
+                    <select id="homeBracketFilter"
+                      class="select-dark min-w-[170px] rounded-2xl px-4 py-3 text-sm"></select>
+                  </label>
+                  <label class="space-y-2">
+                    <span class="leaderboard-panel-label text-[11px] uppercase tracking-[0.12em]">Sort</span>
+                    <select id="homeSortFilter"
+                      class="select-dark min-w-[170px] rounded-2xl px-4 py-3 text-sm"></select>
+                  </label>
+                </div>
+                <div class="flex justify-start sm:justify-end">
+                  <label class="leaderboard-toggle inline-flex items-center gap-3 rounded-full px-3 py-2">
+                    <span id="homeBracketToggleLabel" class="text-sm">Show all projects</span>
+                    <span class="leaderboard-toggle__switch">
+                      <input id="homeBracketToggle" type="checkbox" class="leaderboard-toggle__input" />
+                      <span class="leaderboard-toggle__track" aria-hidden="true"></span>
+                      <span class="leaderboard-toggle__thumb" aria-hidden="true"></span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between gap-4">
+              <p id="homeLeaderboardCount" class="leaderboard-panel-muted text-sm">Loading projects...</p>
+            </div>
+
+            <div id="homeLeaderboard" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-site-footer></div>
+</body>
+
+</html>

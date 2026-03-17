@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update: if true;
+    }
+
+    match /founders/{founderId} {
+      allow read: if true;
+      allow create, update: if true;
+    }
+
+    match /submissions/{submissionId} {
+      allow read: if true;
+      allow create: if true;
+    }
+
+    match /tinyWins/{tinyWinId} {
+      allow read: if true;
+    }
+  }
+}
