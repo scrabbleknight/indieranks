@@ -351,13 +351,48 @@
     }
   }
 
-  function getAuthErrorMessage(error, fallbackMessage) {
+  function getConfiguredAuthRedirectUrl() {
+    var config = IndieRanks.firebaseConfig || {};
+    var authDomain = String(config.authDomain || "").trim();
+
+    if (!authDomain) {
+      return "";
+    }
+
+    return "https://" + authDomain.replace(/^https?:\/\//, "").replace(/\/+$/, "") + "/__/auth/handler";
+  }
+
+  function logAuthError(error, settings) {
+    var details = {
+      code: error && error.code,
+      message: error && error.message,
+      providerName: settings && settings.providerName ? settings.providerName : null,
+      authKind: settings && settings.authKind ? settings.authKind : null,
+      customData: error && error.customData ? error.customData : null,
+      credentialProviderId: error && error.credential ? error.credential.providerId || null : null,
+      credentialSignInMethod: error && error.credential ? error.credential.signInMethod || null : null,
+    };
+
+    if (settings && settings.providerName === "X") {
+      details.expectedCallbackUrl = getConfiguredAuthRedirectUrl() || null;
+    }
+
+    console.error(settings && settings.logLabel ? settings.logLabel : "Auth action failed", error, details);
+  }
+
+  function getAuthErrorMessage(error, settings) {
     var code = error && error.code;
+    var options = settings || {};
+    var providerName = options.providerName || "";
+    var authKind = options.authKind || "";
 
     if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
       return "Sign-in was canceled.";
     }
     if (code === "auth/account-exists-with-different-credential") {
+      if (providerName) {
+        return "That email is already tied to another sign-in method. Use the original method first, then link " + providerName + ".";
+      }
       return "That email is already tied to a different sign-in method.";
     }
     if (code === "auth/email-already-in-use") {
@@ -366,12 +401,16 @@
     if (code === "auth/invalid-email") {
       return "Enter a valid email address.";
     }
-    if (
-      code === "auth/invalid-credential" ||
-      code === "auth/invalid-login-credentials" ||
-      code === "auth/user-not-found" ||
-      code === "auth/wrong-password"
-    ) {
+    if (code === "auth/invalid-credential") {
+      if (authKind === "password") {
+        return "That email or password is incorrect.";
+      }
+      if (providerName) {
+        return providerName + " sign-in is not configured correctly yet. Check the Firebase provider settings and callback URL.";
+      }
+      return "That sign-in credential is invalid or has expired. Try again.";
+    }
+    if (code === "auth/invalid-login-credentials" || code === "auth/user-not-found" || code === "auth/wrong-password") {
       return "That email or password is incorrect.";
     }
     if (code === "auth/weak-password") {
@@ -387,7 +426,7 @@
       return "Network error. Check your connection and try again.";
     }
 
-    return (error && error.message) || fallbackMessage || "Could not sign you in yet. Try again.";
+    return (error && error.message) || options.errorMessage || "Could not sign you in yet. Try again.";
   }
 
   async function runAuthGateAction(action, options) {
@@ -421,8 +460,8 @@
       }
       return user;
     } catch (error) {
-      console.error(error);
-      setAuthGateError(getAuthErrorMessage(error, settings.errorMessage));
+      logAuthError(error, settings);
+      setAuthGateError(getAuthErrorMessage(error, settings));
       setAuthGateBusy(false);
       return null;
     }
@@ -479,14 +518,18 @@
   async function handleAuthGateGoogleSignIn() {
     var authHooks = IndieRanks.authHooks;
     return runAuthGateAction(authHooks && authHooks.signInWithGoogle, {
+      providerName: "Google",
       errorMessage: "Could not sign you in with Google. Try again.",
+      logLabel: "Google sign-in failed",
     });
   }
 
   async function handleAuthProviderX() {
     var authHooks = IndieRanks.authHooks;
     return runAuthGateAction(authHooks && authHooks.signInWithX, {
+      providerName: "X",
       errorMessage: "Could not sign you in with X. Try again.",
+      logLabel: "X sign-in failed",
     });
   }
 
@@ -518,7 +561,9 @@
       return runAuthGateAction(authHooks && authHooks.signInWithEmail && function () {
         return authHooks.signInWithEmail(email, password);
       }, {
+        authKind: "password",
         errorMessage: "Could not sign you in with email. Try again.",
+        logLabel: "Email sign-in failed",
       });
     }
 
@@ -549,8 +594,10 @@
         password: password,
       });
     }, {
+      authKind: "password",
       errorMessage: "Could not create your account yet. Try again.",
       emptyUserMessage: "Account creation did not complete.",
+      logLabel: "Email sign-up failed",
     });
   }
 
@@ -806,12 +853,19 @@
 
   function ensureThemeToggle() {
     var target = $("[data-theme-toggle]");
-    var isFloating = !target;
     if (!target) {
       target = document.createElement("div");
       target.setAttribute("data-theme-toggle", "");
+      target.setAttribute("data-theme-toggle-mode", "floating");
+      target.setAttribute("aria-live", "polite");
       body.appendChild(target);
     }
+
+    if (!target.getAttribute("data-theme-toggle-mode")) {
+      target.setAttribute("data-theme-toggle-mode", "inline");
+    }
+
+    var isFloating = target.getAttribute("data-theme-toggle-mode") === "floating";
 
     if (target.getAttribute("data-theme-toggle-bound") !== "true") {
       target.addEventListener("click", function (event) {
