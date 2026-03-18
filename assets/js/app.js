@@ -9,7 +9,7 @@
     "Productivity",
     "Marketing",
     "Consumer",
-    "Games",
+    "Game",
     "Ecommerce",
     "Finance",
     "Education",
@@ -41,12 +41,22 @@
   var authGateModalState = {
     busy: false,
     onSignedIn: null,
+    onConfirm: null,
     returnFocus: null,
     root: null,
     view: "gate",
     authMode: "signup",
     emailFormVisible: false,
     errorMessage: "",
+    allowAnonymousAuth: true,
+    requireVerifiedAccount: false,
+    authTitle: "Join IndieRanks",
+    authSubtitle: "It's free to sign up.",
+    confirmEyebrow: "Publish listing",
+    confirmMessage: "Are you sure you want to list this project?",
+    confirmSubcopy: "We'll save it to Firestore and add it to the live leaderboard.",
+    confirmLabel: "Confirm",
+    cancelLabel: "Cancel",
   };
 
   function $(selector) {
@@ -67,6 +77,27 @@
 
   function queryParams() {
     return new URLSearchParams(window.location.search);
+  }
+
+  function isAnonymousUser(user) {
+    return !!(user && user.isAnonymous);
+  }
+
+  function hasVerifiedAuthSession(user) {
+    return !!(user && !isAnonymousUser(user));
+  }
+
+  function resetAuthGateModalContent() {
+    authGateModalState.onConfirm = null;
+    authGateModalState.allowAnonymousAuth = true;
+    authGateModalState.requireVerifiedAccount = false;
+    authGateModalState.authTitle = "Join IndieRanks";
+    authGateModalState.authSubtitle = "It's free to sign up.";
+    authGateModalState.confirmEyebrow = "Publish listing";
+    authGateModalState.confirmMessage = "Are you sure you want to list this project?";
+    authGateModalState.confirmSubcopy = "We'll save it to Firestore and add it to the live leaderboard.";
+    authGateModalState.confirmLabel = "Confirm";
+    authGateModalState.cancelLabel = "Cancel";
   }
 
   function resolveAuthReady(user) {
@@ -312,6 +343,16 @@
 
   function renderAuthEntryDialog() {
     var isSignIn = authGateModalState.authMode === "signin";
+    var anonymousOption = authGateModalState.allowAnonymousAuth
+      ? '<button type="button" class="auth-entry-modal__provider" data-auth-modal-anonymous>' +
+        '<span class="auth-entry-modal__provider-icon" aria-hidden="true">' +
+        '<svg viewBox="0 0 24 24" role="img" aria-hidden="true">' +
+        '<path fill="currentColor" d="M12 12a3.75 3.75 0 1 0-3.75-3.75A3.75 3.75 0 0 0 12 12Zm0 1.5c-3.3 0-6 2.01-6 4.5v.75a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75V18c0-2.49-2.7-4.5-6-4.5Z"></path>' +
+        '</svg>' +
+        "</span>" +
+        "<span>Continue as guest</span>" +
+        "</button>"
+      : "";
 
     return (
       '<div class="auth-gate-modal__dialog auth-gate-modal__dialog--auth panel" role="dialog" aria-modal="true" aria-labelledby="authEntryTitle">' +
@@ -321,8 +362,8 @@
       '</svg>' +
       '</button>' +
       '<div class="auth-entry-modal__header">' +
-      '<h2 id="authEntryTitle" class="auth-entry-modal__title">Join IndieRanks</h2>' +
-      '<p class="auth-entry-modal__subtitle">🤫 It\'s free to sign up.</p>' +
+      '<h2 id="authEntryTitle" class="auth-entry-modal__title">' + ui.escapeHtml(authGateModalState.authTitle) + "</h2>" +
+      '<p class="auth-entry-modal__subtitle">' + ui.escapeHtml(authGateModalState.authSubtitle) + "</p>" +
       "</div>" +
       '<div class="auth-entry-modal__segmented" role="tablist" aria-label="Authentication mode">' +
       '<button type="button" class="auth-entry-modal__tab' +
@@ -356,14 +397,7 @@
       "</span>" +
       "<span>Continue with X</span>" +
       "</button>" +
-      '<button type="button" class="auth-entry-modal__provider" data-auth-modal-anonymous>' +
-      '<span class="auth-entry-modal__provider-icon" aria-hidden="true">' +
-      '<svg viewBox="0 0 24 24" role="img" aria-hidden="true">' +
-      '<path fill="currentColor" d="M12 12a3.75 3.75 0 1 0-3.75-3.75A3.75 3.75 0 0 0 12 12Zm0 1.5c-3.3 0-6 2.01-6 4.5v.75a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75V18c0-2.49-2.7-4.5-6-4.5Z"></path>' +
-      '</svg>' +
-      "</span>" +
-      "<span>Continue as guest</span>" +
-      "</button>" +
+      anonymousOption +
       "</div>" +
       '<div class="auth-entry-modal__divider" aria-hidden="true">' +
       '<span class="auth-entry-modal__divider-line"></span>' +
@@ -377,10 +411,59 @@
     );
   }
 
+  function renderSubmitConfirmDialog() {
+    return (
+      '<div class="auth-gate-modal__dialog auth-gate-modal__dialog--gate panel" role="dialog" aria-modal="true" aria-labelledby="submitConfirmTitle">' +
+      '<div class="auth-gate-modal__hero">' +
+      '<div class="auth-gate-modal__hero-badge">' +
+      '<span class="auth-gate-modal__hero-dot"></span>' +
+      "<span>Ready to publish</span>" +
+      "</div>" +
+      '<div class="auth-gate-modal__hero-stack" aria-hidden="true">' +
+      '<span class="auth-gate-modal__hero-chip">Live board</span>' +
+      '<span class="auth-gate-modal__hero-card auth-gate-modal__hero-card--back"></span>' +
+      '<span class="auth-gate-modal__hero-card auth-gate-modal__hero-card--mid"></span>' +
+      '<span class="auth-gate-modal__hero-card auth-gate-modal__hero-card--front">' +
+      '<span class="auth-gate-modal__hero-rank">LIVE</span>' +
+      '<span class="auth-gate-modal__hero-lines">' +
+      '<span></span>' +
+      '<span></span>' +
+      '<span></span>' +
+      "</span>" +
+      "</span>" +
+      "</div>" +
+      "</div>" +
+      '<div class="auth-gate-modal__copy">' +
+      '<p class="auth-gate-modal__eyebrow">' +
+      ui.escapeHtml(authGateModalState.confirmEyebrow) +
+      "</p>" +
+      '<p id="submitConfirmTitle" class="auth-gate-modal__message">' +
+      ui.escapeHtml(authGateModalState.confirmMessage) +
+      "</p>" +
+      '<p class="auth-gate-modal__subcopy">' +
+      ui.escapeHtml(authGateModalState.confirmSubcopy) +
+      "</p>" +
+      "</div>" +
+      '<div class="auth-gate-modal__actions">' +
+      '<button type="button" class="auth-gate-modal__button chip-link" data-submit-cancel>' +
+      ui.escapeHtml(authGateModalState.cancelLabel) +
+      "</button>" +
+      '<button type="button" class="auth-gate-modal__button theme-cta" data-submit-confirm>' +
+      ui.escapeHtml(authGateModalState.confirmLabel) +
+      "</button>" +
+      "</div>" +
+      "</div>"
+    );
+  }
+
   function renderAuthGateModal() {
     return (
       '<div class="auth-gate-modal__scrim" data-auth-gate-dismiss></div>' +
-      (authGateModalState.view === "auth" ? renderAuthEntryDialog() : renderBracketGateDialog())
+      (authGateModalState.view === "auth"
+        ? renderAuthEntryDialog()
+        : authGateModalState.view === "confirm-submit"
+          ? renderSubmitConfirmDialog()
+          : renderBracketGateDialog())
     );
   }
 
@@ -404,10 +487,13 @@
         authGateModalState.authMode === "signin" || authGateModalState.emailFormVisible
           ? "[data-auth-modal-input-primary]"
           : "[data-auth-modal-google]";
+    } else if (authGateModalState.view === "confirm-submit") {
+      selector = "[data-submit-confirm]";
     }
 
     var target =
       modal.querySelector(selector) ||
+      modal.querySelector("[data-submit-cancel]") ||
       modal.querySelector("[data-auth-modal-close]") ||
       modal.querySelector("[data-auth-gate-stay]");
 
@@ -580,9 +666,11 @@
     }
 
     authGateModalState.onSignedIn = null;
+    authGateModalState.onConfirm = null;
     authGateModalState.view = "gate";
     authGateModalState.authMode = "signup";
     authGateModalState.emailFormVisible = false;
+    resetAuthGateModalContent();
     setAuthGateBusy(false);
     setAuthGateError("");
     modal.hidden = true;
@@ -644,6 +732,45 @@
 
   async function handleAuthAnonymousSignIn() {
     var authHooks = IndieRanks.authHooks;
+
+    if (authGateModalState.requireVerifiedAccount) {
+      var currentUser = await getCurrentUser();
+      if (isAnonymousUser(currentUser)) {
+        return currentUser;
+      }
+
+      if (authGateModalState.busy) {
+        return null;
+      }
+
+      if (!authHooks || typeof authHooks.signInAnonymously !== "function") {
+        setAuthGateError("Could not start a guest session. Try again.");
+        return null;
+      }
+
+      setAuthGateError("");
+      setAuthGateBusy(true);
+
+      try {
+        var result = await authHooks.signInAnonymously();
+        var user = (result && result.user) || (await getCurrentUser());
+        authState.user = user || null;
+        setAuthGateBusy(false);
+        focusAuthGateModalPrimary();
+        return user;
+      } catch (error) {
+        logAuthError(error, {
+          errorMessage: "Could not start a guest session. Try again.",
+          emptyUserMessage: "Guest sign-in did not complete.",
+        });
+        setAuthGateError(getAuthErrorMessage(error, {
+          errorMessage: "Could not start a guest session. Try again.",
+        }));
+        setAuthGateBusy(false);
+        return null;
+      }
+    }
+
     return runAuthGateAction(authHooks && authHooks.signInAnonymously, {
       errorMessage: "Could not start a guest session. Try again.",
       emptyUserMessage: "Guest sign-in did not complete.",
@@ -729,6 +856,8 @@
       var authXTrigger = event.target.closest("[data-auth-modal-x]");
       var authAnonymousTrigger = event.target.closest("[data-auth-modal-anonymous]");
       var authEmailTrigger = event.target.closest("[data-auth-modal-email]");
+      var submitConfirmTrigger = event.target.closest("[data-submit-confirm]");
+      var submitCancelTrigger = event.target.closest("[data-submit-cancel]");
 
       if (authGoogleTrigger) {
         handleAuthGateGoogleSignIn();
@@ -760,11 +889,20 @@
         return;
       }
 
+      if (submitConfirmTrigger && !authGateModalState.busy) {
+        var onConfirm = authGateModalState.onConfirm;
+        hideAuthGateModal();
+        if (typeof onConfirm === "function") {
+          onConfirm();
+        }
+        return;
+      }
+
       if (authGateModalState.busy) {
         return;
       }
 
-      if (dismissTrigger || stayTrigger || authCloseTrigger) {
+      if (dismissTrigger || stayTrigger || authCloseTrigger || submitCancelTrigger) {
         hideAuthGateModal();
       }
     });
@@ -794,10 +932,57 @@
 
   function showAuthGateModal(options) {
     var modal = ensureAuthGateModal();
+    resetAuthGateModalContent();
     authGateModalState.onSignedIn = options && options.onSignedIn;
     authGateModalState.returnFocus = document.activeElement;
     authGateModalState.view = "gate";
     authGateModalState.authMode = "signup";
+    authGateModalState.emailFormVisible = false;
+    setAuthGateError("");
+    setAuthGateBusy(false);
+    syncAuthGateModal();
+    modal.hidden = false;
+    body.classList.add("auth-gate-open");
+    focusAuthGateModalPrimary();
+  }
+
+  function showAuthEntryModal(options) {
+    var modal = ensureAuthGateModal();
+    var settings = options || {};
+
+    authGateModalState.onSignedIn = settings.onSignedIn || null;
+    authGateModalState.returnFocus = document.activeElement;
+    authGateModalState.view = "auth";
+    authGateModalState.authMode = settings.authMode === "signin" ? "signin" : "signup";
+    authGateModalState.emailFormVisible = false;
+    authGateModalState.allowAnonymousAuth = settings.allowAnonymousAuth !== false;
+    authGateModalState.requireVerifiedAccount = !!settings.requireVerifiedAccount;
+    authGateModalState.authTitle = String(settings.title || "Join IndieRanks");
+    authGateModalState.authSubtitle = String(settings.subtitle || "It's free to sign up.");
+    authGateModalState.onConfirm = null;
+    setAuthGateError("");
+    setAuthGateBusy(false);
+    syncAuthGateModal();
+    modal.hidden = false;
+    body.classList.add("auth-gate-open");
+    focusAuthGateModalPrimary();
+  }
+
+  function showSubmitConfirmModal(options) {
+    var modal = ensureAuthGateModal();
+    var settings = options || {};
+
+    authGateModalState.returnFocus = document.activeElement;
+    authGateModalState.view = "confirm-submit";
+    authGateModalState.onSignedIn = null;
+    authGateModalState.onConfirm = typeof settings.onConfirm === "function" ? settings.onConfirm : null;
+    authGateModalState.confirmEyebrow = String(settings.eyebrow || "Publish listing");
+    authGateModalState.confirmMessage = String(settings.message || "Are you sure you want to list this project?");
+    authGateModalState.confirmSubcopy = String(
+      settings.subcopy || "We'll save it to Firestore and add it to the live leaderboard."
+    );
+    authGateModalState.confirmLabel = String(settings.confirmLabel || "Confirm");
+    authGateModalState.cancelLabel = String(settings.cancelLabel || "Cancel");
     authGateModalState.emailFormVisible = false;
     setAuthGateError("");
     setAuthGateBusy(false);
@@ -1393,6 +1578,207 @@
     return source.indexOf("revenuecat") >= 0 || source.indexOf("revenue cat") >= 0;
   }
 
+  function isStripeVerification(verificationType) {
+    return String(verificationType || "").trim().toLowerCase().indexOf("stripe") >= 0;
+  }
+
+  function usesAutoDerivedMetrics(metricType, verificationType) {
+    return ui.normalizeMetricKey(metricType) === "mrr" && isStripeVerification(verificationType);
+  }
+
+  function looksLikeLiveStripeKey(value) {
+    return /^(rk|sk)_live_/i.test(String(value || "").trim());
+  }
+
+  function roundMetricNumber(value, decimals) {
+    var precision = Math.pow(10, Number(decimals) || 0);
+    return Math.round((Number(value) || 0) * precision) / precision;
+  }
+
+  function stripeMonthlyAmountFromPrice(price, quantity) {
+    var source = price || {};
+    var recurring = source.recurring || {};
+    var interval = String(recurring.interval || "").toLowerCase();
+    var intervalCount = Math.max(1, Number(recurring.interval_count) || 1);
+    var quantityValue = Math.max(0, Number(quantity) || 1);
+    var unitAmount = Number(source.unit_amount_decimal);
+
+    if (!Number.isFinite(unitAmount)) {
+      unitAmount = Number(source.unit_amount);
+    }
+
+    if (!Number.isFinite(unitAmount) || unitAmount <= 0 || !interval) {
+      return 0;
+    }
+
+    var monthlyAmount = unitAmount / 100;
+
+    if (interval === "year") {
+      monthlyAmount = monthlyAmount / (12 * intervalCount);
+    } else if (interval === "month") {
+      monthlyAmount = monthlyAmount / intervalCount;
+    } else if (interval === "week") {
+      monthlyAmount = (monthlyAmount * 52) / (12 * intervalCount);
+    } else if (interval === "day") {
+      monthlyAmount = (monthlyAmount * 30) / intervalCount;
+    } else {
+      return 0;
+    }
+
+    return monthlyAmount * quantityValue;
+  }
+
+  function stripeSubscriptionEndedAt(subscription) {
+    var value = Number(subscription && subscription.ended_at);
+    if (value > 0) {
+      return value;
+    }
+
+    if (String(subscription && subscription.status ? subscription.status : "").toLowerCase() === "canceled") {
+      value = Number(subscription && (subscription.canceled_at || subscription.cancel_at));
+      return value > 0 ? value : 0;
+    }
+
+    return 0;
+  }
+
+  function isStripeSubscriptionActiveAt(subscription, timestamp, includeCanceledSnapshot) {
+    var status = String(subscription && subscription.status ? subscription.status : "").toLowerCase();
+    var created = Number(subscription && subscription.created) || 0;
+    var endedAt = stripeSubscriptionEndedAt(subscription);
+
+    if (created && created > timestamp) {
+      return false;
+    }
+
+    if (endedAt && endedAt <= timestamp) {
+      return false;
+    }
+
+    if (["incomplete", "incomplete_expired", "paused"].indexOf(status) >= 0) {
+      return false;
+    }
+
+    if (includeCanceledSnapshot) {
+      return ["active", "trialing", "past_due", "unpaid", "canceled"].indexOf(status) >= 0;
+    }
+
+    return ["active", "trialing", "past_due", "unpaid"].indexOf(status) >= 0;
+  }
+
+  function getStripeSubscriptionMonthlyAmount(subscription) {
+    var items = subscription && subscription.items && Array.isArray(subscription.items.data) ? subscription.items.data : [];
+
+    return items.reduce(function (sum, item) {
+      if (!item) {
+        return sum;
+      }
+
+      return sum + stripeMonthlyAmountFromPrice(item.price || item.plan, item.quantity);
+    }, 0);
+  }
+
+  function estimateStripeMrrAt(subscriptions, timestamp, includeCanceledSnapshot) {
+    return roundMetricNumber(
+      (subscriptions || []).reduce(function (sum, subscription) {
+        if (!isStripeSubscriptionActiveAt(subscription, timestamp, includeCanceledSnapshot)) {
+          return sum;
+        }
+
+        return sum + getStripeSubscriptionMonthlyAmount(subscription);
+      }, 0),
+      2
+    );
+  }
+
+  async function fetchStripeApiPage(apiKey, path, params) {
+    var url = new URL("https://api.stripe.com" + path);
+    var search = params || {};
+
+    Object.keys(search).forEach(function (key) {
+      var value = search[key];
+
+      if (Array.isArray(value)) {
+        value.forEach(function (item) {
+          url.searchParams.append(key, item);
+        });
+        return;
+      }
+
+      if (value !== undefined && value !== null && value !== "") {
+        url.searchParams.append(key, value);
+      }
+    });
+
+    var response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+      },
+    });
+    var payload = null;
+
+    try {
+      payload = await response.json();
+    } catch (error) {
+      payload = null;
+    }
+
+    if (!response.ok) {
+      var message =
+        payload && payload.error && payload.error.message
+          ? payload.error.message
+          : "Stripe rejected that key. Check that it is a live restricted key with subscription read access.";
+      throw new Error(message);
+    }
+
+    return payload || { data: [], has_more: false };
+  }
+
+  async function fetchStripeSubscriptions(apiKey) {
+    var subscriptions = [];
+    var startingAfter = "";
+    var hasMore = true;
+
+    while (hasMore) {
+      var page = await fetchStripeApiPage(apiKey, "/v1/subscriptions", {
+        status: "all",
+        limit: 100,
+        "expand[]": ["data.items.data.price"],
+        starting_after: startingAfter || undefined,
+      });
+      var data = Array.isArray(page.data) ? page.data : [];
+
+      subscriptions = subscriptions.concat(data);
+      hasMore = !!page.has_more && data.length > 0;
+      startingAfter = hasMore ? data[data.length - 1].id : "";
+    }
+
+    return subscriptions;
+  }
+
+  async function deriveStripeMetrics(apiKey) {
+    var subscriptions = await fetchStripeSubscriptions(apiKey);
+    var nowSeconds = Math.floor(Date.now() / 1000);
+    var currentMrr = estimateStripeMrrAt(subscriptions, nowSeconds, false);
+    var previousMrr = estimateStripeMrrAt(subscriptions, nowSeconds - 30 * 86400, true);
+    var growthPercent = 0;
+
+    if (previousMrr > 0) {
+      growthPercent = ((currentMrr - previousMrr) / previousMrr) * 100;
+    } else if (currentMrr > 0) {
+      growthPercent = 100;
+    }
+
+    return {
+      currentMetricValue: roundMetricNumber(currentMrr, 0),
+      growthPercent: roundMetricNumber(growthPercent, 1),
+      activeSubscriptionCount: subscriptions.filter(function (subscription) {
+        return isStripeSubscriptionActiveAt(subscription, nowSeconds, false);
+      }).length,
+    };
+  }
+
   function serializeRevenueCatReference(values) {
     return JSON.stringify({
       provider: "RevenueCat",
@@ -1845,8 +2231,6 @@
       category: formData.get("category"),
       tagline: formData.get("tagline"),
       metricType: formData.get("metricType"),
-      currentMetricValue: formData.get("currentMetricValue"),
-      growthPercent: formData.get("growthPercent"),
       websiteUrl: formData.get("websiteUrl"),
       verificationType: verificationType,
       verificationReference: verificationReference,
@@ -1877,6 +2261,8 @@
     var metricKey = ui.normalizeMetricKey(values.metricType || "mrr");
     var value = Number(values.currentMetricValue) || 0;
     var growthValue = Number(values.growthPercent) || 0;
+    var usesStripeSnapshot = values.metricSnapshotMode === "stripe";
+    var metricSnapshotReady = values.metricSnapshotStatus === "ready";
     var growthTone = growthValue > 0 ? "up" : growthValue < 0 ? "down" : "flat";
     var websiteLabel = values.websiteUrl ? String(values.websiteUrl).replace(/^https?:\/\//, "") : "yourapp.com";
     var metricLabel = ui.getDisplayMetric(
@@ -1893,6 +2279,14 @@
       metricKey,
       metricKey === "mrr" ? "allTime" : "month"
     );
+    var metricPreviewText = metricLabel.label;
+    var growthPreviewText = ui.formatPercent(growthValue, true);
+
+    if (usesStripeSnapshot && !metricSnapshotReady) {
+      metricPreviewText = values.metricSnapshotStatus === "loading" ? "Loading from Stripe" : "Stripe sync pending";
+      growthPreviewText = values.metricSnapshotStatus === "error" ? "Needs a valid key" : "Calculating";
+      growthTone = "flat";
+    }
 
     var founderName = String(values.founderName || "").trim();
     var founderXUsername = normalizeXUsername(values.founderXUsername);
@@ -1922,8 +2316,8 @@
       ui.escapeHtml(values.tagline || "Add a plain one-line summary so the leaderboard row reads instantly.") +
       "</p>" +
       '<dl class="submit-preview-card__stats">' +
-      '<div><dt>Metric</dt><dd>' + ui.escapeHtml(metricLabel.label) + "</dd></div>" +
-      '<div><dt>Growth</dt><dd data-tone="' + growthTone + '">' + ui.escapeHtml(ui.formatPercent(growthValue, true)) + "</dd></div>" +
+      '<div><dt>Metric</dt><dd>' + ui.escapeHtml(metricPreviewText) + "</dd></div>" +
+      '<div><dt>Growth</dt><dd data-tone="' + growthTone + '">' + ui.escapeHtml(growthPreviewText) + "</dd></div>" +
       '<div><dt>Founder</dt><dd>' + ui.escapeHtml(founderPreview) + "</dd></div>" +
       '<div><dt>Verification</dt><dd>' + ui.escapeHtml(values.verificationType || getDefaultVerificationType(metricKey)) + "</dd></div>" +
       "</dl>" +
@@ -1952,15 +2346,33 @@
     var verificationReferenceHelp = $("#verificationReferenceHelp");
     var verificationReferenceField = verificationReferenceInput ? verificationReferenceInput.closest(".submit-field") : null;
     var verificationProviderFields = $("#verificationProviderFields");
+    var manualMetricFields = $("#manualMetricFields");
+    var derivedMetricFields = $("#derivedMetricFields");
+    var derivedMetricValue = $("#derivedMetricValue");
+    var derivedGrowthValue = $("#derivedGrowthValue");
+    var derivedMetricStatus = $("#derivedMetricStatus");
     var founderXUsernameInput = $("#founderXUsernameInput");
     var founderXUsernameHint = $("#founderXUsernameHint");
+    var currentMetricValueInput = form ? form.querySelector('[name="currentMetricValue"]') : null;
+    var growthPercentInput = form ? form.querySelector('[name="growthPercent"]') : null;
     var params = queryParams();
     var claimSlug = params.get("claim");
     var submitState = {
       logoUrl: "",
       logoFileName: "",
       autoXUsername: "",
+      metricSnapshot: {
+        mode: "manual",
+        status: "idle",
+        currentMetricValue: "",
+        growthPercent: "",
+        message: "",
+        lastResolvedKey: "",
+        requestId: 0,
+        activeSubscriptionCount: 0,
+      },
     };
+    var stripeMetricLookupTimer = 0;
 
     if (!form) {
       return;
@@ -1977,6 +2389,243 @@
       "SaaS"
     );
     setSelectOptions(metricSelect, metricOptions(), "mrr");
+
+    function updateMetricSnapshotState(nextState) {
+      submitState.metricSnapshot = Object.assign({}, submitState.metricSnapshot, nextState || {});
+      syncDerivedMetricView();
+      updatePreview();
+    }
+
+    function syncDerivedMetricView() {
+      var snapshot = submitState.metricSnapshot;
+      var growthTone = Number(snapshot.growthPercent) > 0 ? "up" : Number(snapshot.growthPercent) < 0 ? "down" : "flat";
+      var metricText = "Waiting for Stripe";
+      var growthText = "Calculating";
+      var message = snapshot.message || "";
+
+      if (snapshot.status === "loading") {
+        metricText = "Loading MRR...";
+        growthText = "Calculating";
+      } else if (snapshot.status === "ready") {
+        metricText = ui.formatCurrency(snapshot.currentMetricValue || 0) + " MRR";
+        growthText = ui.formatPercent(snapshot.growthPercent || 0, true);
+      } else if (snapshot.status === "error") {
+        metricText = "Needs Stripe key";
+        growthText = "Unavailable";
+      }
+
+      if (derivedMetricValue) {
+        setText(derivedMetricValue, metricText);
+      }
+
+      if (derivedGrowthValue) {
+        setText(derivedGrowthValue, growthText);
+        derivedGrowthValue.setAttribute("data-tone", snapshot.status === "ready" ? growthTone : "flat");
+      }
+
+      if (derivedMetricStatus) {
+        setText(
+          derivedMetricStatus,
+          message || "Paste a live Stripe restricted key to load your current MRR and 30-day growth automatically."
+        );
+      }
+    }
+
+    function getMetricModeValues() {
+      return {
+        metricType: metricSelect ? metricSelect.value : "mrr",
+        verificationType: verificationSelect ? verificationSelect.value : getDefaultVerificationType("mrr"),
+      };
+    }
+
+    function scheduleStripeMetricRefresh() {
+      window.clearTimeout(stripeMetricLookupTimer);
+
+      if (!verificationReferenceInput) {
+        return;
+      }
+
+      stripeMetricLookupTimer = window.setTimeout(function () {
+        resolveStripeMetricSnapshot(false).catch(function () {
+          return;
+        });
+      }, 450);
+    }
+
+    async function resolveStripeMetricSnapshot(forceRefresh) {
+      var modeValues = getMetricModeValues();
+      var apiKey = verificationReferenceInput ? String(verificationReferenceInput.value || "").trim() : "";
+
+      if (!usesAutoDerivedMetrics(modeValues.metricType, modeValues.verificationType)) {
+        updateMetricSnapshotState({
+          mode: "manual",
+          status: "idle",
+          currentMetricValue: "",
+          growthPercent: "",
+          message: "",
+          lastResolvedKey: "",
+          requestId: submitState.metricSnapshot.requestId + 1,
+          activeSubscriptionCount: 0,
+        });
+        return null;
+      }
+
+      if (!apiKey) {
+        updateMetricSnapshotState({
+          mode: "stripe",
+          status: "idle",
+          currentMetricValue: "",
+          growthPercent: "",
+          message: "Paste a live Stripe restricted key to load your current MRR and 30-day growth automatically.",
+          lastResolvedKey: "",
+          requestId: submitState.metricSnapshot.requestId + 1,
+          activeSubscriptionCount: 0,
+        });
+        return null;
+      }
+
+      if (!looksLikeLiveStripeKey(apiKey)) {
+        updateMetricSnapshotState({
+          mode: "stripe",
+          status: "error",
+          currentMetricValue: "",
+          growthPercent: "",
+          message: "Use a live Stripe key that starts with rk_live_ or sk_live_.",
+          lastResolvedKey: "",
+          requestId: submitState.metricSnapshot.requestId + 1,
+          activeSubscriptionCount: 0,
+        });
+        return null;
+      }
+
+      if (!forceRefresh && submitState.metricSnapshot.status === "ready" && submitState.metricSnapshot.lastResolvedKey === apiKey) {
+        return submitState.metricSnapshot;
+      }
+
+      var requestId = submitState.metricSnapshot.requestId + 1;
+      updateMetricSnapshotState({
+        mode: "stripe",
+        status: "loading",
+        message: "Checking Stripe and calculating MRR from active subscriptions...",
+        requestId: requestId,
+      });
+
+      try {
+        var metrics = await deriveStripeMetrics(apiKey);
+
+        if (submitState.metricSnapshot.requestId !== requestId) {
+          return null;
+        }
+
+        updateMetricSnapshotState({
+          mode: "stripe",
+          status: "ready",
+          currentMetricValue: metrics.currentMetricValue,
+          growthPercent: metrics.growthPercent,
+          message:
+            "Loaded from Stripe using " +
+            metrics.activeSubscriptionCount +
+            " active subscription" +
+            (metrics.activeSubscriptionCount === 1 ? "." : "s."),
+          lastResolvedKey: apiKey,
+          activeSubscriptionCount: metrics.activeSubscriptionCount,
+        });
+
+        return metrics;
+      } catch (error) {
+        if (submitState.metricSnapshot.requestId !== requestId) {
+          return null;
+        }
+
+        updateMetricSnapshotState({
+          mode: "stripe",
+          status: "error",
+          currentMetricValue: "",
+          growthPercent: "",
+          message: (error && error.message) || "Could not load metrics from Stripe.",
+          lastResolvedKey: "",
+          activeSubscriptionCount: 0,
+        });
+        throw error;
+      }
+    }
+
+    async function ensureDerivedMetricsReady() {
+      var values = getSubmitValues();
+
+      if (!usesAutoDerivedMetrics(values.metricType, values.verificationType)) {
+        return values;
+      }
+
+      if (!looksLikeLiveStripeKey(values.verificationReference)) {
+        throw new Error("Paste a live Stripe restricted key before listing your project.");
+      }
+
+      if (
+        submitState.metricSnapshot.status !== "ready" ||
+        submitState.metricSnapshot.lastResolvedKey !== String(values.verificationReference || "").trim()
+      ) {
+        await resolveStripeMetricSnapshot(true);
+      }
+
+      values = getSubmitValues();
+      if (submitState.metricSnapshot.status !== "ready") {
+        throw new Error("We could not calculate your MRR from Stripe yet. Recheck the key and try again.");
+      }
+
+      return values;
+    }
+
+    function syncMetricInputMode() {
+      var modeValues = getMetricModeValues();
+      var useAutoMetrics = usesAutoDerivedMetrics(modeValues.metricType, modeValues.verificationType);
+
+      if (manualMetricFields) {
+        manualMetricFields.hidden = useAutoMetrics;
+      }
+
+      if (derivedMetricFields) {
+        derivedMetricFields.hidden = !useAutoMetrics;
+      }
+
+      if (currentMetricValueInput) {
+        currentMetricValueInput.disabled = useAutoMetrics;
+        currentMetricValueInput.required = !useAutoMetrics;
+      }
+
+      if (growthPercentInput) {
+        growthPercentInput.disabled = useAutoMetrics;
+        growthPercentInput.required = !useAutoMetrics;
+      }
+
+      if (useAutoMetrics) {
+        if (verificationReferenceInput && verificationReferenceInput.value) {
+          scheduleStripeMetricRefresh();
+        } else {
+          updateMetricSnapshotState({
+            mode: "stripe",
+            status: "idle",
+            currentMetricValue: "",
+            growthPercent: "",
+            message: "Paste a live Stripe restricted key to load your current MRR and 30-day growth automatically.",
+            lastResolvedKey: "",
+            requestId: submitState.metricSnapshot.requestId + 1,
+            activeSubscriptionCount: 0,
+          });
+        }
+      } else {
+        updateMetricSnapshotState({
+          mode: "manual",
+          status: "idle",
+          currentMetricValue: "",
+          growthPercent: "",
+          message: "",
+          lastResolvedKey: "",
+          requestId: submitState.metricSnapshot.requestId + 1,
+          activeSubscriptionCount: 0,
+        });
+      }
+    }
 
     function syncVerificationReferenceField(metricType, verificationType) {
       var config = getVerificationReferenceConfig(metricType, verificationType);
@@ -2005,6 +2654,8 @@
       if (verificationReferenceHelp) {
         setHtml(verificationReferenceHelp, config.helpText || "");
       }
+
+      syncMetricInputMode();
     }
 
     function syncVerificationOptions(selectedVerificationValue) {
@@ -2072,10 +2723,24 @@
     }
 
     function getSubmitValues() {
-      return Object.assign(readFormValues(form), {
+      var values = Object.assign(readFormValues(form), {
         logoUrl: submitState.logoUrl,
         logoFileName: submitState.logoFileName,
       });
+
+      if (usesAutoDerivedMetrics(values.metricType, values.verificationType)) {
+        values.currentMetricValue = submitState.metricSnapshot.currentMetricValue || 0;
+        values.growthPercent = submitState.metricSnapshot.growthPercent || 0;
+        values.metricSnapshotMode = "stripe";
+        values.metricSnapshotStatus = submitState.metricSnapshot.status;
+      } else {
+        values.currentMetricValue = currentMetricValueInput ? currentMetricValueInput.value : "";
+        values.growthPercent = growthPercentInput ? growthPercentInput.value : "";
+        values.metricSnapshotMode = "manual";
+        values.metricSnapshotStatus = "ready";
+      }
+
+      return values;
     }
 
     function syncFounderXUsernameHint(user, username) {
@@ -2130,6 +2795,7 @@
     }
 
     resetAppIconPicker();
+    syncDerivedMetricView();
     updatePreview();
     form.addEventListener("input", updatePreview);
     form.addEventListener("change", updatePreview);
@@ -2169,6 +2835,27 @@
     if (verificationSelect) {
       verificationSelect.addEventListener("change", function () {
         syncVerificationReferenceField(metricSelect ? metricSelect.value : "mrr", verificationSelect.value);
+        updatePreview();
+      });
+    }
+
+    if (verificationReferenceInput) {
+      verificationReferenceInput.addEventListener("input", function () {
+        if (!usesAutoDerivedMetrics(metricSelect ? metricSelect.value : "mrr", verificationSelect ? verificationSelect.value : "")) {
+          return;
+        }
+
+        scheduleStripeMetricRefresh();
+      });
+
+      verificationReferenceInput.addEventListener("change", function () {
+        if (!usesAutoDerivedMetrics(metricSelect ? metricSelect.value : "mrr", verificationSelect ? verificationSelect.value : "")) {
+          return;
+        }
+
+        resolveStripeMetricSnapshot(true).catch(function () {
+          return;
+        });
       });
     }
 
@@ -2240,31 +2927,7 @@
       );
     }
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
-      if (!form.reportValidity()) {
-        return;
-      }
-
-      await ensureAuthReady();
-      if (!(await getCurrentUser())) {
-        setHtml(
-          status,
-          '<div class="rounded-[1.5rem] border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-white/80">Authenticate to submit your listing. You can use Google, X, email, or continue as a guest.</div>'
-        );
-        showAuthGateModal({
-          onSignedIn: function () {
-            if (typeof form.requestSubmit === "function") {
-              form.requestSubmit();
-              return;
-            }
-            submitButton.click();
-          },
-        });
-        openAuthEntryModal();
-        return;
-      }
-
+    async function submitProjectListing() {
       var values = getSubmitValues();
       submitButton.disabled = true;
       submitButton.textContent = "Listing...";
@@ -2274,6 +2937,7 @@
       );
 
       try {
+        values = await ensureDerivedMetricsReady();
         var result = await store.submitProject(values);
         setHtml(
           status,
@@ -2297,6 +2961,7 @@
         );
         form.reset();
         resetAppIconPicker();
+        syncVerificationOptions();
         syncFounderXUsernameField(authState.user);
         updatePreview();
       } catch (error) {
@@ -2315,6 +2980,134 @@
         submitButton.disabled = false;
         submitButton.textContent = "List project";
       }
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      await ensureAuthReady();
+      var currentUser = await getCurrentUser();
+
+      if (!hasVerifiedAuthSession(currentUser)) {
+        setHtml(
+          status,
+          '<div class="rounded-[1.5rem] border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-white/80">Finish signing in before listing your project. Guest sessions cannot publish listings.</div>'
+        );
+        showAuthEntryModal({
+          authMode: "signin",
+          allowAnonymousAuth: true,
+          requireVerifiedAccount: true,
+          title: "Sign in to list your project",
+          subtitle: "Guest sessions can browse, but publishing requires a full account.",
+          onSignedIn: function (user) {
+            if (!hasVerifiedAuthSession(user)) {
+              return;
+            }
+
+            if (typeof form.requestSubmit === "function") {
+              form.requestSubmit();
+              return;
+            }
+            submitButton.click();
+          },
+        });
+        return;
+      }
+
+      showSubmitConfirmModal({
+        message: "Are you sure you want to list this project?",
+        subcopy: "We'll save it to Firestore and publish it to the IndieRanks leaderboard.",
+        confirmLabel: "Confirm",
+        cancelLabel: "Cancel",
+        onConfirm: function () {
+          submitProjectListing();
+        },
+      });
+    });
+  }
+
+  function isBillingVerificationType(verificationType) {
+    var source = String(verificationType || "").trim().toLowerCase();
+    return source.indexOf("stripe") >= 0 || source.indexOf("lemon") >= 0 || source.indexOf("revenuecat") >= 0 || source.indexOf("revenue cat") >= 0;
+  }
+
+  function getProjectPrimaryMetricKey(project) {
+    if (isBillingVerificationType(project && project.verificationType)) {
+      return "mrr";
+    }
+
+    return ui.normalizeMetricKey(project && project.primaryMetricKey);
+  }
+
+  function getProjectMetricTimeframe(metricKey) {
+    return metricKey === "mrr" ? "allTime" : "month";
+  }
+
+  function hasVerifiedRevenueMetrics(project) {
+    return !!(project && project.verified && isBillingVerificationType(project.verificationType));
+  }
+
+  function hasLiveRevenueMetrics(revenueState) {
+    return !!(revenueState && revenueState.status === "live" && revenueState.snapshot);
+  }
+
+  async function getProjectRevenueState(project) {
+    if (!project || !isBillingVerificationType(project.verificationType)) {
+      return {
+        status: "none",
+        snapshot: null,
+        message: "",
+      };
+    }
+
+    if (isStripeVerification(project.verificationType)) {
+      var apiKey = String(project.verificationReference || "").trim();
+
+      if (!looksLikeLiveStripeKey(apiKey)) {
+        return {
+          status: "pending",
+          snapshot: null,
+          message: "Stripe is selected, but no usable live restricted key is attached yet.",
+        };
+      }
+
+      try {
+        return {
+          status: "live",
+          snapshot: await deriveStripeMetrics(apiKey),
+          message: "Live MRR and growth are loading directly from Stripe.",
+        };
+      } catch (error) {
+        console.error("Failed to load live Stripe metrics for project.", project.slug, error);
+        return {
+          status: "error",
+          snapshot: null,
+          message: (error && error.message) || "Stripe sync is unavailable right now.",
+        };
+      }
+    }
+
+    return {
+      status: "pending",
+      snapshot: null,
+      message: String(project.verificationType || "Billing provider") + " support on the project page is still being wired up.",
+    };
+  }
+
+  function applyRevenueSnapshot(project, revenueState) {
+    if (!hasLiveRevenueMetrics(revenueState)) {
+      return project;
+    }
+
+    return Object.assign({}, project, {
+      metrics: Object.assign({}, project.metrics, {
+        mrr: revenueState.snapshot.currentMetricValue,
+      }),
+      metricValue: revenueState.snapshot.currentMetricValue,
+      growthPercent: revenueState.snapshot.growthPercent,
     });
   }
 
@@ -2330,6 +3123,82 @@
       "</p>" +
       "</div>"
     );
+  }
+
+  function growthCard(project) {
+    return (
+      '<div class="panel rounded-3xl px-5 py-5">' +
+      '<p class="text-[11px] font-mono uppercase tracking-[0.2em] text-white/45">Primary growth</p>' +
+      '<p class="mt-3 text-2xl font-semibold tracking-tight text-white">' + ui.escapeHtml(ui.formatPercent(project.growthPercent, true)) + "</p>" +
+      "</div>"
+    );
+  }
+
+  function renderProjectMetricCards(project, revenueState) {
+    var cards = [];
+
+    if (hasLiveRevenueMetrics(revenueState)) {
+      cards.push(metricCard(project, "mrr", "allTime"));
+      cards.push(growthCard(project));
+    } else {
+      cards.push(
+        '<div class="panel rounded-3xl px-5 py-5 sm:col-span-2 xl:col-span-3">' +
+        '<p class="text-[11px] font-mono uppercase tracking-[0.2em] text-white/45">Revenue metrics</p>' +
+        '<p class="mt-3 text-2xl font-semibold tracking-tight text-white">' +
+        ui.escapeHtml(revenueState && revenueState.status === "error" ? "Stripe sync unavailable" : "Awaiting live billing data") +
+        "</p>" +
+        '<p class="mt-2 text-sm leading-6 text-white/62">' +
+        ui.escapeHtml(
+          (revenueState && revenueState.message) ||
+          "Revenue will appear here once a live Stripe, Lemon Squeezy, or RevenueCat source is connected."
+        ) +
+        "</p>" +
+        "</div>"
+      );
+    }
+
+    return cards.join("");
+  }
+
+  function renderProjectHistoryPanel(project) {
+    var hasHistory = Array.isArray(project && project.history) && project.history.length >= 2;
+
+    return (
+      '<div class="sparkline-wrap mt-8 rounded-[1.75rem] p-4 sm:p-5">' +
+      '<div class="flex items-center justify-between gap-4 text-sm">' +
+      '<div>' +
+      '<p class="text-[11px] font-mono uppercase tracking-[0.22em] text-white/40">Momentum</p>' +
+      '<p class="mt-1 text-white/70">' +
+      ui.escapeHtml(
+        hasHistory
+          ? "Historical points for the current headline metric."
+          : "A real history chart will appear once IndieRanks stores time-series snapshots for this project."
+      ) +
+      "</p>" +
+      "</div>" +
+      '<a href="./submit.html?claim=' + encodeURIComponent(project.slug) + '" class="chip-link rounded-full px-4 py-2 text-sm">Claim this project</a>' +
+      "</div>" +
+      (
+        hasHistory
+          ? '<canvas id="projectSparkline" class="mt-5 h-56 w-full"></canvas>'
+          : '<div class="empty-panel mt-5 rounded-[1.5rem] px-5 py-12 text-sm text-white/58">No verified history is available for this listing yet.</div>'
+      ) +
+      "</div>"
+    );
+  }
+
+  function getVerificationDescription(project, revenueState) {
+    var verificationType = String(project && project.verificationType ? project.verificationType : "Verification");
+
+    if (isBillingVerificationType(verificationType)) {
+      if (hasLiveRevenueMetrics(revenueState)) {
+        return verificationType + " is the current source of truth for this listing, and the revenue numbers shown here are being loaded live from it.";
+      }
+
+      return (revenueState && revenueState.message) || (verificationType + " is selected for this listing, but live revenue data is not available yet.");
+    }
+
+    return verificationType + " is the current source of truth for the metrics connected to this listing.";
   }
 
   async function initProjectPage() {
@@ -2354,12 +3223,17 @@
       return;
     }
 
+    var revenueState = await getProjectRevenueState(project);
+    var displayProject = applyRevenueSnapshot(project, revenueState);
     var founder = await store.getFounderBySlug(project.founderSlug);
     var allProjects = await store.getProjects();
     var relatedProjects = allProjects.filter(function (item) {
       return item.founderSlug === project.founderSlug && item.slug !== project.slug;
     });
-    var growth = ui.getGrowthValue(project, "allTime");
+    var primaryMetricKey = getProjectPrimaryMetricKey(displayProject);
+    var primaryMetricTimeframe = getProjectMetricTimeframe(primaryMetricKey);
+    var showLiveRevenue = hasLiveRevenueMetrics(revenueState);
+    var growth = ui.getGrowthValue(displayProject, "allTime");
     var growthTone = growth >= 0 ? "up" : "down";
 
     setHtml(
@@ -2369,49 +3243,44 @@
       '<div class="panel rounded-[2rem] p-6 sm:p-8">' +
       '<div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">' +
       '<div class="flex items-start gap-4">' +
-      ui.renderInitialsBadge(project.name, "h-16 w-16", project.logoUrl) +
+      ui.renderInitialsBadge(displayProject.name, "h-16 w-16", displayProject.logoUrl) +
       '<div class="min-w-0">' +
       '<div class="flex flex-wrap items-center gap-2">' +
-      '<h1 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">' + ui.escapeHtml(project.name) + "</h1>" +
-      ui.renderBadge(project.category, "flat") +
-      (project.verified ? ui.renderBadge("VERIFIED", "up") : "") +
+      '<h1 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">' + ui.escapeHtml(displayProject.name) + "</h1>" +
+      ui.renderBadge(displayProject.category, "flat") +
+      (showLiveRevenue ? ui.renderBadge("Live", "up") : "") +
       "</div>" +
-      '<p class="mt-3 max-w-2xl text-base leading-7 text-white/72">' + ui.escapeHtml(project.description) + "</p>" +
+      '<p class="mt-3 max-w-2xl text-base leading-7 text-white/72">' + ui.escapeHtml(displayProject.description) + "</p>" +
       '<div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-white/65">' +
-      '<a href="./founder.html?id=' + encodeURIComponent(project.founderSlug) + '" class="hover:text-white">By ' + ui.escapeHtml(project.founderName) + "</a>" +
+      '<a href="./founder.html?id=' + encodeURIComponent(displayProject.founderSlug) + '" class="hover:text-white">By ' + ui.escapeHtml(displayProject.founderName) + "</a>" +
       '<span class="h-1 w-1 rounded-full bg-white/20"></span>' +
-      '<span>' + ui.escapeHtml(ui.relativeDate(project.createdAt)) + "</span>" +
+      '<span>' + ui.escapeHtml(ui.relativeDate(displayProject.createdAt)) + "</span>" +
       '<span class="h-1 w-1 rounded-full bg-white/20"></span>' +
-      '<a href="' + ui.escapeHtml(project.websiteUrl) + '" target="_blank" rel="noreferrer" class="hover:text-white">Visit website</a>' +
+      '<a href="' + ui.escapeHtml(displayProject.websiteUrl) + '" target="_blank" rel="noreferrer" class="hover:text-white">Visit website</a>' +
       "</div>" +
       "</div>" +
       "</div>" +
       '<div class="panel rounded-3xl px-5 py-5 lg:min-w-[250px]">' +
       '<p class="text-[11px] font-mono uppercase tracking-[0.2em] text-white/45">Current traction</p>' +
-      '<p class="mt-3 text-3xl font-semibold tracking-tight text-white">' + ui.escapeHtml(ui.getDisplayMetric(project, project.primaryMetricKey, project.primaryMetricKey === "mrr" ? "allTime" : "month").label) + "</p>" +
-      '<div class="mt-4 flex items-center gap-2">' + ui.renderBadge(ui.formatPercent(growth, true), growthTone) + ui.renderBadge(project.verificationType, "flat") + "</div>" +
+      '<p class="mt-3 text-3xl font-semibold tracking-tight text-white">' +
+      ui.escapeHtml(
+        showLiveRevenue
+          ? ui.getDisplayMetric(displayProject, primaryMetricKey, primaryMetricTimeframe).label
+          : revenueState && revenueState.status === "error"
+            ? "Stripe sync unavailable"
+            : "Awaiting live data"
+      ) +
+      "</p>" +
+      '<div class="mt-4 flex items-center gap-2">' +
+      (showLiveRevenue ? ui.renderBadge(ui.formatPercent(growth, true), growthTone) : "") +
+      ui.renderBadge(displayProject.verificationType, "flat") +
       "</div>" +
       "</div>" +
-      '<div class="sparkline-wrap mt-8 rounded-[1.75rem] p-4 sm:p-5">' +
-      '<div class="flex items-center justify-between gap-4 text-sm">' +
-      '<div>' +
-      '<p class="text-[11px] font-mono uppercase tracking-[0.22em] text-white/40">Momentum</p>' +
-      '<p class="mt-1 text-white/70">A scrappy 14-point sparkline for the current headline metric.</p>' +
       "</div>" +
-      '<a href="./submit.html?claim=' + encodeURIComponent(project.slug) + '" class="chip-link rounded-full px-4 py-2 text-sm">Claim this project</a>' +
-      "</div>" +
-      '<canvas id="projectSparkline" class="mt-5 h-56 w-full"></canvas>' +
-      "</div>" +
+      renderProjectHistoryPanel(displayProject) +
       "</div>" +
       '<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">' +
-      metricCard(project, "mrr", "allTime") +
-      metricCard(project, "users", "month") +
-      metricCard(project, "downloads", "month") +
-      metricCard(project, "githubStars", "allTime") +
-      '<div class="panel rounded-3xl px-5 py-5">' +
-      '<p class="text-[11px] font-mono uppercase tracking-[0.2em] text-white/45">Primary growth</p>' +
-      '<p class="mt-3 text-2xl font-semibold tracking-tight text-white">' + ui.escapeHtml(ui.formatPercent(project.growthPercent, true)) + "</p>" +
-      "</div>" +
+      renderProjectMetricCards(displayProject, revenueState) +
       "</div>" +
       '<div class="panel rounded-[2rem] p-6 sm:p-8">' +
       '<div class="flex items-center justify-between gap-4">' +
@@ -2419,15 +3288,15 @@
       '<p class="section-kicker">Tiny wins history</p>' +
       '<h2 class="mt-2 text-2xl font-semibold tracking-tight text-white">Milestones worth caring about</h2>' +
       "</div>" +
-      '<span class="rounded-full border border-white/8 bg-white/4 px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] text-white/50">' + project.tinyWins.length + " wins</span>" +
+      '<span class="rounded-full border border-white/8 bg-white/4 px-3 py-2 text-[11px] font-mono uppercase tracking-[0.18em] text-white/50">' + displayProject.tinyWins.length + " wins</span>" +
       "</div>" +
       '<div class="mt-6 space-y-3">' +
-      project.tinyWins.map(function (win) {
+      displayProject.tinyWins.map(function (win) {
         return (
           '<div class="rounded-3xl border border-white/8 bg-white/[0.025] px-5 py-4">' +
           '<div class="flex flex-wrap items-center justify-between gap-3">' +
           '<div class="flex flex-wrap items-center gap-2">' +
-          ui.renderBadge(win.badge || win.label, win.badge === "NEW" ? "up" : "flat") +
+          ui.renderBadge(win.badge === "NEW" ? "New" : (win.badge || win.label), win.badge === "NEW" ? "up" : "flat") +
           '<p class="font-medium text-white">' + ui.escapeHtml(win.label) + "</p>" +
           "</div>" +
           '<span class="text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">' + ui.escapeHtml(ui.relativeDate(win.date)) + "</span>" +
@@ -2443,9 +3312,9 @@
       '<div class="panel rounded-[2rem] p-6">' +
       '<p class="section-kicker">Founder</p>' +
       '<div class="mt-4 flex items-start gap-4">' +
-      ui.renderInitialsBadge(founder ? founder.name : project.founderName, "h-14 w-14") +
+      ui.renderInitialsBadge(founder ? founder.name : displayProject.founderName, "h-14 w-14") +
       '<div>' +
-      '<a href="./founder.html?id=' + encodeURIComponent(project.founderSlug) + '" class="text-xl font-semibold tracking-tight text-white hover:text-accent">' + ui.escapeHtml(founder ? founder.name : project.founderName) + "</a>" +
+      '<a href="./founder.html?id=' + encodeURIComponent(displayProject.founderSlug) + '" class="text-xl font-semibold tracking-tight text-white hover:text-accent">' + ui.escapeHtml(founder ? founder.name : displayProject.founderName) + "</a>" +
       '<p class="mt-2 text-sm leading-6 text-white/68">' + ui.escapeHtml((founder && founder.bio) || "Claim this profile to add a real founder bio.") + "</p>" +
       "</div>" +
       "</div>" +
@@ -2457,8 +3326,8 @@
       "</div>" +
       '<div class="panel rounded-[2rem] p-6">' +
       '<p class="section-kicker">Verification</p>' +
-      '<h2 class="mt-2 text-xl font-semibold tracking-tight text-white">' + ui.escapeHtml(project.verificationType) + "</h2>" +
-      '<p class="mt-3 text-sm leading-6 text-white/68">Verification is source-based for now: billing providers for MRR, GitHub for stars, and GitHub or Firebase for user and download metrics.</p>' +
+      '<h2 class="mt-2 text-xl font-semibold tracking-tight text-white">' + ui.escapeHtml(displayProject.verificationType) + "</h2>" +
+      '<p class="mt-3 text-sm leading-6 text-white/68">' + ui.escapeHtml(getVerificationDescription(displayProject, revenueState)) + "</p>" +
       "</div>" +
       '<div class="panel rounded-[2rem] p-6">' +
       '<p class="section-kicker">Builder pack</p>' +
@@ -2475,11 +3344,13 @@
       '<div class="mt-4 space-y-3">' +
       (relatedProjects.length
         ? relatedProjects.slice(0, 3).map(function (item) {
+          var itemMetricKey = getProjectPrimaryMetricKey(item);
+          var itemHasVerifiedRevenue = hasVerifiedRevenueMetrics(item);
           return (
             '<a href="./project.html?id=' + encodeURIComponent(item.slug) + '" class="block rounded-3xl border border-white/8 bg-white/[0.025] px-4 py-4 hover:border-white/12 hover:bg-white/[0.04]">' +
             '<div class="flex items-center justify-between gap-3">' +
             '<span class="font-medium text-white">' + ui.escapeHtml(item.name) + "</span>" +
-            '<span class="font-mono text-xs text-white/50">' + ui.escapeHtml(ui.getDisplayMetric(item, item.primaryMetricKey, item.primaryMetricKey === "mrr" ? "allTime" : "month").label) + "</span>" +
+            '<span class="font-mono text-xs text-white/50">' + ui.escapeHtml(itemHasVerifiedRevenue ? ui.getDisplayMetric(item, itemMetricKey, getProjectMetricTimeframe(itemMetricKey)).label : "Awaiting verification") + "</span>" +
             "</div>" +
             '<p class="mt-2 text-sm text-white/62">' + ui.escapeHtml(item.tagline) + "</p>" +
             "</a>"
@@ -2493,7 +3364,10 @@
     );
 
     window.requestAnimationFrame(function () {
-      ui.drawSparkline($("#projectSparkline"), project.history, growthTone);
+      var sparklineCanvas = $("#projectSparkline");
+      if (sparklineCanvas) {
+        ui.drawSparkline(sparklineCanvas, displayProject.history, growthTone);
+      }
     });
   }
 
@@ -2526,7 +3400,9 @@
     var combinedMrr = projects.reduce(function (sum, project) {
       return sum + (project.metrics.mrr || 0);
     }, 0);
-    var totalMetricCount = projects.length * 4;
+    var totalMetricCount = projects.reduce(function (sum, project) {
+      return sum + (hasVerifiedRevenueMetrics(project) ? 1 : 0);
+    }, 0);
     var recentMilestones = projects
       .reduce(function (items, project) {
         project.tinyWins.forEach(function (win) {

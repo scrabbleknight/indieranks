@@ -888,6 +888,13 @@ img {
   font-size: 0.72rem;
 }
 
+body[data-page="project"] #projectDetail .section-kicker,
+body[data-page="project"] #projectDetail [class*="uppercase"] {
+  font-family: var(--font-sans) !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+}
+
 .leaderboard-head {
   font-family: var(--font-sans) !important;
   font-weight: 700;
@@ -1531,6 +1538,10 @@ body[data-page="submit"]::before {
   gap: 0.75rem;
 }
 
+.submit-fields--metric {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .submit-field {
   display: grid;
   min-width: 0;
@@ -1625,6 +1636,59 @@ body[data-page="submit"]::before {
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.01em;
+}
+
+.submit-derived-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.submit-derived-metrics__card {
+  display: grid;
+  gap: 0.32rem;
+  min-width: 0;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.035);
+}
+
+.submit-derived-metrics__label {
+  margin: 0;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.submit-derived-metrics__value {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.submit-derived-metrics__value[data-tone="up"] {
+  color: var(--positive-badge-text);
+}
+
+.submit-derived-metrics__value[data-tone="down"] {
+  color: #d45571;
+}
+
+html[data-theme="dark"] .submit-derived-metrics__value[data-tone="down"] {
+  color: #fb7185;
+}
+
+.submit-derived-metrics__meta {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.74rem;
+  line-height: 1.35;
 }
 
 .submit-field--wide {
@@ -1967,6 +2031,10 @@ html[data-theme="dark"] .submit-preview-card__stats dd[data-tone="down"] {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .submit-fields--metric {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .submit-field--half {
     grid-column: span 2;
   }
@@ -2004,6 +2072,10 @@ html[data-theme="dark"] .submit-preview-card__stats dd[data-tone="down"] {
 }
 
 @media (max-width: 639px) {
+  .submit-derived-metrics {
+    grid-template-columns: 1fr;
+  }
+
   .submit-fields,
   .submit-preview-card__stats {
     grid-template-columns: 1fr;

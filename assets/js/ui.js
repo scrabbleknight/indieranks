@@ -389,6 +389,22 @@
     return Math.max(0, Number(project && project.metrics && project.metrics.users) || 0);
   }
 
+  function hasProjectMetric(project, metricKey) {
+    var normalizedKey = normalizeMetricKey(metricKey);
+
+    if (project && project.metricAvailability && Object.prototype.hasOwnProperty.call(project.metricAvailability, normalizedKey)) {
+      return !!project.metricAvailability[normalizedKey];
+    }
+
+    return getMetricValue(project, normalizedKey, "allTime") > 0 || normalizeMetricKey(project && project.primaryMetricKey) === normalizedKey;
+  }
+
+  function getAvailableMetricKeys(project) {
+    return Object.keys(METRIC_META).filter(function (key) {
+      return hasProjectMetric(project, key);
+    });
+  }
+
   function getProjectChurnRate(project) {
     var candidates = [
       project && project.churnRate,
@@ -914,6 +930,10 @@
       return;
     }
 
+    if (!Array.isArray(points) || points.length < 2) {
+      return;
+    }
+
     var context = canvas.getContext("2d");
     var width = canvas.clientWidth;
     var height = canvas.clientHeight;
@@ -923,7 +943,7 @@
     context.scale(dpr, dpr);
     context.clearRect(0, 0, width, height);
 
-    var safePoints = Array.isArray(points) && points.length ? points : [2, 3, 4, 5, 6];
+    var safePoints = points.slice();
     var min = Math.min.apply(null, safePoints);
     var max = Math.max.apply(null, safePoints);
     var range = Math.max(max - min, 1);
@@ -1022,6 +1042,8 @@
     getNumericGrowthPercent: getNumericGrowthPercent,
     getProjectMrr: getProjectMrr,
     getProjectUsers: getProjectUsers,
+    hasProjectMetric: hasProjectMetric,
+    getAvailableMetricKeys: getAvailableMetricKeys,
     getProjectChurnRate: getProjectChurnRate,
     getProjectTrendingScore: getProjectTrendingScore,
     searchProjects: searchProjects,

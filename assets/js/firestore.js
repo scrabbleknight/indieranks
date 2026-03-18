@@ -1,6 +1,7 @@
 (function () {
   var IndieRanks = (window.IndieRanks = window.IndieRanks || {});
   var LEADERBOARD_MAX_MRR = 20000;
+  var METRIC_KEYS = ["mrr", "users", "downloads", "githubStars"];
 
   function slugify(value) {
     return String(value || "")
@@ -106,6 +107,32 @@
     };
   }
 
+  function emptyMetricAvailability() {
+    return {
+      mrr: false,
+      users: false,
+      downloads: false,
+      githubStars: false,
+    };
+  }
+
+  function hasProvidedMetricValue(value) {
+    if (value == null) {
+      return false;
+    }
+
+    if (typeof value === "string") {
+      return value.trim() !== "";
+    }
+
+    return true;
+  }
+
+  function isBillingVerificationType(verificationType) {
+    var source = String(verificationType || "").trim().toLowerCase();
+    return source.indexOf("stripe") >= 0 || source.indexOf("lemon") >= 0 || source.indexOf("revenuecat") >= 0 || source.indexOf("revenue cat") >= 0;
+  }
+
   function verificationOptionsForMetric(metricType) {
     var metricKey = normalizePrimaryMetricKey(metricType);
 
@@ -150,44 +177,43 @@
     return options[0];
   }
 
-  function synthesizeMetrics(metricKey, metricValue, growthPercent) {
-    var value = Math.max(coerceNumber(metricValue), 0);
-    var growth = Math.abs(coerceNumber(growthPercent));
-    var metrics = emptyMetrics();
-
-    metrics[metricKey] = value;
-    metrics.users =
-      metricKey === "users" ? value : Math.max(40, Math.round(metricKey === "mrr" ? value * 0.42 : value * 0.72));
-    metrics.downloads =
-      metricKey === "downloads" ? value : Math.max(50, Math.round(metricKey === "githubStars" ? value * 5.5 : value * 1.4));
-    metrics.githubStars =
-      metricKey === "githubStars" ? value : Math.max(5, Math.round(Math.min(value * 0.08 + growth, 280)));
-    metrics.mrr =
-      metricKey === "mrr"
-        ? value
-        : Math.max(20, Math.round(metricKey === "users" ? value * 0.55 : metricKey === "downloads" ? value * 0.12 : value * 2.8));
-
-    return metrics;
-  }
-
-  function normalizeMetrics(rawMetrics, metricType, metricValue, growthPercent) {
+  function normalizeMetrics(rawMetrics, metricType, metricValue) {
     var metricKey = normalizePrimaryMetricKey(metricType);
     var metrics = emptyMetrics();
     var hasRawMetrics = rawMetrics && typeof rawMetrics === "object";
 
     if (hasRawMetrics) {
-      Object.keys(metrics).forEach(function (key) {
+      METRIC_KEYS.forEach(function (key) {
         metrics[key] = coerceNumber(rawMetrics[key]);
       });
     }
 
-    if (Object.keys(metrics).every(function (key) { return metrics[key] === 0; })) {
-      metrics = synthesizeMetrics(metricKey, metricValue, growthPercent);
-    } else if (metricKey && metrics[metricKey] === 0 && coerceNumber(metricValue) > 0) {
+    if (metricKey && hasProvidedMetricValue(metricValue)) {
       metrics[metricKey] = coerceNumber(metricValue);
     }
 
     return metrics;
+  }
+
+  function getMetricAvailability(rawMetrics, metricKey, metricValue, verificationType) {
+    var availability = emptyMetricAvailability();
+    var hasRawMetrics = rawMetrics && typeof rawMetrics === "object";
+
+    if (hasRawMetrics) {
+      METRIC_KEYS.forEach(function (key) {
+        availability[key] = coerceNumber(rawMetrics[key]) > 0;
+      });
+    }
+
+    if (metricKey && (hasProvidedMetricValue(metricValue) || (hasRawMetrics && Object.prototype.hasOwnProperty.call(rawMetrics, metricKey)))) {
+      availability[metricKey] = true;
+    }
+
+    if (isBillingVerificationType(verificationType)) {
+      availability.mrr = true;
+    }
+
+    return availability;
   }
 
   function toIsoDate(value) {
@@ -234,13 +260,7 @@
       });
   }
 
-  function buildHistory(metrics, primaryMetricKey, growthPercent, existingHistory) {
-    if (Array.isArray(existingHistory) && existingHistory.length >= 6) {
-      return existingHistory.map(function (value) {
-        return Math.max(1, coerceNumber(value));
-      });
-    }
-
+  function buildGeneratedHistory(metrics, primaryMetricKey, growthPercent) {
     var base = Math.max(coerceNumber(metrics[primaryMetricKey]), 1);
     var series = [];
     var factor = 1 + coerceNumber(growthPercent) / 100;
@@ -255,19 +275,52 @@
     return series;
   }
 
+  function isGeneratedHistorySeries(history, metrics, primaryMetricKey, growthPercent) {
+    var generated = buildGeneratedHistory(metrics, primaryMetricKey, growthPercent);
+
+    if (!Array.isArray(history) || history.length !== generated.length) {
+      return false;
+    }
+
+    return history.every(function (value, index) {
+      return coerceNumber(value) === generated[index];
+    });
+  }
+
+  function buildHistory(metrics, primaryMetricKey, growthPercent, existingHistory) {
+    if (Array.isArray(existingHistory) && existingHistory.length >= 2) {
+      var normalizedHistory = existingHistory.map(function (value) {
+        return Math.max(1, coerceNumber(value));
+      });
+
+      if (!isGeneratedHistorySeries(normalizedHistory, metrics, primaryMetricKey, growthPercent)) {
+        return normalizedHistory;
+      }
+    }
+
+    return [];
+  }
+
   function normalizeProject(rawProject) {
     var project = rawProject || {};
     var slug = project.slug || project.id || slugify(project.name || "untitled-project");
     var founderName = project.founderName || project.founder || "Anonymous builder";
     var founderSlug = project.founderSlug || slugify(founderName);
-    var primaryMetricKey = normalizePrimaryMetricKey(project.primaryMetricKey || project.metricType);
+    var requestedPrimaryMetricKey = normalizePrimaryMetricKey(project.primaryMetricKey || project.metricType);
     var growthPercent = coerceNumber(project.growthPercent);
-    var metrics = normalizeMetrics(project.metrics || project.stats, primaryMetricKey, project.metricValue, growthPercent);
+    var resolvedVerificationType = normalizeVerificationType(requestedPrimaryMetricKey, project.verificationType);
+    var primaryMetricKey = isBillingVerificationType(resolvedVerificationType) ? "mrr" : requestedPrimaryMetricKey;
+    var metrics = normalizeMetrics(project.metrics || project.stats, primaryMetricKey, project.metricValue);
+    var metricAvailability = getMetricAvailability(project.metrics || project.stats, primaryMetricKey, project.metricValue, resolvedVerificationType);
 
-    if (!metrics[primaryMetricKey]) {
-      primaryMetricKey = Object.keys(metrics).sort(function (left, right) {
+    if (!metricAvailability[primaryMetricKey]) {
+      primaryMetricKey = Object.keys(metricAvailability)
+        .filter(function (key) {
+          return metricAvailability[key];
+        })
+        .sort(function (left, right) {
         return metrics[right] - metrics[left];
-      })[0] || "mrr";
+        })[0] || primaryMetricKey;
     }
 
     return {
@@ -297,7 +350,8 @@
       momentum: Math.max(0.82, Math.min(1.22, coerceNumber(project.momentum) || 1)),
       highlightBadge: project.highlightBadge || "",
       metrics: metrics,
-      history: buildHistory(metrics, primaryMetricKey, growthPercent, project.history),
+      metricAvailability: metricAvailability,
+      history: project.historySource ? buildHistory(metrics, primaryMetricKey, growthPercent, project.history) : [],
     };
   }
 
@@ -575,7 +629,7 @@
     var projectSlug = slugify(projectName);
     var founderSlug = slugify(founderName);
     var nowIso = new Date().toISOString();
-    var metrics = emptyMetrics();
+    var metrics = {};
     metrics[metricKey] = metricValue;
 
     return normalizeProject({
@@ -637,6 +691,9 @@
     }
     if (!services.auth || !services.auth.currentUser) {
       throw new Error("Sign in before submitting. Public Firestore rules only allow authenticated writes.");
+    }
+    if (services.auth.currentUser.isAnonymous) {
+      throw new Error("Finish signing in before submitting. Guest sessions cannot publish listings.");
     }
 
     try {
@@ -721,7 +778,7 @@
     } catch (error) {
       console.error("Firestore submit failed.", error);
       if (error && error.code === "permission-denied") {
-        throw new Error("Submission blocked by Firestore rules. Make sure you are signed in and deploying your own rules.");
+        throw new Error("Submission blocked by Firestore rules. Guest sign-in is supported, but your deployed rules need to match the current submission fields.");
       }
       throw error && error.message
         ? error
