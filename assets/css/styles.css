@@ -382,6 +382,7 @@ img {
 
 .select-dark {
   appearance: none;
+  cursor: pointer;
   background-image:
     linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--field-text) 72%, transparent) 50%),
     linear-gradient(135deg, color-mix(in srgb, var(--field-text) 72%, transparent) 50%, transparent 50%);
@@ -785,6 +786,194 @@ img {
   box-shadow: var(--leaderboard-panel-shadow);
 }
 
+.hall-of-fame-panel {
+  border-color: var(--leaderboard-line);
+  background:
+    radial-gradient(circle at top right, rgba(244, 211, 94, 0.1), transparent 32%),
+    var(--leaderboard-panel-bg);
+  box-shadow: var(--leaderboard-panel-shadow);
+}
+
+.hall-of-fame-panel__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.hall-of-fame-panel__eyebrow {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--leaderboard-label);
+}
+
+.hall-of-fame-panel__title {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.8rem, 2vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--leaderboard-title);
+}
+
+.hall-of-fame-panel__copy {
+  margin: 0.7rem 0 0;
+  max-width: 42rem;
+  color: var(--leaderboard-copy);
+}
+
+.hall-of-fame-panel__count {
+  min-width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7b5410;
+  background: linear-gradient(180deg, rgba(255, 243, 180, 0.98), rgba(243, 209, 98, 0.94));
+  box-shadow: 0 12px 28px rgba(226, 177, 50, 0.18);
+}
+
+.hall-of-fame-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .hall-of-fame-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .hall-of-fame-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.hall-of-fame-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(135deg, rgba(244, 211, 94, 0.08), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 78%, transparent), color-mix(in srgb, var(--panel) 96%, transparent));
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.hall-of-fame-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, #f4d35e 36%, var(--line));
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.14);
+}
+
+.hall-of-fame-card-target {
+  animation: hall-of-fame-target-glow 2.2s ease;
+}
+
+.hall-of-fame-card__top,
+.hall-of-fame-card__footer,
+.hall-of-fame-card__metrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.hall-of-fame-card__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.hall-of-fame-card__rank,
+.hall-of-fame-card__status,
+.hall-of-fame-card__label,
+.hall-of-fame-card__category {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hall-of-fame-card__rank {
+  color: #c9931e;
+}
+
+.hall-of-fame-card__status,
+.hall-of-fame-card__label,
+.hall-of-fame-card__category {
+  color: var(--leaderboard-label);
+}
+
+.hall-of-fame-card__title,
+.hall-of-fame-card__founder {
+  color: var(--leaderboard-title);
+}
+
+.hall-of-fame-card__title {
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.hall-of-fame-card__title:hover,
+.hall-of-fame-card__founder:hover,
+.hall-of-fame-card__title:focus-visible,
+.hall-of-fame-card__founder:focus-visible {
+  color: var(--text-main);
+}
+
+.hall-of-fame-card__trophy {
+  font-size: 1rem;
+}
+
+.hall-of-fame-card__tagline {
+  margin: 0.35rem 0 0;
+  color: var(--leaderboard-copy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hall-of-fame-card__value {
+  margin: 0.35rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--leaderboard-title);
+}
+
+.hall-of-fame-card__growth span {
+  font-size: 0.92rem;
+}
+
+@keyframes hall-of-fame-target-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 211, 94, 0.4);
+  }
+
+  40% {
+    box-shadow: 0 0 0 8px rgba(244, 211, 94, 0.12);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 211, 94, 0);
+  }
+}
+
 .leaderboard-panel-title {
   color: var(--leaderboard-title) !important;
 }
@@ -955,8 +1144,170 @@ body[data-page="project"] #projectDetail [class*="uppercase"] {
   background: var(--empty-bg);
 }
 
-body.auth-gate-open {
+body.auth-gate-open,
+body.graduation-modal-open {
   overflow: hidden;
+}
+
+.graduation-modal[hidden] {
+  display: none;
+}
+
+.graduation-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.graduation-modal__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(244, 211, 94, 0.16), transparent 32%),
+    rgba(6, 6, 7, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.graduation-modal__dialog {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 33rem);
+  padding: 1.4rem;
+  border: 1px solid rgba(244, 211, 94, 0.24);
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(32, 26, 12, 0.96), rgba(15, 13, 10, 0.98));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.graduation-modal__confetti {
+  position: absolute;
+  inset: -10% 0 0;
+  pointer-events: none;
+}
+
+.graduation-confetti__piece {
+  position: absolute;
+  top: -12%;
+  left: var(--left);
+  width: 0.7rem;
+  height: 1rem;
+  border-radius: 0.2rem;
+  background: var(--color);
+  opacity: 0;
+  transform: translate3d(0, 0, 0) rotate(0deg);
+  animation: graduation-confetti-fall var(--duration) linear var(--delay) forwards;
+}
+
+.graduation-modal__hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.graduation-modal__trophy {
+  width: 4.75rem;
+  height: 4.75rem;
+  margin: 0 auto 1rem;
+  border-radius: 1.4rem;
+  display: grid;
+  place-items: center;
+  font-size: 2.1rem;
+  background: linear-gradient(180deg, rgba(255, 243, 180, 0.98), rgba(243, 209, 98, 0.94));
+  box-shadow: 0 20px 46px rgba(226, 177, 50, 0.22);
+}
+
+.graduation-modal__eyebrow,
+.graduation-modal__meta,
+.graduation-modal__badge,
+.graduation-modal__metric {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.graduation-modal__eyebrow {
+  margin: 0;
+  font-size: 0.74rem;
+  color: rgba(255, 243, 180, 0.9);
+}
+
+.graduation-modal__title {
+  margin: 0.9rem 0 0;
+  font-size: clamp(1.85rem, 4vw, 2.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  color: #fffaf0;
+}
+
+.graduation-modal__copy {
+  margin: 0.9rem auto 0;
+  max-width: 26rem;
+  color: rgba(255, 250, 240, 0.72);
+}
+
+.graduation-modal__badge-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.35rem;
+  flex-wrap: wrap;
+}
+
+.graduation-modal__badge,
+.graduation-modal__metric {
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff7d0;
+}
+
+.graduation-modal__meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  color: rgba(255, 250, 240, 0.56);
+}
+
+.graduation-modal__button {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 1.35rem;
+  border-radius: 1rem;
+  padding: 0.95rem 1.2rem;
+}
+
+@keyframes graduation-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.96;
+    transform: translate3d(var(--drift), 110vh, 0) rotate(var(--rotation));
+  }
 }
 
 .auth-gate-modal[hidden] {
@@ -1516,6 +1867,29 @@ html[data-theme="dark"] .auth-gate-modal__scrim {
 }
 
 @media (max-width: 640px) {
+  .hall-of-fame-panel__header,
+  .hall-of-fame-card__metrics,
+  .hall-of-fame-card__footer,
+  .graduation-modal__meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hall-of-fame-panel__count {
+    min-width: 3rem;
+    height: 3rem;
+  }
+
+  .graduation-modal__dialog {
+    width: min(100%, 28rem);
+    padding: 1.1rem;
+    border-radius: 1.6rem;
+  }
+
+  .graduation-modal__title {
+    font-size: 1.8rem;
+  }
+
   .auth-gate-modal__dialog--gate {
     padding: 1rem;
     border-radius: 1.7rem;

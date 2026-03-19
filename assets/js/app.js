@@ -34,6 +34,7 @@
   var SUBMIT_BUTTON_LOADING_LABEL = "Listing...";
   var X_PROVIDER_ID = "twitter.com";
   var X_PROFILE_CACHE_KEY = "indieranks-x-profile-cache";
+  var GRADUATION_SEEN_KEY = "indieranks-graduation-seen";
   var authState = {
     ready: false,
     readyPromise: null,
@@ -1005,17 +1006,8 @@
   }
 
   async function normalizeBracketScopeForAuth(toggle, state, syncLabel) {
-    if (!toggle || !state.onlyMyBracket) {
-      if (typeof syncLabel === "function") {
-        syncLabel();
-      }
-      return;
-    }
-
-    var user = await getCurrentUser();
-    if (!user) {
-      state.onlyMyBracket = false;
-      toggle.checked = false;
+    if (toggle) {
+      toggle.checked = !state.onlyMyBracket;
     }
 
     if (typeof syncLabel === "function") {
@@ -1031,42 +1023,13 @@
       return;
     }
 
-    if (!toggle.checked) {
-      if (typeof updateFn === "function") {
-        updateFn();
-      }
-      return;
-    }
-
-    var user = await getCurrentUser();
-    if (user) {
-      if (typeof updateFn === "function") {
-        updateFn();
-      }
-      return;
-    }
-
-    toggle.checked = false;
-    state.onlyMyBracket = false;
+    state.onlyMyBracket = !toggle.checked;
     if (typeof syncLabel === "function") {
       syncLabel();
     }
     if (typeof updateFn === "function") {
       updateFn();
     }
-
-    showAuthGateModal({
-      onSignedIn: function () {
-        toggle.checked = true;
-        state.onlyMyBracket = true;
-        if (typeof syncLabel === "function") {
-          syncLabel();
-        }
-        if (typeof updateFn === "function") {
-          updateFn();
-        }
-      },
-    });
   }
 
   function getStoredTheme() {
@@ -1281,6 +1244,335 @@
     });
 
     return true;
+  }
+
+  function getStoredGraduationCelebrations() {
+    if (!window.localStorage) {
+      return [];
+    }
+
+    try {
+      var parsed = JSON.parse(window.localStorage.getItem(GRADUATION_SEEN_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function hasSeenGraduationCelebration(slug) {
+    if (!slug) {
+      return false;
+    }
+
+    return getStoredGraduationCelebrations().indexOf(slug) >= 0;
+  }
+
+  function markGraduationCelebrationSeen(slug) {
+    if (!window.localStorage || !slug) {
+      return;
+    }
+
+    var seen = getStoredGraduationCelebrations();
+    if (seen.indexOf(slug) >= 0) {
+      return;
+    }
+
+    seen.push(slug);
+
+    try {
+      window.localStorage.setItem(GRADUATION_SEEN_KEY, JSON.stringify(seen.slice(-24)));
+    } catch (error) {
+      console.warn("Failed to persist graduation celebration state", error);
+    }
+  }
+
+  function getExplicitGraduationSlug(params) {
+    if (!params || typeof params.get !== "function") {
+      return "";
+    }
+
+    return String(
+      params.get("graduate") ||
+      params.get("graduated") ||
+      params.get("simulateGraduation") ||
+      ""
+    ).trim();
+  }
+
+  function findProjectBySlug(projects, slug) {
+    return (
+      (projects || []).find(function (project) {
+        return project.slug === slug;
+      }) || null
+    );
+  }
+
+  function createSimulatedGraduationProject(project) {
+    if (!project) {
+      return null;
+    }
+
+    var milestoneMrr = Math.max(
+      typeof ui.getProjectMrr === "function" ? ui.getProjectMrr(project) : 0,
+      store.leaderboardMaxMrr || 20000
+    );
+    var nowIso = new Date().toISOString();
+    var metrics = Object.assign({}, project.metrics || {}, {
+      mrr: milestoneMrr,
+    });
+    var primaryMetricKey = project.primaryMetricKey || "mrr";
+    var nextTinyWins = Array.isArray(project.tinyWins) ? project.tinyWins.slice() : [];
+
+    nextTinyWins.unshift({
+      label: "Graduated to the Hall of Fame",
+      note: "Crossed $20k MRR and graduated off the IndieRanks leaderboard.",
+      badge: "HOF",
+      date: nowIso,
+    });
+
+    return Object.assign({}, project, {
+      metricValue: primaryMetricKey === "mrr" ? milestoneMrr : project.metricValue,
+      metrics: metrics,
+      tinyWins: nextTinyWins,
+      graduatedAt: nowIso,
+      simulatedGraduation: true,
+      highlightBadge: project.highlightBadge || "HALL OF FAME",
+    });
+  }
+
+  function sortHallOfFameProjects(projects) {
+    return (projects || []).slice().sort(function (left, right) {
+      var mrrDelta = ui.getProjectMrr(right) - ui.getProjectMrr(left);
+      if (mrrDelta !== 0) {
+        return mrrDelta;
+      }
+
+      var dateDelta =
+        new Date(right.graduatedAt || right.createdAt).getTime() -
+        new Date(left.graduatedAt || left.createdAt).getTime();
+      if (dateDelta !== 0) {
+        return dateDelta;
+      }
+
+      return left.name.localeCompare(right.name);
+    });
+  }
+
+  function buildGraduationExperienceState(allProjects, params) {
+    var projects = Array.isArray(allProjects) ? allProjects.slice() : [];
+    var explicitSlug = getExplicitGraduationSlug(params);
+    var focusSlug = getLeaderboardFocusSlug(params);
+    var celebrationProject = null;
+    var activeProjects = projects.filter(function (project) {
+      return store.isLeaderboardEligible(project);
+    });
+    var hallOfFameProjects = projects.filter(function (project) {
+      return store.isGraduatedProject(project);
+    });
+
+    if (explicitSlug) {
+      var explicitProject = findProjectBySlug(projects, explicitSlug);
+      if (explicitProject) {
+        celebrationProject = store.isGraduatedProject(explicitProject)
+          ? explicitProject
+          : createSimulatedGraduationProject(explicitProject);
+
+        if (celebrationProject) {
+          activeProjects = activeProjects.filter(function (project) {
+            return project.slug !== explicitProject.slug;
+          });
+          hallOfFameProjects = hallOfFameProjects.filter(function (project) {
+            return project.slug !== celebrationProject.slug;
+          });
+          hallOfFameProjects.unshift(celebrationProject);
+        }
+      }
+    } else if (focusSlug) {
+      celebrationProject = findProjectBySlug(hallOfFameProjects, focusSlug);
+    }
+
+    var uniqueHallOfFameProjects = {};
+    hallOfFameProjects.forEach(function (project) {
+      uniqueHallOfFameProjects[project.slug] = project;
+    });
+
+    return {
+      activeProjects: activeProjects,
+      hallOfFameProjects: sortHallOfFameProjects(
+        Object.keys(uniqueHallOfFameProjects).map(function (slug) {
+          return uniqueHallOfFameProjects[slug];
+        })
+      ),
+      celebrationProject: celebrationProject,
+    };
+  }
+
+  function buildGraduationConfettiMarkup() {
+    var pieces = [];
+    var palette = ["#f4d35e", "#ee964b", "#f95738", "#7bdff2", "#b2f7ef", "#f15bb5"];
+
+    for (var index = 0; index < 42; index += 1) {
+      pieces.push(
+        '<span class="graduation-confetti__piece" style="' +
+        "--left:" + (Math.random() * 100).toFixed(2) + "%;" +
+        "--delay:" + (Math.random() * 0.9).toFixed(2) + "s;" +
+        "--duration:" + (3.6 + Math.random() * 1.6).toFixed(2) + "s;" +
+        "--drift:" + (-18 + Math.random() * 36).toFixed(2) + "vw;" +
+        "--rotation:" + (Math.random() * 520).toFixed(0) + "deg;" +
+        "--color:" + palette[index % palette.length] +
+        '"></span>'
+      );
+    }
+
+    return pieces.join("");
+  }
+
+  function findHallOfFameCard(container, slug) {
+    if (!container || !slug) {
+      return null;
+    }
+
+    return container.querySelector('[data-hall-project-slug="' + slug + '"]');
+  }
+
+  function revealHallOfFameCard(container, slug) {
+    var card = findHallOfFameCard(container, slug);
+
+    if (!card) {
+      return false;
+    }
+
+    card.classList.remove("hall-of-fame-card-target");
+    window.requestAnimationFrame(function () {
+      card.classList.add("hall-of-fame-card-target");
+      card.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
+
+    return true;
+  }
+
+  function ensureGraduationModal() {
+    var existing = $(".graduation-modal");
+    if (existing) {
+      return existing;
+    }
+
+    var modal = document.createElement("div");
+    modal.className = "graduation-modal";
+    modal.hidden = true;
+
+    modal.addEventListener("click", function (event) {
+      if (event.target.closest("[data-graduation-continue]")) {
+        var slug = modal.getAttribute("data-project-slug") || "";
+        var targetId = modal.getAttribute("data-hall-target") || "";
+        var hallTarget = targetId ? document.getElementById(targetId) : null;
+        modal.hidden = true;
+        body.classList.remove("graduation-modal-open");
+        if (slug) {
+          markGraduationCelebrationSeen(slug);
+        }
+        if (hallTarget && slug) {
+          window.setTimeout(function () {
+            revealHallOfFameCard(hallTarget, slug);
+          }, 80);
+        }
+      }
+    });
+
+    modal.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !modal.hidden) {
+        var continueButton = modal.querySelector("[data-graduation-continue]");
+        if (continueButton) {
+          continueButton.click();
+        }
+      }
+    });
+
+    body.appendChild(modal);
+    return modal;
+  }
+
+  function renderGraduationModal(project) {
+    var mrr = ui.formatCurrency(ui.getProjectMrr(project));
+    var copy = project.simulatedGraduation
+      ? "This demo graduates the project immediately, removes it from the active board, and archives it in the Hall of Fame."
+      : "You crossed the $20k MRR line, earned the graduation badge, and moved into the Hall of Fame.";
+
+    return (
+      '<div class="graduation-modal__scrim"></div>' +
+      '<div class="graduation-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="graduationTitle">' +
+      '<div class="graduation-modal__confetti" aria-hidden="true">' + buildGraduationConfettiMarkup() + "</div>" +
+      '<div class="graduation-modal__hero">' +
+      '<div class="graduation-modal__trophy" aria-hidden="true">🏆</div>' +
+      '<p class="graduation-modal__eyebrow">Graduation unlocked</p>' +
+      '<h2 id="graduationTitle" class="graduation-modal__title">' + ui.escapeHtml(project.name) + " joined the Hall of Fame</h2>" +
+      '<p class="graduation-modal__copy">' + ui.escapeHtml(copy) + "</p>" +
+      "</div>" +
+      '<div class="graduation-modal__badge-row">' +
+      '<span class="graduation-modal__badge">Graduate</span>' +
+      '<span class="graduation-modal__metric">' + ui.escapeHtml(mrr) + " MRR</span>" +
+      "</div>" +
+      '<div class="graduation-modal__meta">' +
+      '<span>Founder: ' + ui.escapeHtml(project.founderName) + "</span>" +
+      '<span>Category: ' + ui.escapeHtml(project.category) + "</span>" +
+      "</div>" +
+      '<button type="button" class="graduation-modal__button theme-cta" data-graduation-continue>Continue</button>' +
+      "</div>"
+    );
+  }
+
+  function maybeCelebrateGraduation(project, hallContainer) {
+    if (!project || hasSeenGraduationCelebration(project.slug)) {
+      return;
+    }
+
+    var modal = ensureGraduationModal();
+    modal.innerHTML = renderGraduationModal(project);
+    modal.hidden = false;
+    modal.setAttribute("data-project-slug", project.slug);
+    modal.setAttribute("data-hall-target", hallContainer && hallContainer.id ? hallContainer.id : "");
+    body.classList.add("graduation-modal-open");
+
+    window.requestAnimationFrame(function () {
+      var continueButton = modal.querySelector("[data-graduation-continue]");
+      if (continueButton) {
+        continueButton.focus();
+      }
+    });
+  }
+
+  function renderHallOfFameSection(container, projects, options) {
+    if (!container) {
+      return;
+    }
+
+    var config = options || {};
+    var total = (projects || []).length;
+    var summary = total
+      ? total + " graduates have crossed the $20k MRR line and left the active board behind."
+      : "Once a project crosses $20k MRR, it graduates out of the active leaderboard and lands here.";
+
+    setHtml(
+      container,
+      '<section class="panel hall-of-fame-panel rounded-[2rem] p-5 sm:p-6">' +
+      '<div class="hall-of-fame-panel__header">' +
+      '<div>' +
+      '<p class="hall-of-fame-panel__eyebrow">Beyond the board</p>' +
+      '<h2 class="hall-of-fame-panel__title">Hall of Fame</h2>' +
+      '<p class="hall-of-fame-panel__copy">' + ui.escapeHtml(summary) + "</p>" +
+      "</div>" +
+      '<div class="hall-of-fame-panel__count">' + ui.escapeHtml(String(total)) + "</div>" +
+      "</div>" +
+      ui.renderHallOfFame(projects, {
+        theme: config.theme || getTheme(),
+        limit: config.limit || 6,
+        emptyMessage: config.emptyMessage,
+      }) +
+      "</section>"
+    );
   }
 
   function renderHeader() {
@@ -2104,6 +2396,7 @@
 
   async function initHomePage() {
     var leaderboardRoot = $("#homeLeaderboard");
+    var hallOfFameRoot = $("#homeHallOfFame");
     var heroSearch = $("#homeSearch");
     var leaderboardCount = $("#homeLeaderboardCount");
     var leaderboardSummary = $("#homeLeaderboardSummary");
@@ -2120,14 +2413,19 @@
       timeframe: "allTime",
       bracket: params.get("bracket") || "under-100",
       sort: params.get("sort") || "mrr",
-      onlyMyBracket: params.get("scope") === "bracket",
+      onlyMyBracket: params.get("scope") !== "all",
     };
 
     if (leaderboardRoot) {
       setHtml(leaderboardRoot, ui.buildLeaderboardSkeleton(12, getTheme()));
     }
 
-    var projects = await store.getProjects();
+    var allProjects = typeof store.getAllProjects === "function"
+      ? await store.getAllProjects()
+      : await store.getProjects();
+    var graduationState = buildGraduationExperienceState(allProjects, params);
+    var projects = graduationState.activeProjects;
+    var hallOfFameProjects = graduationState.hallOfFameProjects;
 
     if (heroSearch) {
       heroSearch.value = state.query;
@@ -2138,15 +2436,15 @@
     enhanceSortSelect(sortSelect);
 
     if (bracketToggle) {
-      bracketToggle.checked = state.onlyMyBracket;
+      bracketToggle.checked = !state.onlyMyBracket;
     }
 
     function syncBracketToggleLabel() {
-      if (!bracketToggleLabel || !bracketToggle) {
+      if (!bracketToggleLabel) {
         return;
       }
 
-      setText(bracketToggleLabel, bracketToggle.checked ? "Only my bracket" : "Show all projects");
+      setText(bracketToggleLabel, "Show all projects");
     }
 
     await normalizeBracketScopeForAuth(bracketToggle, state, syncBracketToggleLabel);
@@ -2155,7 +2453,7 @@
       state.query = heroSearch ? heroSearch.value.trim() : "";
       state.bracket = bracketSelect ? bracketSelect.value : state.bracket;
       state.sort = sortSelect ? sortSelect.value : state.sort;
-      state.onlyMyBracket = bracketToggle ? bracketToggle.checked : state.onlyMyBracket;
+      state.onlyMyBracket = bracketToggle ? !bracketToggle.checked : state.onlyMyBracket;
       syncBracketToggleLabel();
 
       renderLeaderboardInto(leaderboardRoot, projects, state, {
@@ -2172,12 +2470,17 @@
         setText(competitionLabel, competitionBracketLabel(state));
       }
 
+      renderHallOfFameSection(hallOfFameRoot, hallOfFameProjects, {
+        theme: getTheme(),
+      });
+
       if (focusSlug && revealLeaderboardRow(leaderboardRoot, focusSlug)) {
         focusSlug = "";
       }
     }
 
     updateHomeLeaderboard();
+    maybeCelebrateGraduation(graduationState.celebrationProject, hallOfFameRoot);
 
     if (heroSearch) {
       heroSearch.addEventListener("input", updateHomeLeaderboard);
@@ -2208,6 +2511,7 @@
     var bracketToggleLabel = $("#leaderboardBracketToggleLabel");
     var resultsCount = $("#leaderboardResultsCount");
     var leaderboardRoot = $("#leaderboardRows");
+    var hallOfFameRoot = $("#leaderboardHallOfFame");
     var summary = $("#leaderboardSummary");
     var competitionLabel = $("#leaderboardCompetitionLabel");
     var params = queryParams();
@@ -2219,14 +2523,19 @@
       includeMetricParams: false,
       bracket: params.get("bracket") || "under-100",
       sort: params.get("sort") || "mrr",
-      onlyMyBracket: params.get("scope") === "bracket",
+      onlyMyBracket: params.get("scope") !== "all",
     };
 
     if (leaderboardRoot) {
       setHtml(leaderboardRoot, ui.buildLeaderboardSkeleton(14, getTheme()));
     }
 
-    var projects = await store.getProjects();
+    var allProjects = typeof store.getAllProjects === "function"
+      ? await store.getAllProjects()
+      : await store.getProjects();
+    var graduationState = buildGraduationExperienceState(allProjects, params);
+    var projects = graduationState.activeProjects;
+    var hallOfFameProjects = graduationState.hallOfFameProjects;
 
     if (searchInput) {
       searchInput.value = state.query;
@@ -2236,15 +2545,15 @@
     enhanceSortSelect(sortSelect);
 
     if (bracketToggle) {
-      bracketToggle.checked = state.onlyMyBracket;
+      bracketToggle.checked = !state.onlyMyBracket;
     }
 
     function syncBracketToggleLabel() {
-      if (!bracketToggleLabel || !bracketToggle) {
+      if (!bracketToggleLabel) {
         return;
       }
 
-      setText(bracketToggleLabel, bracketToggle.checked ? "Only my bracket" : "Show all projects");
+      setText(bracketToggleLabel, "Show all projects");
     }
 
     await normalizeBracketScopeForAuth(bracketToggle, state, syncBracketToggleLabel);
@@ -2258,7 +2567,7 @@
       state.query = searchInput ? searchInput.value.trim() : "";
       state.bracket = bracketSelect ? bracketSelect.value : state.bracket;
       state.sort = sortSelect ? sortSelect.value : state.sort;
-      state.onlyMyBracket = bracketToggle ? bracketToggle.checked : state.onlyMyBracket;
+      state.onlyMyBracket = bracketToggle ? !bracketToggle.checked : state.onlyMyBracket;
       syncBracketToggleLabel();
 
       renderLeaderboardInto(leaderboardRoot, projects, state, {
@@ -2275,6 +2584,10 @@
         setText(competitionLabel, competitionBracketLabel(state));
       }
 
+      renderHallOfFameSection(hallOfFameRoot, hallOfFameProjects, {
+        theme: getTheme(),
+      });
+
       syncUrl();
 
       if (focusSlug && revealLeaderboardRow(leaderboardRoot, focusSlug)) {
@@ -2283,6 +2596,7 @@
     }
 
     updateLeaderboard();
+    maybeCelebrateGraduation(graduationState.celebrationProject, hallOfFameRoot);
 
     if (searchInput) {
       searchInput.addEventListener("input", updateLeaderboard);
@@ -3353,7 +3667,9 @@
     var revenueState = await getProjectRevenueState(project);
     var displayProject = applyRevenueSnapshot(project, revenueState);
     var founder = await store.getFounderBySlug(project.founderSlug);
-    var allProjects = await store.getProjects();
+    var allProjects = typeof store.getAllProjects === "function"
+      ? await store.getAllProjects()
+      : await store.getProjects();
     var relatedProjects = allProjects.filter(function (item) {
       return item.founderSlug === project.founderSlug && item.slug !== project.slug;
     });
@@ -3511,7 +3827,9 @@
 
     var slug = queryParams().get("id");
     var founder = await store.getFounderBySlug(slug);
-    var allProjects = await store.getProjects();
+    var allProjects = typeof store.getAllProjects === "function"
+      ? await store.getAllProjects()
+      : await store.getProjects();
 
     if (!founder) {
       setHtml(

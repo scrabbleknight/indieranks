@@ -886,6 +886,73 @@
     );
   }
 
+  function renderHallOfFame(projects, options) {
+    var config = options || {};
+    var isLight = config.theme === "light";
+    var items = (projects || []).slice(0, Number(config.limit) || (projects || []).length);
+
+    if (!items.length) {
+      return (
+        '<div class="empty-panel rounded-[1.75rem] px-6 py-10 text-center ' +
+        (isLight ? "text-slate-600" : "text-white/60") +
+        '">' +
+        escapeHtml(config.emptyMessage || "No graduates yet. The first $20k MRR milestone will land here.") +
+        "</div>"
+      );
+    }
+
+    return (
+      '<div class="hall-of-fame-grid">' +
+      items
+        .map(function (project, index) {
+          var graduatedAt = project.graduatedAt || project.createdAt;
+          var statusCopy = project.simulatedGraduation
+            ? "Just graduated"
+            : "Graduated " + relativeDate(graduatedAt);
+          var metricLabel = formatCurrency(getProjectMrr(project)) + " MRR";
+
+          return (
+            '<article class="hall-of-fame-card" data-hall-project-slug="' + escapeHtml(project.slug) + '">' +
+            '<div class="hall-of-fame-card__top">' +
+            '<span class="hall-of-fame-card__rank">#' + escapeHtml(String(index + 1)) + "</span>" +
+            '<span class="hall-of-fame-card__status">' + escapeHtml(statusCopy) + "</span>" +
+            "</div>" +
+            '<div class="hall-of-fame-card__brand">' +
+            renderInitialsBadge(project.name, "h-12 w-12", project.logoUrl) +
+            '<div class="min-w-0">' +
+            '<div class="flex flex-wrap items-center gap-2">' +
+            '<a href="./project.html?id=' + encodeURIComponent(project.slug) + '" class="hall-of-fame-card__title">' +
+            escapeHtml(project.name) +
+            "</a>" +
+            '<span class="hall-of-fame-card__trophy" aria-hidden="true">🏆</span>' +
+            "</div>" +
+            '<p class="hall-of-fame-card__tagline">' + escapeHtml(project.tagline) + "</p>" +
+            "</div>" +
+            "</div>" +
+            '<div class="hall-of-fame-card__metrics">' +
+            '<div>' +
+            '<p class="hall-of-fame-card__label">Milestone</p>' +
+            '<p class="hall-of-fame-card__value">' + escapeHtml(metricLabel) + "</p>" +
+            "</div>" +
+            '<div>' +
+            '<p class="hall-of-fame-card__label">Growth</p>' +
+            '<div class="hall-of-fame-card__growth">' + renderGrowthText(getGrowthValue(project, "allTime"), config.theme) + "</div>" +
+            "</div>" +
+            "</div>" +
+            '<div class="hall-of-fame-card__footer">' +
+            '<a href="./founder.html?id=' + encodeURIComponent(project.founderSlug) + '" class="hall-of-fame-card__founder">' +
+            escapeHtml(project.founderName) +
+            "</a>" +
+            '<span class="hall-of-fame-card__category">' + escapeHtml(project.category) + "</span>" +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("") +
+      "</div>"
+    );
+  }
+
   function renderStatsCards(stats) {
     var items = [
       { label: "Projects tracked", value: stats.trackedProjects },
@@ -1054,6 +1121,7 @@
     renderTinyWinCard: renderTinyWinCard,
     renderLeaderboardRows: renderLeaderboardRows,
     renderLeaderboardHeader: renderLeaderboardHeader,
+    renderHallOfFame: renderHallOfFame,
     renderStatsCards: renderStatsCards,
     renderSelectOptions: renderSelectOptions,
     drawSparkline: drawSparkline,

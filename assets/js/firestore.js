@@ -49,6 +49,10 @@
     return getProjectMrr(project) < LEADERBOARD_MAX_MRR;
   }
 
+  function isGraduatedProject(project) {
+    return getProjectMrr(project) >= LEADERBOARD_MAX_MRR;
+  }
+
   function metricKeyFromType(metricType) {
     var value = String(metricType || "")
       .trim()
@@ -504,24 +508,33 @@
     return null;
   }
 
-  async function getProjects() {
+  async function getAllProjects() {
     var remoteProjects = await fetchCollection("projects", 80);
-    return mergeProjects(remoteProjects).filter(isLeaderboardEligible);
+    return mergeProjects(remoteProjects);
+  }
+
+  async function getProjects() {
+    var projects = await getAllProjects();
+    return projects.filter(isLeaderboardEligible);
+  }
+
+  async function getGraduatedProjects() {
+    var projects = await getAllProjects();
+    return projects.filter(isGraduatedProject);
   }
 
   async function getProjectBySlug(slug) {
     if (!slug) {
-      var projects = await getProjects();
+      var projects = await getAllProjects();
       return projects[0] || null;
     }
 
     var remote = await fetchDocumentBySlug("projects", slug);
     if (remote) {
-      var project = normalizeProject(remote);
-      return isLeaderboardEligible(project) ? project : null;
+      return normalizeProject(remote);
     }
 
-    var projects = await getProjects();
+    var projects = await getAllProjects();
     return (
       projects.find(function (project) {
         return project.slug === slug;
@@ -545,13 +558,13 @@
   }
 
   async function getFounderList(projects) {
-    var projectList = projects || (await getProjects());
+    var projectList = projects || (await getAllProjects());
     var remoteFounders = await fetchCollection("founders", 80);
     return deriveFounders(projectList, mergeFounders(remoteFounders));
   }
 
   async function getFounderBySlug(slug) {
-    var projects = await getProjects();
+    var projects = await getAllProjects();
     if (!slug) {
       var founders = await getFounderList(projects);
       return founders[0] || null;
@@ -567,7 +580,7 @@
   }
 
   async function getTinyWins(projects) {
-    var projectList = projects || (await getProjects());
+    var projectList = projects || (await getAllProjects());
     var remoteWins = await fetchCollection("tinyWins", 30);
     var derivedWins = deriveTinyWins(projectList);
 
@@ -603,7 +616,7 @@
   }
 
   async function getOverviewStats(projects, founders, wins) {
-    var projectList = projects || (await getProjects());
+    var projectList = projects || (await getAllProjects());
     var founderList = founders || (await getFounderList(projectList));
     var tinyWins = wins || (await getTinyWins(projectList));
 
@@ -798,7 +811,9 @@
   }
 
   IndieRanks.store = {
+    getAllProjects: getAllProjects,
     getProjects: getProjects,
+    getGraduatedProjects: getGraduatedProjects,
     getProjectBySlug: getProjectBySlug,
     getFounderList: getFounderList,
     getFounderBySlug: getFounderBySlug,
@@ -806,6 +821,7 @@
     getOverviewStats: getOverviewStats,
     submitProject: submitProject,
     isLeaderboardEligible: isLeaderboardEligible,
+    isGraduatedProject: isGraduatedProject,
     leaderboardMaxMrr: LEADERBOARD_MAX_MRR,
   };
 })();
