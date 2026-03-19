@@ -83,7 +83,7 @@ service cloud.firestore {
         request.resource.data.verificationReference.size() <= 280 &&
         stringBetween(request.resource.data.websiteUrl, 1, 300) &&
         request.resource.data.logoUrl is string &&
-        request.resource.data.logoUrl.size() <= 300000 &&
+        request.resource.data.logoUrl.size() <= 800000 &&
         request.resource.data.verified == false &&
         request.resource.data.featured == false &&
         request.resource.data.recent == true &&
@@ -116,7 +116,7 @@ service cloud.firestore {
         request.resource.data.xUsername is string &&
         request.resource.data.xUsername.size() <= 15 &&
         request.resource.data.avatarUrl is string &&
-        request.resource.data.avatarUrl.size() <= 300000 &&
+        request.resource.data.avatarUrl.size() <= 800000 &&
         request.resource.data.projectSlugs is list &&
         request.resource.data.projectSlugs.size() <= 24 &&
         request.resource.data.milestones is list &&
@@ -163,7 +163,7 @@ service cloud.firestore {
         request.resource.data.verificationReference.size() <= 280 &&
         stringBetween(request.resource.data.websiteUrl, 1, 300) &&
         request.resource.data.logoUrl is string &&
-        request.resource.data.logoUrl.size() <= 300000 &&
+        request.resource.data.logoUrl.size() <= 800000 &&
         request.resource.data.status == "received" &&
         request.resource.data.submitterUid == request.auth.uid &&
         request.resource.data.createdAt == request.time;

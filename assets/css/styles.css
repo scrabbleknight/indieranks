@@ -1863,6 +1863,10 @@ html[data-theme="dark"] .submit-icon-picker__meta[data-state="error"] {
 
 .submit-submit {
   align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
   flex-shrink: 0;
   min-width: 9rem;
   border: 1px solid rgba(15, 23, 42, 0.92);
@@ -1874,6 +1878,26 @@ html[data-theme="dark"] .submit-icon-picker__meta[data-state="error"] {
 
 .submit-submit:hover {
   background: #020617;
+}
+
+.submit-submit.is-loading,
+.submit-submit[aria-busy="true"] {
+  cursor: wait;
+}
+
+.submit-submit__spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-top-color: #ffffff;
+  animation: submit-button-spin 0.72s linear infinite;
+}
+
+@keyframes submit-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .submit-side-card {

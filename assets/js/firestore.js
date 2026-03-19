@@ -692,9 +692,6 @@
     if (!services.auth || !services.auth.currentUser) {
       throw new Error("Sign in before submitting. Public Firestore rules only allow authenticated writes.");
     }
-    if (services.auth.currentUser.isAnonymous) {
-      throw new Error("Finish signing in before submitting. Guest sessions cannot publish listings.");
-    }
 
     try {
       var projectRef = services.db.collection("projects").doc(project.slug);
@@ -778,7 +775,13 @@
     } catch (error) {
       console.error("Firestore submit failed.", error);
       if (error && error.code === "permission-denied") {
-        throw new Error("Submission blocked by Firestore rules. Guest sign-in is supported, but your deployed rules need to match the current submission fields.");
+        if ((project.logoUrl || "").length > 300000) {
+          throw new Error(
+            "Submission blocked by Firestore rules. Your app icon expands past the deployed logo size limit. Deploy the updated Firestore rules or use a smaller icon."
+          );
+        }
+
+        throw new Error("Submission blocked by Firestore rules. Deploy the updated Firestore rules so the current submission fields are allowed.");
       }
       throw error && error.message
         ? error

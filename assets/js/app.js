@@ -30,6 +30,8 @@
   var page = body.getAttribute("data-page") || "home";
   var THEME_KEY = "indieranks-theme-override";
   var APP_ICON_MAX_BYTES = 512 * 1024;
+  var SUBMIT_BUTTON_DEFAULT_LABEL = "List project";
+  var SUBMIT_BUTTON_LOADING_LABEL = "Listing...";
   var X_PROVIDER_ID = "twitter.com";
   var X_PROFILE_CACHE_KEY = "indieranks-x-profile-cache";
   var authState = {
@@ -41,6 +43,7 @@
   var authGateModalState = {
     busy: false,
     onSignedIn: null,
+    onAnonymousContinue: null,
     onConfirm: null,
     returnFocus: null,
     root: null,
@@ -88,6 +91,7 @@
   }
 
   function resetAuthGateModalContent() {
+    authGateModalState.onAnonymousContinue = null;
     authGateModalState.onConfirm = null;
     authGateModalState.allowAnonymousAuth = true;
     authGateModalState.requireVerifiedAccount = false;
@@ -732,10 +736,15 @@
 
   async function handleAuthAnonymousSignIn() {
     var authHooks = IndieRanks.authHooks;
+    var onAnonymousContinue = authGateModalState.onAnonymousContinue;
 
     if (authGateModalState.requireVerifiedAccount) {
       var currentUser = await getCurrentUser();
       if (isAnonymousUser(currentUser)) {
+        hideAuthGateModal();
+        if (typeof onAnonymousContinue === "function") {
+          onAnonymousContinue(currentUser);
+        }
         return currentUser;
       }
 
@@ -755,8 +764,10 @@
         var result = await authHooks.signInAnonymously();
         var user = (result && result.user) || (await getCurrentUser());
         authState.user = user || null;
-        setAuthGateBusy(false);
-        focusAuthGateModalPrimary();
+        hideAuthGateModal();
+        if (typeof onAnonymousContinue === "function") {
+          onAnonymousContinue(user);
+        }
         return user;
       } catch (error) {
         logAuthError(error, {
@@ -951,6 +962,7 @@
     var settings = options || {};
 
     authGateModalState.onSignedIn = settings.onSignedIn || null;
+    authGateModalState.onAnonymousContinue = settings.onAnonymousContinue || null;
     authGateModalState.returnFocus = document.activeElement;
     authGateModalState.view = "auth";
     authGateModalState.authMode = settings.authMode === "signin" ? "signin" : "signup";
@@ -2722,6 +2734,25 @@
       updateAppIconThumb();
     }
 
+    function setSubmitButtonLoading(isLoading) {
+      if (!submitButton) {
+        return;
+      }
+
+      submitButton.disabled = !!isLoading;
+      submitButton.setAttribute("aria-busy", isLoading ? "true" : "false");
+      submitButton.classList.toggle("is-loading", !!isLoading);
+
+      if (isLoading) {
+        submitButton.innerHTML =
+          '<span class="submit-submit__spinner" aria-hidden="true"></span>' +
+          '<span>' + SUBMIT_BUTTON_LOADING_LABEL + "</span>";
+        return;
+      }
+
+      submitButton.textContent = SUBMIT_BUTTON_DEFAULT_LABEL;
+    }
+
     function getSubmitValues() {
       var values = Object.assign(readFormValues(form), {
         logoUrl: submitState.logoUrl,
@@ -2929,8 +2960,7 @@
 
     async function submitProjectListing() {
       var values = getSubmitValues();
-      submitButton.disabled = true;
-      submitButton.textContent = "Listing...";
+      setSubmitButtonLoading(true);
       setHtml(
         status,
         '<div class="rounded-[1.5rem] border border-white/8 bg-white/4 px-4 py-3 text-sm text-white/65">Saving your submission to Firestore and publishing the listing.</div>'
@@ -2977,8 +3007,7 @@
           "</div>"
         );
       } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = "List project";
+        setSubmitButtonLoading(false);
       }
     }
 
@@ -2994,24 +3023,39 @@
       if (!hasVerifiedAuthSession(currentUser)) {
         setHtml(
           status,
-          '<div class="rounded-[1.5rem] border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-white/80">Finish signing in before listing your project. Guest sessions cannot publish listings.</div>'
+          '<div class="rounded-[1.5rem] border border-rose/20 bg-rose/10 px-4 py-3 text-sm text-white/80">Choose how you want to continue before listing your project.</div>'
         );
         showAuthEntryModal({
           authMode: "signin",
           allowAnonymousAuth: true,
           requireVerifiedAccount: true,
-          title: "Sign in to list your project",
-          subtitle: "Guest sessions can browse, but publishing requires a full account.",
+          title: "Continue to list your project",
+          subtitle: "Sign in, sign up, or continue as a guest before publishing.",
           onSignedIn: function (user) {
             if (!hasVerifiedAuthSession(user)) {
               return;
             }
 
-            if (typeof form.requestSubmit === "function") {
-              form.requestSubmit();
-              return;
-            }
-            submitButton.click();
+            showSubmitConfirmModal({
+              message: "Are you sure you want to list this project?",
+              subcopy: "We'll save it to Firestore and publish it to the IndieRanks leaderboard.",
+              confirmLabel: "Confirm",
+              cancelLabel: "Cancel",
+              onConfirm: function () {
+                submitProjectListing();
+              },
+            });
+          },
+          onAnonymousContinue: function () {
+            showSubmitConfirmModal({
+              message: "Are you sure you want to list this project?",
+              subcopy: "We'll save it to Firestore and publish it to the IndieRanks leaderboard.",
+              confirmLabel: "Confirm",
+              cancelLabel: "Cancel",
+              onConfirm: function () {
+                submitProjectListing();
+              },
+            });
           },
         });
         return;
