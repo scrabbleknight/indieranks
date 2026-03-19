@@ -622,12 +622,13 @@
   function buildSubmittedProject(formData) {
     var projectName = String(formData.projectName || "").trim();
     var founderName = String(formData.founderName || "").trim();
+    var founderLabel = founderName || "Anonymous builder";
     var metricType = formData.metricType || "mrr";
     var metricKey = normalizePrimaryMetricKey(metricType);
     var metricValue = coerceNumber(formData.currentMetricValue);
     var growthPercent = coerceNumber(formData.growthPercent);
     var projectSlug = slugify(projectName);
-    var founderSlug = slugify(founderName);
+    var founderSlug = slugify(founderName) || projectSlug + "-founder";
     var nowIso = new Date().toISOString();
     var metrics = {};
     metrics[metricKey] = metricValue;
@@ -635,7 +636,7 @@
     return normalizeProject({
       slug: projectSlug,
       name: projectName,
-      founderName: founderName,
+      founderName: founderLabel,
       founderSlug: founderSlug,
       founderXUsername: normalizeXUsername(formData.founderXUsername),
       category: formData.category || "SaaS",

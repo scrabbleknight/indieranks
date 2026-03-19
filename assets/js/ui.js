@@ -480,7 +480,7 @@
       badges.push({ label: "🚀 New", tone: "up" });
     }
 
-    if (getProjectMrr(project) < 100) {
+    if (getProjectMrr(project) > 0 && getProjectMrr(project) < 100) {
       badges.push({ label: "💰 First $", tone: "flat" });
     }
 
@@ -797,6 +797,7 @@
           " " +
           (index === 0 ? " border-t-0" : "") +
           (isTopProject ? " leaderboard-row-top" : "") +
+          '" data-project-slug="' + escapeHtml(project.slug) + '" data-project-rank="' + escapeHtml(String(rank)) +
           '">' +
           '<div class="flex items-center">' +
           rankNode +
@@ -1041,6 +1042,7 @@
     getGrowthValue: getGrowthValue,
     getNumericGrowthPercent: getNumericGrowthPercent,
     getProjectMrr: getProjectMrr,
+    getProjectMrrBracket: getProjectMrrBracket,
     getProjectUsers: getProjectUsers,
     hasProjectMetric: hasProjectMetric,
     getAvailableMetricKeys: getAvailableMetricKeys,

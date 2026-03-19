@@ -1214,6 +1214,75 @@
     return query ? path + "?" + query : path;
   }
 
+  function withExtraQueryParam(url, key, value) {
+    if (!key || value == null || value === "") {
+      return url;
+    }
+
+    return url + (url.indexOf("?") >= 0 ? "&" : "?") + encodeURIComponent(key) + "=" + encodeURIComponent(value);
+  }
+
+  function buildPostSubmitLeaderboardUrl(project) {
+    if (!project) {
+      return "./index.html";
+    }
+
+    var bracket = typeof ui.getProjectMrrBracket === "function"
+      ? ui.getProjectMrrBracket(project)
+      : "all";
+    var url = buildUrl("./index.html", {
+      query: "",
+      metric: "mrr",
+      timeframe: "allTime",
+      includeMetricParams: false,
+      bracket: bracket,
+      sort: "mrr",
+      onlyMyBracket: false,
+    });
+
+    return withExtraQueryParam(url, "focus", project.slug);
+  }
+
+  function getLeaderboardFocusSlug(params) {
+    if (!params || typeof params.get !== "function") {
+      return "";
+    }
+
+    return String(params.get("focus") || params.get("project") || "").trim();
+  }
+
+  function findLeaderboardRow(container, slug) {
+    if (!container || !slug) {
+      return null;
+    }
+
+    return Array.prototype.find.call(
+      container.querySelectorAll("[data-project-slug]"),
+      function (node) {
+        return node.getAttribute("data-project-slug") === slug;
+      }
+    ) || null;
+  }
+
+  function revealLeaderboardRow(container, slug) {
+    var row = findLeaderboardRow(container, slug);
+
+    if (!row) {
+      return false;
+    }
+
+    row.classList.remove("leaderboard-row-target");
+    window.requestAnimationFrame(function () {
+      row.classList.add("leaderboard-row-target");
+      row.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
+
+    return true;
+  }
+
   function renderHeader() {
     var target = $("[data-site-header]");
     if (!target) {
@@ -2044,6 +2113,7 @@
     var bracketToggle = $("#homeBracketToggle");
     var bracketToggleLabel = $("#homeBracketToggleLabel");
     var params = queryParams();
+    var focusSlug = getLeaderboardFocusSlug(params);
     var state = {
       query: params.get("q") || "",
       metric: "mrr",
@@ -2101,6 +2171,10 @@
       if (competitionLabel) {
         setText(competitionLabel, competitionBracketLabel(state));
       }
+
+      if (focusSlug && revealLeaderboardRow(leaderboardRoot, focusSlug)) {
+        focusSlug = "";
+      }
     }
 
     updateHomeLeaderboard();
@@ -2137,6 +2211,7 @@
     var summary = $("#leaderboardSummary");
     var competitionLabel = $("#leaderboardCompetitionLabel");
     var params = queryParams();
+    var focusSlug = getLeaderboardFocusSlug(params);
     var state = {
       query: params.get("q") || "",
       metric: "mrr",
@@ -2201,6 +2276,10 @@
       }
 
       syncUrl();
+
+      if (focusSlug && revealLeaderboardRow(leaderboardRoot, focusSlug)) {
+        focusSlug = "";
+      }
     }
 
     updateLeaderboard();
@@ -2302,9 +2381,14 @@
 
     var founderName = String(values.founderName || "").trim();
     var founderXUsername = normalizeXUsername(values.founderXUsername);
-    var founderPreview = founderName || founderXUsername ? founderName || formatXUsername(founderXUsername) : "Founder name";
-    if (founderName && founderXUsername) {
-      founderPreview = founderName + " • " + formatXUsername(founderXUsername);
+    var founderPreviewMarkup =
+      '<span class="submit-preview-card__redacted" aria-label="Founder hidden">Founder hidden</span>';
+    if (founderName) {
+      var founderPreview = founderName;
+      if (founderXUsername) {
+        founderPreview = founderName + " • " + formatXUsername(founderXUsername);
+      }
+      founderPreviewMarkup = ui.escapeHtml(founderPreview);
     }
 
     return (
@@ -2330,7 +2414,7 @@
       '<dl class="submit-preview-card__stats">' +
       '<div><dt>Metric</dt><dd>' + ui.escapeHtml(metricPreviewText) + "</dd></div>" +
       '<div><dt>Growth</dt><dd data-tone="' + growthTone + '">' + ui.escapeHtml(growthPreviewText) + "</dd></div>" +
-      '<div><dt>Founder</dt><dd>' + ui.escapeHtml(founderPreview) + "</dd></div>" +
+      '<div><dt>Founder</dt><dd>' + founderPreviewMarkup + "</dd></div>" +
       '<div><dt>Verification</dt><dd>' + ui.escapeHtml(values.verificationType || getDefaultVerificationType(metricKey)) + "</dd></div>" +
       "</dl>" +
       '<p class="submit-preview-card__footer">' + ui.escapeHtml(websiteLabel) + "</p>" +
@@ -2969,6 +3053,7 @@
       try {
         values = await ensureDerivedMetricsReady();
         var result = await store.submitProject(values);
+        var leaderboardUrl = buildPostSubmitLeaderboardUrl(result.project);
         setHtml(
           status,
           '<div class="panel success-ring rounded-[1.5rem] p-5">' +
@@ -2979,21 +3064,19 @@
           '<div>' +
           '<p class="text-lg font-semibold text-white">Project listed</p>' +
           '<p class="mt-2 text-sm leading-6 text-white/70">' +
-          "Saved to Firestore and added to the live leaderboard." +
+          "Saved to Firestore and added to the live leaderboard. Taking you there now." +
           "</p>" +
           '<div class="mt-4 flex flex-wrap gap-3">' +
           '<a href="./project.html?id=' + encodeURIComponent(result.project.slug) + '" class="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-accent">View project</a>' +
-          '<a href="./leaderboard.html?q=' + encodeURIComponent(result.project.name) + '" class="chip-link rounded-full px-4 py-2 text-sm">See it on the leaderboard</a>' +
+          '<a href="' + ui.escapeHtml(leaderboardUrl) + '" class="chip-link rounded-full px-4 py-2 text-sm">See it on the leaderboard</a>' +
           "</div>" +
           "</div>" +
           "</div>" +
           "</div>"
         );
-        form.reset();
-        resetAppIconPicker();
-        syncVerificationOptions();
-        syncFounderXUsernameField(authState.user);
-        updatePreview();
+        window.setTimeout(function () {
+          window.location.assign(leaderboardUrl);
+        }, 180);
       } catch (error) {
         console.error(error);
         var message =

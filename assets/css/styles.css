@@ -64,6 +64,15 @@
   --leaderboard-title: #142033;
   --leaderboard-copy: #5d6879;
   --leaderboard-label: #8390a2;
+  --leaderboard-top-row-bg:
+    linear-gradient(135deg, rgba(255, 247, 205, 0.68) 0%, rgba(239, 246, 255, 0.92) 52%, rgba(236, 253, 245, 0.88) 100%);
+  --leaderboard-top-row-border: rgba(86, 105, 245, 0.14);
+  --leaderboard-top-row-shadow:
+    0 16px 36px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  --leaderboard-top-row-hover-bg:
+    linear-gradient(135deg, rgba(255, 247, 205, 0.78) 0%, rgba(239, 246, 255, 0.98) 52%, rgba(236, 253, 245, 0.94) 100%);
+  --leaderboard-top-row-hover-border: rgba(86, 105, 245, 0.2);
   --row-hover: rgba(15, 23, 42, 0.03);
   --avatar-border: rgba(15, 23, 42, 0.1);
   --avatar-bg:
@@ -144,6 +153,17 @@ html[data-theme="dark"] {
   --leaderboard-title: #ffffff;
   --leaderboard-copy: rgba(245, 247, 250, 0.7);
   --leaderboard-label: rgba(245, 247, 250, 0.4);
+  --leaderboard-top-row-bg:
+    linear-gradient(135deg, rgba(125, 211, 252, 0.12) 0%, rgba(92, 111, 243, 0.11) 52%, rgba(110, 231, 183, 0.08) 100%),
+    rgba(255, 255, 255, 0.02);
+  --leaderboard-top-row-border: rgba(125, 211, 252, 0.16);
+  --leaderboard-top-row-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --leaderboard-top-row-hover-bg:
+    linear-gradient(135deg, rgba(125, 211, 252, 0.16) 0%, rgba(92, 111, 243, 0.14) 52%, rgba(110, 231, 183, 0.1) 100%),
+    rgba(255, 255, 255, 0.03);
+  --leaderboard-top-row-hover-border: rgba(125, 211, 252, 0.24);
   --row-hover: rgba(255, 255, 255, 0.02);
   --avatar-border: rgba(255, 255, 255, 0.08);
   --avatar-bg:
@@ -681,14 +701,23 @@ img {
 }
 
 .leaderboard-row {
+  scroll-margin-block: 8rem;
   transition:
     background-color 160ms ease,
-    border-color 160ms ease;
+    border-color 160ms ease,
+    box-shadow 220ms ease;
 }
 
 .leaderboard-row:hover {
   background: var(--row-hover);
   border-color: var(--line-strong);
+}
+
+.leaderboard-row-target {
+  background: color-mix(in srgb, var(--accent, #7dd3fc) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent, #7dd3fc) 32%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #7dd3fc) 26%, transparent);
+  animation: leaderboard-target-glow 2.4s ease;
 }
 
 .leaderboard-row-top {
@@ -701,18 +730,20 @@ img {
 .leaderboard-row-top::before {
   content: "";
   position: absolute;
-  top: -1px;
+  top: 0.35rem;
   right: calc(-1 * var(--leaderboard-row-bleed));
-  bottom: 0;
+  bottom: 0.35rem;
   left: calc(-1 * var(--leaderboard-row-bleed));
   z-index: -1;
-  background: color-mix(in srgb, var(--signal) 14%, rgba(255, 255, 255, 0.78));
-  border-top: 1px solid color-mix(in srgb, var(--signal) 24%, var(--line));
+  border-radius: 1.35rem;
+  border: 1px solid var(--leaderboard-top-row-border);
+  background: var(--leaderboard-top-row-bg);
+  box-shadow: var(--leaderboard-top-row-shadow);
+  pointer-events: none;
 }
 
 .leaderboard-row-top.border-t-0::before {
-  top: 0;
-  border-top: 0;
+  top: 0.15rem;
 }
 
 .leaderboard-row-top:hover {
@@ -721,8 +752,26 @@ img {
 }
 
 .leaderboard-row-top:hover::before {
-  background: color-mix(in srgb, var(--signal) 18%, rgba(255, 255, 255, 0.82));
-  border-top-color: color-mix(in srgb, var(--signal) 30%, var(--line-strong));
+  background: var(--leaderboard-top-row-hover-bg);
+  border-color: var(--leaderboard-top-row-hover-border);
+}
+
+@keyframes leaderboard-target-glow {
+  0% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent, #7dd3fc) 52%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--accent, #7dd3fc) 22%, transparent);
+  }
+
+  55% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent, #7dd3fc) 38%, transparent),
+      0 0 0 14px color-mix(in srgb, var(--accent, #7dd3fc) 0%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #7dd3fc) 26%, transparent);
+  }
 }
 
 .leaderboard-medal {
@@ -921,6 +970,20 @@ body.auth-gate-open {
   display: grid;
   place-items: center;
   padding: 1.25rem;
+  --auth-modal-shell: color-mix(in srgb, var(--surface) 94%, var(--panel));
+  --auth-modal-shell-alt: color-mix(in srgb, var(--surface) 88%, var(--panel));
+  --auth-modal-border: color-mix(in srgb, var(--line) 100%, transparent);
+  --auth-modal-active-bg: var(--text-main);
+  --auth-modal-active-text: var(--surface);
+  --auth-modal-shadow:
+    0 24px 60px color-mix(in srgb, #000 18%, transparent),
+    var(--panel-shadow);
+}
+
+html[data-theme="dark"] .auth-gate-modal {
+  --auth-modal-shell: color-mix(in srgb, var(--surface) 86%, var(--panel));
+  --auth-modal-shell-alt: color-mix(in srgb, var(--surface) 74%, var(--panel));
+  --auth-modal-active-text: #060607;
 }
 
 .auth-gate-modal__scrim {
@@ -928,6 +991,10 @@ body.auth-gate-open {
   inset: 0;
   background: rgba(15, 23, 42, 0.34);
   backdrop-filter: blur(10px);
+}
+
+html[data-theme="dark"] .auth-gate-modal__scrim {
+  background: rgba(2, 4, 8, 0.62);
 }
 
 .auth-gate-modal__dialog {
@@ -950,10 +1017,11 @@ body.auth-gate-open {
   padding: 1.6rem 1.5rem 1.3rem;
   border-radius: 1rem;
   gap: 0.72rem;
-  border-color: #d8e0d4;
-  background: #ffffff;
-  box-shadow: 0 24px 60px rgba(14, 28, 21, 0.22);
-  backdrop-filter: none;
+  border-color: var(--auth-modal-border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--panel-top) 96%, transparent), color-mix(in srgb, var(--panel-bottom) 100%, transparent)),
+    var(--auth-modal-shell);
+  box-shadow: var(--auth-modal-shadow);
   text-align: center;
 }
 
@@ -1048,7 +1116,12 @@ body.auth-gate-open {
 .auth-gate-modal__hero-card--back {
   top: 1.6rem;
   height: 7.8rem;
-  background: linear-gradient(180deg, rgba(86, 105, 245, 0.08), rgba(86, 105, 245, 0.02));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--signal) 16%, transparent),
+      color-mix(in srgb, var(--signal) 6%, var(--panel))
+    );
   transform: translateX(calc(-50% - 1.25rem)) rotate(-8deg);
   opacity: 0.68;
 }
@@ -1056,7 +1129,12 @@ body.auth-gate-open {
 .auth-gate-modal__hero-card--mid {
   top: 1.85rem;
   height: 8.15rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(248, 250, 252, 0.92));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 84%, rgba(255, 255, 255, 0.18)),
+      color-mix(in srgb, var(--panel) 98%, transparent)
+    );
   transform: translateX(calc(-50% + 1.2rem)) rotate(7deg);
   opacity: 0.9;
 }
@@ -1067,7 +1145,12 @@ body.auth-gate-open {
   gap: 1rem;
   min-height: 8.8rem;
   padding: 1rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 247, 249, 0.98));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 92%, transparent),
+      color-mix(in srgb, var(--panel) 98%, transparent)
+    );
 }
 
 .auth-gate-modal__hero-rank {
@@ -1078,12 +1161,17 @@ body.auth-gate-open {
   height: 3rem;
   border-radius: 1rem;
   border: 1px solid color-mix(in srgb, var(--signal) 18%, var(--line));
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(110, 231, 183, 0.12));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 94%, transparent),
+      color-mix(in srgb, var(--accent) 14%, var(--panel))
+    );
   color: var(--text-main);
   font-family: var(--font-mono);
   font-size: 0.95rem;
   font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface) 28%, transparent);
 }
 
 .auth-gate-modal__hero-lines {
@@ -1095,7 +1183,12 @@ body.auth-gate-open {
   display: block;
   height: 0.78rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(86, 105, 245, 0.14), rgba(15, 23, 42, 0.08));
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--signal) 22%, transparent),
+      color-mix(in srgb, var(--text-main) 12%, transparent)
+    );
 }
 
 .auth-gate-modal__hero-lines > span:nth-child(1) {
@@ -1194,8 +1287,8 @@ body.auth-gate-open {
   height: 1.85rem;
   border: 0;
   border-radius: 999px;
-  background: #101820;
-  color: #ffffff;
+  background: color-mix(in srgb, var(--text-main) 92%, transparent);
+  color: var(--auth-modal-active-text);
   padding: 0;
   line-height: 0;
   cursor: pointer;
@@ -1211,7 +1304,7 @@ body.auth-gate-open {
 
 .auth-entry-modal__title {
   margin: 0;
-  color: #192534;
+  color: var(--text-main);
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -1220,7 +1313,7 @@ body.auth-gate-open {
 
 .auth-entry-modal__subtitle {
   margin: 0.45rem 0 1.1rem;
-  color: #637388;
+  color: var(--text-soft);
   font-size: 0.93rem;
   font-weight: 600;
   line-height: 1.35;
@@ -1233,7 +1326,7 @@ body.auth-gate-open {
   margin: 0 auto;
   padding: 0.22rem;
   border-radius: 999px;
-  background: #e8ecef;
+  background: var(--auth-modal-shell-alt);
 }
 
 .auth-entry-modal__tab {
@@ -1242,15 +1335,15 @@ body.auth-gate-open {
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
-  color: #47566a;
+  color: var(--text-soft);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .auth-entry-modal__tab.is-active {
-  background: #0f1114;
-  color: #ffffff;
+  background: var(--auth-modal-active-bg);
+  color: var(--auth-modal-active-text);
 }
 
 .auth-entry-modal__providers {
@@ -1266,9 +1359,9 @@ body.auth-gate-open {
   width: 100%;
   min-height: 2.75rem;
   border-radius: 0.72rem;
-  border: 1px solid #d2dae5;
-  background: #f5f8fb;
-  color: #1f2c3a;
+  border: 1px solid var(--auth-modal-border);
+  background: var(--auth-modal-shell-alt);
+  color: var(--text-main);
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
@@ -1281,14 +1374,14 @@ body.auth-gate-open {
   width: 1.3rem;
   height: 1.3rem;
   border-radius: 999px;
-  border: 1px solid #c7d0dc;
-  background: #ffffff;
-  color: #0f1114;
+  border: 1px solid var(--field-border);
+  background: var(--auth-modal-shell);
+  color: var(--text-main);
   flex: 0 0 1.3rem;
 }
 
 .auth-entry-modal__provider-icon--x {
-  color: #111111;
+  color: var(--text-main);
 }
 
 .auth-entry-modal__provider-icon svg {
@@ -1303,7 +1396,7 @@ body.auth-gate-open {
 }
 
 .auth-entry-modal__provider--email {
-  background: #f5f8fb;
+  background: var(--auth-modal-shell-alt);
 }
 
 .auth-entry-modal__divider {
@@ -1311,13 +1404,13 @@ body.auth-gate-open {
   display: flex;
   align-items: center;
   gap: 0.66rem;
-  color: #7c8899;
+  color: var(--text-faint);
 }
 
 .auth-entry-modal__divider-line {
   height: 1px;
   flex: 1;
-  background: #d8e0e8;
+  background: var(--auth-modal-border);
 }
 
 .auth-entry-modal__divider-copy {
@@ -1334,47 +1427,59 @@ body.auth-gate-open {
 
 .auth-entry-modal__input {
   width: 100%;
-  border: 1px solid #d4dce7;
+  border: 1px solid var(--field-border);
   border-radius: 0.72rem;
   padding: 0.76rem 0.86rem;
-  background: #ffffff;
-  color: #192534;
+  background: var(--field-bg);
+  color: var(--field-text);
   font-size: 0.94rem;
 }
 
 .auth-entry-modal__input::placeholder {
-  color: #8490a2;
+  color: var(--field-placeholder);
 }
 
 .auth-entry-modal__input:focus {
   outline: none;
-  border-color: #19b969;
-  box-shadow: 0 0 0 3px rgba(31, 203, 119, 0.18);
+  border-color: color-mix(in srgb, var(--signal) 56%, var(--accent));
+  background: var(--field-bg-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 18%, transparent);
 }
 
 .auth-entry-modal__submit {
   border: 1px solid transparent;
   border-radius: 0.72rem;
   padding: 0.8rem 1rem;
-  color: #0f1f17;
+  color: #081015;
   font-size: 1rem;
   font-weight: 800;
   font-family: inherit;
+  box-shadow: 0 18px 32px color-mix(in srgb, var(--signal) 16%, transparent);
   cursor: pointer;
 }
 
 .auth-entry-modal__submit--signup {
-  background: #83dca8;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 84%, white 16%),
+      color-mix(in srgb, var(--accent) 64%, var(--signal) 36%)
+    );
 }
 
 .auth-entry-modal__submit--signin {
-  background: #8db1e6;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--signal) 74%, white 26%),
+      color-mix(in srgb, var(--signal) 84%, var(--accent) 16%)
+    );
 }
 
 .auth-gate-modal__error--auth {
   margin: 0.64rem 0 0;
   padding: 0;
-  color: #a91e2b;
+  color: var(--rose);
   font-size: 0.84rem;
   font-weight: 600;
   text-align: center;
@@ -1383,7 +1488,7 @@ body.auth-gate-open {
 .auth-entry-modal__legal {
   margin: 0.88rem auto 0;
   max-width: 22rem;
-  color: #69778a;
+  color: var(--text-soft);
   font-size: 0.76rem;
   line-height: 1.45;
   text-align: center;
@@ -1396,12 +1501,12 @@ body.auth-gate-open {
 
 .auth-entry-modal__legal-link:hover,
 .auth-entry-modal__legal-link:focus-visible {
-  color: #354255;
+  color: var(--text-main);
 }
 
 .auth-entry-modal__provider:hover,
 .auth-entry-modal__provider:focus-visible {
-  background: #edf2f7;
+  background: var(--auth-modal-shell);
 }
 
 .auth-entry-modal__provider:disabled,
@@ -2023,6 +2128,14 @@ html[data-theme="dark"] .submit-icon-picker__meta[data-state="error"] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.submit-preview-card__redacted {
+  display: inline-block;
+  color: color-mix(in srgb, var(--text-main) 86%, transparent);
+  filter: blur(7px);
+  transform: translateZ(0);
+  user-select: none;
 }
 
 .submit-preview-card__stats dd[data-tone="up"] {
