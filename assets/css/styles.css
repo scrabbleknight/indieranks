@@ -780,6 +780,37 @@ img {
   line-height: 1;
 }
 
+.leaderboard-share-button {
+  border: 1px solid color-mix(in srgb, var(--signal) 18%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--text-main);
+  padding: 0.32rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.leaderboard-share-button:hover,
+.leaderboard-share-button:focus-visible {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.leaderboard-share-button:disabled {
+  opacity: 0.75;
+  cursor: default;
+  transform: none;
+}
+
 .leaderboard-panel {
   border-color: var(--leaderboard-line);
   background: var(--leaderboard-panel-bg);

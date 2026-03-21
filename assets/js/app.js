@@ -1246,6 +1246,114 @@
     return true;
   }
 
+  async function copyTextToClipboard(value) {
+    var text = String(value || "").trim();
+    if (!text) {
+      return false;
+    }
+
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+
+    var helper = document.createElement("textarea");
+    helper.value = text;
+    helper.setAttribute("readonly", "readonly");
+    helper.style.position = "fixed";
+    helper.style.opacity = "0";
+    document.body.appendChild(helper);
+    helper.select();
+
+    var didCopy = false;
+    try {
+      didCopy = document.execCommand("copy");
+    } finally {
+      document.body.removeChild(helper);
+    }
+
+    return didCopy;
+  }
+
+  function setLeaderboardShareButtonState(button, label) {
+    if (!button) {
+      return;
+    }
+
+    if (!button.dataset.defaultLabel) {
+      button.dataset.defaultLabel = button.textContent || "Share";
+    }
+
+    button.textContent = label || button.dataset.defaultLabel;
+  }
+
+  function bindLeaderboardShareActions(container) {
+    if (!container || container.dataset.shareBindingReady === "true") {
+      return;
+    }
+
+    container.dataset.shareBindingReady = "true";
+    container.addEventListener("click", function (event) {
+      var trigger = event.target.closest("[data-share-project]");
+      if (!trigger || !container.contains(trigger)) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (trigger.disabled) {
+        return;
+      }
+
+      var projectName = String(trigger.getAttribute("data-share-name") || "this project").trim();
+      var shareHref = String(trigger.getAttribute("data-share-url") || "").trim();
+      var shareUrl = shareHref ? new URL(shareHref, window.location.href).toString() : "";
+
+      if (!shareUrl) {
+        return;
+      }
+
+      trigger.disabled = true;
+      setLeaderboardShareButtonState(trigger, "Sharing...");
+
+      Promise.resolve()
+        .then(async function () {
+          if (navigator.share) {
+            await navigator.share({
+              title: projectName + " on IndieRanks",
+              text: "Check out " + projectName + " on IndieRanks.",
+              url: shareUrl,
+            });
+            setLeaderboardShareButtonState(trigger, "Shared");
+            return;
+          }
+
+          var copied = await copyTextToClipboard(shareUrl);
+          setLeaderboardShareButtonState(trigger, copied ? "Link copied" : "Copy failed");
+        })
+        .catch(function (error) {
+          if (error && error.name === "AbortError") {
+            setLeaderboardShareButtonState(trigger, trigger.dataset.defaultLabel);
+            return;
+          }
+
+          copyTextToClipboard(shareUrl)
+            .then(function (copied) {
+              setLeaderboardShareButtonState(trigger, copied ? "Link copied" : "Copy failed");
+            })
+            .catch(function () {
+              setLeaderboardShareButtonState(trigger, "Copy failed");
+            });
+        })
+        .finally(function () {
+          window.setTimeout(function () {
+            trigger.disabled = false;
+            setLeaderboardShareButtonState(trigger, trigger.dataset.defaultLabel);
+          }, 1800);
+        });
+    });
+  }
+
   function getStoredGraduationCelebrations() {
     if (!window.localStorage) {
       return [];
@@ -2368,6 +2476,7 @@
         limit: options.limit || filtered.length,
         emptyMessage: options.emptyMessage,
         highlightTop: !!options.highlightTop,
+        shareTargetSlug: options.shareTargetSlug,
         theme: theme,
       })
     );
@@ -2406,7 +2515,8 @@
     var bracketToggle = $("#homeBracketToggle");
     var bracketToggleLabel = $("#homeBracketToggleLabel");
     var params = queryParams();
-    var focusSlug = getLeaderboardFocusSlug(params);
+    var shareTargetSlug = getLeaderboardFocusSlug(params);
+    var focusSlug = shareTargetSlug;
     var state = {
       query: params.get("q") || "",
       metric: "mrr",
@@ -2418,6 +2528,7 @@
 
     if (leaderboardRoot) {
       setHtml(leaderboardRoot, ui.buildLeaderboardSkeleton(12, getTheme()));
+      bindLeaderboardShareActions(leaderboardRoot);
     }
 
     var allProjects = typeof store.getAllProjects === "function"
@@ -2463,6 +2574,7 @@
         summaryBuilder: fairLeaderboardSummary,
         emptyMessage: fairLeaderboardEmptyMessage(state),
         highlightTop: true,
+        shareTargetSlug: shareTargetSlug,
         theme: getTheme(),
       });
 
@@ -2515,7 +2627,8 @@
     var summary = $("#leaderboardSummary");
     var competitionLabel = $("#leaderboardCompetitionLabel");
     var params = queryParams();
-    var focusSlug = getLeaderboardFocusSlug(params);
+    var shareTargetSlug = getLeaderboardFocusSlug(params);
+    var focusSlug = shareTargetSlug;
     var state = {
       query: params.get("q") || "",
       metric: "mrr",
@@ -2528,6 +2641,7 @@
 
     if (leaderboardRoot) {
       setHtml(leaderboardRoot, ui.buildLeaderboardSkeleton(14, getTheme()));
+      bindLeaderboardShareActions(leaderboardRoot);
     }
 
     var allProjects = typeof store.getAllProjects === "function"
@@ -2577,6 +2691,7 @@
         summaryBuilder: fairLeaderboardSummary,
         emptyMessage: fairLeaderboardEmptyMessage(state),
         highlightTop: true,
+        shareTargetSlug: shareTargetSlug,
         theme: getTheme(),
       });
 

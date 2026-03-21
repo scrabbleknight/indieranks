@@ -513,6 +513,24 @@
       .join("");
   }
 
+  function renderLeaderboardShareButton(project) {
+    if (!project || !project.slug) {
+      return "";
+    }
+
+    return (
+      '<button type="button" class="leaderboard-share-button" data-share-project="' +
+      escapeHtml(project.slug) +
+      '" data-share-name="' +
+      escapeHtml(project.name) +
+      '" data-share-url="./project.html?id=' +
+      encodeURIComponent(project.slug) +
+      '">' +
+      "Share" +
+      "</button>"
+    );
+  }
+
   function getMetricValue(project, metricKey, timeframe) {
     var normalizedKey = normalizeMetricKey(metricKey);
     var normalizedTimeframe = normalizeTimeframe(timeframe);
@@ -776,6 +794,7 @@
         var growth = getGrowthValue(project, timeframe);
         var badges = renderProjectBadges(project);
         var isTopProject = !!config.highlightTop && rank <= 3;
+        var isShareTarget = config.shareTargetSlug && config.shareTargetSlug === project.slug;
         var medalClass = rank <= 3 ? " top-" + rank : "";
         var medalEmoji = {
           1: "🥇",
@@ -815,6 +834,7 @@
           "</a>" +
           (isTopProject ? '<span class="leaderboard-medal" aria-hidden="true">' + escapeHtml(medalEmoji) + "</span>" : "") +
           badges +
+          (isShareTarget ? renderLeaderboardShareButton(project) : "") +
           (project.verified
             ? '<span class="leaderboard-meta-label ' +
               (isLight ? "text-slate-400" : "text-white/32") +
