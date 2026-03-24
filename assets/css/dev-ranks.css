@@ -394,6 +394,73 @@ html[data-theme="dark"] .indie-category-badge.is-rookie {
   border-top: 0;
 }
 
+.indie-section__pagination {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--leaderboard-line);
+}
+
+.indie-section__pagination-copy {
+  margin: 0;
+  color: var(--leaderboard-copy);
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.indie-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.indie-pagination__button {
+  min-width: 2.45rem;
+  height: 2.45rem;
+  padding: 0 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--line) 96%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--leaderboard-copy);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.indie-pagination__button:hover,
+.indie-pagination__button:focus-visible {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--leaderboard-title);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.indie-pagination__button.is-active {
+  border-color: color-mix(in srgb, var(--signal) 42%, transparent);
+  background: var(--signal);
+  color: #ffffff;
+  box-shadow: 0 12px 22px rgba(86, 105, 245, 0.2);
+}
+
+html[data-theme="dark"] .indie-pagination__button.is-active {
+  color: #071018;
+}
+
 .indie-dev-row:hover,
 .indie-dev-row:focus-visible {
   background: color-mix(in srgb, var(--surface) 94%, transparent);
@@ -740,6 +807,11 @@ body[data-page="dev-profile"] .site-footer__brand-title {
     display: grid;
     grid-template-columns: minmax(0, 7rem) minmax(0, 1fr);
     align-items: start;
+  }
+
+  .indie-section__pagination {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .indie-mobile-label {

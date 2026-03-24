@@ -160,6 +160,42 @@ function getScoreExplainer(category) {
   return SCORE_EXPLAINERS[category] || SCORE_EXPLAINERS.rookie;
 }
 
+function renderSectionPagination(category, pagination, visibleCount) {
+  const meta = CATEGORY_META[category] || CATEGORY_META.rookie;
+  const totalItems = Number(pagination.totalItems) || 0;
+  const pageSize = Number(pagination.pageSize) || visibleCount || 1;
+  const pageCount = Math.max(1, Number(pagination.pageCount) || Math.ceil(totalItems / pageSize) || 1);
+  const currentPage = Math.min(Math.max(Number(pagination.page) || 1, 1), pageCount);
+  const start = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const end = totalItems > 0 ? start + Math.max(visibleCount - 1, 0) : 0;
+
+  if (pageCount <= 1) {
+    return "";
+  }
+
+  return `
+    <div class="indie-section__pagination">
+      <p class="indie-section__pagination-copy">Showing ${escapeHtml(formatNumber(start))}-${escapeHtml(formatNumber(end))} of ${escapeHtml(formatNumber(totalItems))} items</p>
+      <div class="indie-pagination" role="navigation" aria-label="${escapeHtml(meta.sectionLabel)} pagination">
+        ${Array.from({ length: pageCount }, (_, index) => {
+          const pageNumber = index + 1;
+          return `
+            <button
+              type="button"
+              class="indie-pagination__button ${pageNumber === currentPage ? "is-active" : ""}"
+              data-home-section="${escapeHtml(category)}"
+              data-home-page="${escapeHtml(pageNumber)}"
+              ${pageNumber === currentPage ? 'aria-current="page"' : ""}
+            >
+              ${escapeHtml(pageNumber)}
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
 function renderLeaderboardRow(dev) {
   const productSummary = formatProductSummary(dev.productSignals);
   const engagementSummary = formatEngagementSummary(dev.metrics);
@@ -207,12 +243,13 @@ function renderLeaderboardRow(dev) {
   `;
 }
 
-export function renderLeaderboardSection(category, items) {
+export function renderLeaderboardSection(category, items, pagination = {}) {
   const meta = CATEGORY_META[category] || CATEGORY_META.rookie;
   const scoreExplainer = getScoreExplainer(category);
+  const sectionCount = Number(pagination.totalItems) || items.length;
 
   return `
-    <section class="panel leaderboard-panel indie-section indie-section--${escapeHtml(category)} rounded-[2rem] p-5 sm:p-6">
+    <section class="panel leaderboard-panel indie-section indie-section--${escapeHtml(category)} rounded-[2rem] p-5 sm:p-6" data-category-section="${escapeHtml(category)}">
       <div class="indie-section__header">
         <div>
           <p class="indie-hand-note indie-section__eyebrow">${escapeHtml(meta.eyebrow)}</p>
@@ -222,7 +259,7 @@ export function renderLeaderboardSection(category, items) {
         </div>
         <div class="indie-section__meta">
           ${renderCategoryBadge(category)}
-          <span class="indie-section__count">${escapeHtml(formatNumber(items.length))} ranked</span>
+          <span class="indie-section__count">${escapeHtml(formatNumber(sectionCount))} ranked</span>
         </div>
       </div>
       <div class="indie-dev-table-head">
@@ -238,6 +275,7 @@ export function renderLeaderboardSection(category, items) {
       <div class="indie-dev-table-body mt-2">
         ${items.map((item) => renderLeaderboardRow(item)).join("")}
       </div>
+      ${renderSectionPagination(category, pagination, items.length)}
     </section>
   `;
 }
