@@ -4,9 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IndieRanks | Ranking indie devs on X</title>
-  <meta name="description"
-    content="Track indie dev legends, contenders, and rookies on X using a transparent score built from product shipping, reach, engagement, consistency, and momentum." />
+  <title>IndieRanks | Developer Profile</title>
+  <meta
+    name="description"
+    content="Explore an IndieRanks developer profile with score breakdowns, product shipping signals, top posts, and bucket placement."
+  />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
   <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -19,7 +21,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet" />
+    rel="stylesheet"
+  />
   <script src="/assets/js/theme-init.js"></script>
   <script src="/assets/js/tailwind-theme.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,10 +33,10 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script defer src="/assets/js/firebase-config.js"></script>
-  <script type="module" src="/assets/js/dev-ranks/home.js"></script>
+  <script type="module" src="/assets/js/dev-ranks/profile.js"></script>
 </head>
 
-<body data-page="dev-home" class="bg-ink font-sans text-white antialiased">
+<body data-page="dev-profile" class="bg-ink font-sans text-white antialiased">
   <header class="dev-ranks-header px-4 pt-6 sm:px-6 sm:pt-8">
     <div class="mx-auto max-w-shell">
       <div class="dev-ranks-header__inner">
@@ -43,62 +46,23 @@
           </span>
           <div class="min-w-0">
             <p class="indie-brand__title">IndieRanks</p>
-            <p class="indie-brand__copy">Indie dev rankings</p>
+            <p class="indie-brand__copy">Indie dev rankings on X</p>
           </div>
         </a>
 
-        <div class="brand-pill dev-ranks-header__pill hidden lg:inline-flex items-center gap-3 rounded-full px-4 py-3">
-          <span class="logo-mark flex h-10 w-10 items-center justify-center rounded-2xl">
-            <img src="/favicon/web-app-manifest-192x192.png" alt="" class="logo-mark__image" />
-          </span>
-          <span class="brand-pill__text text-[11px] uppercase tracking-[0.16em]">IndieRanks</span>
-        </div>
-
         <div class="dev-ranks-header__actions">
-          <a href="/small-dev-leaderboard.html" class="chip-link rounded-full px-5 py-3 text-sm">Small Dev
-            Leaderboard</a>
+          <a href="/index.html" class="chip-link rounded-full px-5 py-3 text-sm">Home</a>
+          <a href="/small-dev-leaderboard.html" class="chip-link rounded-full px-5 py-3 text-sm">Small Dev Leaderboard</a>
           <button type="button" data-theme-toggle class="theme-toggle"></button>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
-    <section class="dev-ranks-hero relative isolate overflow-hidden">
-      <div class="mx-auto max-w-shell">
-        <div class="mx-auto max-w-4xl text-center">
-          <div class="brand-pill inline-flex items-center gap-3 rounded-full px-4 py-3 lg:hidden">
-            <span class="logo-mark flex h-10 w-10 items-center justify-center rounded-2xl">
-              <img src="/favicon/web-app-manifest-192x192.png" alt="" class="logo-mark__image" />
-            </span>
-            <span class="brand-pill__text text-[11px] uppercase tracking-[0.16em]">IndieRanks</span>
-          </div>
-
-          <h1 class="dev-ranks-hero__title">
-            The leaderboard for indie devs
-          </h1>
-          <p class="dev-ranks-hero__copy">
-            Ranked by product shipping, reach, engagement, consistency, and momentum, not just follower count.
-          </p>
-
-          <div class="mx-auto mt-10 max-w-4xl">
-            <div class="dev-ranks-search__grid">
-              <input id="homeSearch" type="search" placeholder='Search "@levelsio", "Marc Lou", or "bootstrapped AI"'
-                class="search-input rounded-2xl px-5 py-4 text-base" />
-            </div>
-            <div id="homeSearchResults" class="mt-3"></div>
-          </div>
-
-          <div class="dev-ranks-hero__meta-line">
-            <span>Snapshot refreshed <span id="homeSnapshotDate">Loading...</span></span>
-            <span class="dev-ranks-hero__dot">•</span>
-            <span id="homeSourceLabel">Loading...</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div id="homeSections" class="mx-auto mt-10 max-w-[86rem] space-y-5"></div>
+  <main class="px-4 pb-20 pt-4 sm:px-6 sm:pt-8">
+    <div class="mx-auto max-w-[72rem]">
+      <div id="devProfileRoot"></div>
+    </div>
   </main>
 
   <footer class="site-footer indie-site-footer">
@@ -110,7 +74,7 @@
           </span>
           <span class="site-footer__brand-copy">
             <span class="site-footer__brand-title">IndieRanks</span>
-            <span class="site-footer__brand-text">A ranking board for indie devs that rewards product shipping too.</span>
+            <span class="site-footer__brand-text">Profiles, product output, scores, and movement for indie developers on X.</span>
           </span>
         </a>
       </div>
@@ -135,10 +99,10 @@
         </div>
 
         <div class="site-footer__group">
-          <p class="site-footer__label">Notes</p>
+          <p class="site-footer__label">Data</p>
           <div class="site-footer__links">
-            <span class="site-footer__text">Explainable scoring</span>
-            <span class="site-footer__text">Mock X layer ready to swap</span>
+            <span class="site-footer__text">Mock seed + Firestore fallback</span>
+            <span class="site-footer__text">Cloud Function ready</span>
           </div>
         </div>
       </div>

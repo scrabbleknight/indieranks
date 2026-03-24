@@ -183,6 +183,22 @@ service cloud.firestore {
       allow create: if isSignedIn() && validSubmissionCreate();
     }
 
+    match /devs/{handle} {
+      allow read: if true;
+    }
+
+    match /devMetrics/{handle} {
+      allow read: if true;
+    }
+
+    match /rankSnapshots/{snapshotId} {
+      allow read: if true;
+    }
+
+    match /rankSnapshots/{snapshotId}/rows/{handle} {
+      allow read: if true;
+    }
+
     match /tinyWins/{tinyWinId} {
       allow read: if true;
     }

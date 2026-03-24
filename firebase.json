@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
     "public": ".",
     "ignore": [
@@ -6,9 +9,28 @@
       "firestore.rules",
       "firestore.indexes.json",
       "README.md",
+      "docs/**",
+      "functions/**",
       ".gitignore",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "redirects": [
+      {
+        "source": "/leaderboard",
+        "destination": "/small-dev-leaderboard",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/small-dev-leaderboard",
+        "destination": "/small-dev-leaderboard.html"
+      },
+      {
+        "source": "/dev",
+        "destination": "/dev.html"
+      }
     ]
   },
   "firestore": {

@@ -1,0 +1,673 @@
+{
+  "seededAt": "2026-03-23T08:00:00.000Z",
+  "devs": [
+    {
+      "handle": "levelsio",
+      "displayName": "Pieter Levels",
+      "bio": "Bootstrapped founder sharing experiments, internet products, and blunt lessons from shipping in public.",
+      "followers": 265000,
+      "website": "https://levels.io",
+      "isLegendOverride": true,
+      "previousRanks": { "legend": 2 },
+      "metrics": {
+        "postsLast7d": 14,
+        "repliesLast7d": 26,
+        "avgLikesPerPost": 1800,
+        "avgRepliesPerPost": 110,
+        "avgRepostsPerPost": 92,
+        "avgQuotesPerPost": 45,
+        "engagementRate": 0.021,
+        "accountAgeDays": 5400,
+        "momentum7d": 18
+      }
+    },
+    {
+      "handle": "marclou",
+      "displayName": "Marc Lou",
+      "bio": "Shipping build-in-public products, startup systems, and distribution playbooks for indie makers.",
+      "followers": 148000,
+      "website": "https://marclou.com",
+      "isLegendOverride": true,
+      "previousRanks": { "legend": 1 },
+      "metrics": {
+        "postsLast7d": 12,
+        "repliesLast7d": 22,
+        "avgLikesPerPost": 1450,
+        "avgRepliesPerPost": 96,
+        "avgRepostsPerPost": 70,
+        "avgQuotesPerPost": 36,
+        "engagementRate": 0.025,
+        "accountAgeDays": 3900,
+        "momentum7d": 12
+      }
+    },
+    {
+      "handle": "dannypostmaa",
+      "displayName": "Danny Postma",
+      "bio": "Founder building AI products in public with a strong mix of launches, educational threads, and honest numbers.",
+      "followers": 92000,
+      "website": "https://headshotpro.com",
+      "isLegendOverride": true,
+      "previousRanks": { "legend": 4 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 18,
+        "avgLikesPerPost": 1200,
+        "avgRepliesPerPost": 88,
+        "avgRepostsPerPost": 64,
+        "avgQuotesPerPost": 31,
+        "engagementRate": 0.029,
+        "accountAgeDays": 3200,
+        "momentum7d": 24
+      }
+    },
+    {
+      "handle": "arvidkahl",
+      "displayName": "Arvid Kahl",
+      "bio": "Calm, thoughtful indie founder sharing audience-first startup strategy, SaaS lessons, and creator economics.",
+      "followers": 82000,
+      "website": "https://arvidkahl.com",
+      "previousRanks": { "legend": 3 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 20,
+        "avgLikesPerPost": 950,
+        "avgRepliesPerPost": 70,
+        "avgRepostsPerPost": 58,
+        "avgQuotesPerPost": 22,
+        "engagementRate": 0.024,
+        "accountAgeDays": 4100,
+        "momentum7d": 8
+      }
+    },
+    {
+      "handle": "yongfook",
+      "displayName": "Pieter Fook",
+      "bio": "Long-time indie builder posting product strategy, customer insight, and sustainable company-building notes.",
+      "followers": 97000,
+      "website": "https://bannernote.com",
+      "previousRanks": { "legend": 6 },
+      "metrics": {
+        "postsLast7d": 8,
+        "repliesLast7d": 14,
+        "avgLikesPerPost": 820,
+        "avgRepliesPerPost": 55,
+        "avgRepostsPerPost": 44,
+        "avgQuotesPerPost": 18,
+        "engagementRate": 0.018,
+        "accountAgeDays": 4700,
+        "momentum7d": 15
+      }
+    },
+    {
+      "handle": "dagorenouf",
+      "displayName": "Goran",
+      "bio": "Serial indie builder sharing launch updates, product experiments, and founder notes from the trenches.",
+      "followers": 73000,
+      "website": "https://goran.com",
+      "previousRanks": { "legend": 5 },
+      "metrics": {
+        "postsLast7d": 11,
+        "repliesLast7d": 16,
+        "avgLikesPerPost": 760,
+        "avgRepliesPerPost": 61,
+        "avgRepostsPerPost": 40,
+        "avgQuotesPerPost": 20,
+        "engagementRate": 0.02,
+        "accountAgeDays": 2800,
+        "momentum7d": 11
+      }
+    },
+    {
+      "handle": "tibo_maker",
+      "displayName": "Tibo",
+      "bio": "Builder sharing productized services, shipping systems, and transparent growth lessons for solo founders.",
+      "followers": 61000,
+      "website": "https://tibo.dev",
+      "previousRanks": { "legend": 7 },
+      "metrics": {
+        "postsLast7d": 13,
+        "repliesLast7d": 24,
+        "avgLikesPerPost": 700,
+        "avgRepliesPerPost": 57,
+        "avgRepostsPerPost": 36,
+        "avgQuotesPerPost": 17,
+        "engagementRate": 0.022,
+        "accountAgeDays": 2300,
+        "momentum7d": 17
+      }
+    },
+    {
+      "handle": "patwalls",
+      "displayName": "Pat Walls",
+      "bio": "Marketplace founder spotlighting bootstrapped companies, practical growth patterns, and repeatable founder habits.",
+      "followers": 54000,
+      "website": "https://starterstory.com",
+      "previousRanks": { "legend": 8 },
+      "metrics": {
+        "postsLast7d": 7,
+        "repliesLast7d": 12,
+        "avgLikesPerPost": 640,
+        "avgRepliesPerPost": 38,
+        "avgRepostsPerPost": 28,
+        "avgQuotesPerPost": 12,
+        "engagementRate": 0.016,
+        "accountAgeDays": 3600,
+        "momentum7d": 6
+      }
+    },
+    {
+      "handle": "buildwithnina",
+      "displayName": "Nina Hart",
+      "bio": "Building a profitable AI ops toolkit and sharing every launch, teardown, and conversion lesson.",
+      "followers": 42000,
+      "website": "https://buildwithnina.com",
+      "previousRanks": { "contender": 2 },
+      "metrics": {
+        "postsLast7d": 13,
+        "repliesLast7d": 25,
+        "avgLikesPerPost": 620,
+        "avgRepliesPerPost": 51,
+        "avgRepostsPerPost": 32,
+        "avgQuotesPerPost": 18,
+        "engagementRate": 0.036,
+        "accountAgeDays": 1500,
+        "momentum7d": 28
+      }
+    },
+    {
+      "handle": "datadexter",
+      "displayName": "Dexter Cole",
+      "bio": "Shipping data products for creators with fast iterations, strong reply game, and weekly product notes.",
+      "followers": 36800,
+      "website": "https://datadexter.dev",
+      "previousRanks": { "contender": 1 },
+      "metrics": {
+        "postsLast7d": 12,
+        "repliesLast7d": 24,
+        "avgLikesPerPost": 590,
+        "avgRepliesPerPost": 47,
+        "avgRepostsPerPost": 29,
+        "avgQuotesPerPost": 16,
+        "engagementRate": 0.034,
+        "accountAgeDays": 1320,
+        "momentum7d": 19
+      }
+    },
+    {
+      "handle": "evanknowsgrowth",
+      "displayName": "Evan Rhodes",
+      "bio": "Growth-focused founder documenting acquisition loops, founder psychology, and polished micro-launches.",
+      "followers": 34200,
+      "website": "https://evangrowth.com",
+      "previousRanks": { "contender": 4 },
+      "metrics": {
+        "postsLast7d": 11,
+        "repliesLast7d": 21,
+        "avgLikesPerPost": 540,
+        "avgRepliesPerPost": 45,
+        "avgRepostsPerPost": 27,
+        "avgQuotesPerPost": 15,
+        "engagementRate": 0.032,
+        "accountAgeDays": 1410,
+        "momentum7d": 22
+      }
+    },
+    {
+      "handle": "makermaxwell",
+      "displayName": "Maxwell Reed",
+      "bio": "A relentless shipping thread machine building async team software with clean launch positioning.",
+      "followers": 29800,
+      "website": "https://makermaxwell.com",
+      "previousRanks": { "contender": 3 },
+      "metrics": {
+        "postsLast7d": 14,
+        "repliesLast7d": 26,
+        "avgLikesPerPost": 480,
+        "avgRepliesPerPost": 42,
+        "avgRepostsPerPost": 25,
+        "avgQuotesPerPost": 14,
+        "engagementRate": 0.031,
+        "accountAgeDays": 1100,
+        "momentum7d": 26
+      }
+    },
+    {
+      "handle": "julesbuilds",
+      "displayName": "Jules Park",
+      "bio": "Indie dev building workflow software for designers and sharing daily iterations with calm clarity.",
+      "followers": 24400,
+      "website": "https://julesbuilds.com",
+      "previousRanks": { "contender": 6 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 18,
+        "avgLikesPerPost": 430,
+        "avgRepliesPerPost": 39,
+        "avgRepostsPerPost": 22,
+        "avgQuotesPerPost": 12,
+        "engagementRate": 0.03,
+        "accountAgeDays": 980,
+        "momentum7d": 18
+      }
+    },
+    {
+      "handle": "noahsideproject",
+      "displayName": "Noah Vale",
+      "bio": "Documenting side-project compounding, customer interviews, and repeatable founder systems that actually ship.",
+      "followers": 19800,
+      "website": "https://sideprojectnoah.com",
+      "previousRanks": { "contender": 7 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 16,
+        "avgLikesPerPost": 380,
+        "avgRepliesPerPost": 34,
+        "avgRepostsPerPost": 20,
+        "avgQuotesPerPost": 10,
+        "engagementRate": 0.029,
+        "accountAgeDays": 870,
+        "momentum7d": 16
+      }
+    },
+    {
+      "handle": "shipfastsam",
+      "displayName": "Sam Ortiz",
+      "bio": "Shipping templates and backend tools with launch recaps, screenshots, and strong community engagement.",
+      "followers": 17400,
+      "website": "https://shipfastsam.dev",
+      "previousRanks": { "contender": 10 },
+      "metrics": {
+        "postsLast7d": 12,
+        "repliesLast7d": 22,
+        "avgLikesPerPost": 360,
+        "avgRepliesPerPost": 31,
+        "avgRepostsPerPost": 18,
+        "avgQuotesPerPost": 9,
+        "engagementRate": 0.031,
+        "accountAgeDays": 740,
+        "momentum7d": 23
+      }
+    },
+    {
+      "handle": "hannahlaunches",
+      "displayName": "Hannah Bell",
+      "bio": "Bootstrapped maker sharing polished launch campaigns, pricing experiments, and conversion lessons.",
+      "followers": 16100,
+      "website": "https://hannahlaunches.com",
+      "previousRanks": { "contender": 8 },
+      "metrics": {
+        "postsLast7d": 11,
+        "repliesLast7d": 19,
+        "avgLikesPerPost": 340,
+        "avgRepliesPerPost": 29,
+        "avgRepostsPerPost": 16,
+        "avgQuotesPerPost": 9,
+        "engagementRate": 0.03,
+        "accountAgeDays": 680,
+        "momentum7d": 17
+      }
+    },
+    {
+      "handle": "openloopdan",
+      "displayName": "Dan Mercer",
+      "bio": "Building for developers with sharp technical writeups, launch clips, and consistent high-signal replies.",
+      "followers": 12800,
+      "website": "https://openloopdan.dev",
+      "previousRanks": { "contender": 12 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 24,
+        "avgLikesPerPost": 300,
+        "avgRepliesPerPost": 30,
+        "avgRepostsPerPost": 18,
+        "avgQuotesPerPost": 11,
+        "engagementRate": 0.034,
+        "accountAgeDays": 590,
+        "momentum7d": 24
+      }
+    },
+    {
+      "handle": "microlaunchleo",
+      "displayName": "Leo Finch",
+      "bio": "Building tiny software with a marketer's eye and posting crisp launch debriefs every single week.",
+      "followers": 9400,
+      "website": "https://microlaunchleo.com",
+      "previousRanks": { "contender": 9 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 15,
+        "avgLikesPerPost": 250,
+        "avgRepliesPerPost": 25,
+        "avgRepostsPerPost": 13,
+        "avgQuotesPerPost": 8,
+        "engagementRate": 0.03,
+        "accountAgeDays": 510,
+        "momentum7d": 15
+      }
+    },
+    {
+      "handle": "backendbenji",
+      "displayName": "Benji Clark",
+      "bio": "Deep in API tooling, backend ergonomics, and shipping updates that resonate with technical builders.",
+      "followers": 8300,
+      "website": "https://backendbenji.dev",
+      "previousRanks": { "contender": 11 },
+      "metrics": {
+        "postsLast7d": 8,
+        "repliesLast7d": 20,
+        "avgLikesPerPost": 230,
+        "avgRepliesPerPost": 24,
+        "avgRepostsPerPost": 12,
+        "avgQuotesPerPost": 7,
+        "engagementRate": 0.032,
+        "accountAgeDays": 560,
+        "momentum7d": 18
+      }
+    },
+    {
+      "handle": "pixelandprofit",
+      "displayName": "Mia Flores",
+      "bio": "Designer-founder sharing polished screenshots, product loops, and a surprisingly strong growth curve.",
+      "followers": 6100,
+      "website": "https://pixelandprofit.com",
+      "previousRanks": { "contender": 14 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 14,
+        "avgLikesPerPost": 215,
+        "avgRepliesPerPost": 21,
+        "avgRepostsPerPost": 11,
+        "avgQuotesPerPost": 7,
+        "engagementRate": 0.033,
+        "accountAgeDays": 430,
+        "momentum7d": 21
+      }
+    },
+    {
+      "handle": "buildwitheva",
+      "displayName": "Eva Lane",
+      "bio": "Underrated AI builder with sharp product takes, frequent progress posts, and a very sticky audience.",
+      "followers": 4800,
+      "website": "https://buildwitheva.dev",
+      "previousRanks": { "rookie": 3 },
+      "metrics": {
+        "postsLast7d": 13,
+        "repliesLast7d": 25,
+        "avgLikesPerPost": 180,
+        "avgRepliesPerPost": 22,
+        "avgRepostsPerPost": 13,
+        "avgQuotesPerPost": 10,
+        "engagementRate": 0.081,
+        "accountAgeDays": 320,
+        "momentum7d": 29
+      }
+    },
+    {
+      "handle": "monobuilds",
+      "displayName": "Owen Moss",
+      "bio": "Solo SaaS rookie shipping every day, writing crisp launch notes, and turning a tiny audience into real signal.",
+      "followers": 4500,
+      "website": "https://monobuilds.com",
+      "previousRanks": { "rookie": 1 },
+      "metrics": {
+        "postsLast7d": 14,
+        "repliesLast7d": 26,
+        "avgLikesPerPost": 170,
+        "avgRepliesPerPost": 21,
+        "avgRepostsPerPost": 12,
+        "avgQuotesPerPost": 9,
+        "engagementRate": 0.084,
+        "accountAgeDays": 280,
+        "momentum7d": 22
+      }
+    },
+    {
+      "handle": "leahships",
+      "displayName": "Leah Kim",
+      "bio": "Building niche workflow software and quietly earning outsized engagement from other operators.",
+      "followers": 4200,
+      "website": "https://leahships.dev",
+      "previousRanks": { "rookie": 2 },
+      "metrics": {
+        "postsLast7d": 12,
+        "repliesLast7d": 22,
+        "avgLikesPerPost": 160,
+        "avgRepliesPerPost": 19,
+        "avgRepostsPerPost": 11,
+        "avgQuotesPerPost": 9,
+        "engagementRate": 0.079,
+        "accountAgeDays": 300,
+        "momentum7d": 21
+      }
+    },
+    {
+      "handle": "mikedebugs",
+      "displayName": "Mike Rowan",
+      "bio": "Technical founder posting build clips, debugging wins, and unusually engaged progress updates.",
+      "followers": 3900,
+      "website": "https://mikedebugs.dev",
+      "previousRanks": { "rookie": 5 },
+      "metrics": {
+        "postsLast7d": 11,
+        "repliesLast7d": 24,
+        "avgLikesPerPost": 152,
+        "avgRepliesPerPost": 18,
+        "avgRepostsPerPost": 10,
+        "avgQuotesPerPost": 8,
+        "engagementRate": 0.082,
+        "accountAgeDays": 260,
+        "momentum7d": 24
+      }
+    },
+    {
+      "handle": "tinywinskai",
+      "displayName": "Kai Morgan",
+      "bio": "Posting honest micro-wins, progress screenshots, and thoughtful reflections from a tiny but loyal audience.",
+      "followers": 3600,
+      "website": "https://tinywinskai.com",
+      "previousRanks": { "rookie": 4 },
+      "metrics": {
+        "postsLast7d": 12,
+        "repliesLast7d": 20,
+        "avgLikesPerPost": 145,
+        "avgRepliesPerPost": 17,
+        "avgRepostsPerPost": 10,
+        "avgQuotesPerPost": 7,
+        "engagementRate": 0.078,
+        "accountAgeDays": 240,
+        "momentum7d": 20
+      }
+    },
+    {
+      "handle": "apiashley",
+      "displayName": "Ashley Cruz",
+      "bio": "API-first builder sharing technical launch notes, product reasoning, and high-quality reply chains.",
+      "followers": 3300,
+      "website": "https://apiashley.dev",
+      "previousRanks": { "rookie": 8 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 26,
+        "avgLikesPerPost": 132,
+        "avgRepliesPerPost": 18,
+        "avgRepostsPerPost": 11,
+        "avgQuotesPerPost": 8,
+        "engagementRate": 0.086,
+        "accountAgeDays": 220,
+        "momentum7d": 27
+      }
+    },
+    {
+      "handle": "bootstrapbao",
+      "displayName": "Bao Tran",
+      "bio": "Bootstrapping quietly in public with consistent essays, metrics screenshots, and sharp customer takeaways.",
+      "followers": 2900,
+      "website": "https://bootstrapbao.com",
+      "previousRanks": { "rookie": 6 },
+      "metrics": {
+        "postsLast7d": 11,
+        "repliesLast7d": 18,
+        "avgLikesPerPost": 124,
+        "avgRepliesPerPost": 15,
+        "avgRepostsPerPost": 9,
+        "avgQuotesPerPost": 7,
+        "engagementRate": 0.075,
+        "accountAgeDays": 210,
+        "momentum7d": 18
+      }
+    },
+    {
+      "handle": "launchlina",
+      "displayName": "Lina Ford",
+      "bio": "Indie hacker sharing screenshots, pricing tests, and surprisingly polished launches from a small following.",
+      "followers": 2600,
+      "website": "https://launchlina.com",
+      "previousRanks": { "rookie": 9 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 17,
+        "avgLikesPerPost": 118,
+        "avgRepliesPerPost": 14,
+        "avgRepostsPerPost": 8,
+        "avgQuotesPerPost": 6,
+        "engagementRate": 0.074,
+        "accountAgeDays": 190,
+        "momentum7d": 17
+      }
+    },
+    {
+      "handle": "shipwithsol",
+      "displayName": "Sol Vega",
+      "bio": "Posting fast launch loops, clean copy experiments, and underrated tactical lessons for new builders.",
+      "followers": 2200,
+      "website": "https://shipwithsol.dev",
+      "previousRanks": { "rookie": 7 },
+      "metrics": {
+        "postsLast7d": 13,
+        "repliesLast7d": 16,
+        "avgLikesPerPost": 114,
+        "avgRepliesPerPost": 14,
+        "avgRepostsPerPost": 8,
+        "avgQuotesPerPost": 6,
+        "engagementRate": 0.077,
+        "accountAgeDays": 180,
+        "momentum7d": 21
+      }
+    },
+    {
+      "handle": "indieowen",
+      "displayName": "Owen Patel",
+      "bio": "A low-follower builder getting consistent traction by sharing useful product lessons instead of hot takes.",
+      "followers": 1800,
+      "website": "https://indieowen.dev",
+      "previousRanks": { "rookie": 10 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 15,
+        "avgLikesPerPost": 102,
+        "avgRepliesPerPost": 13,
+        "avgRepostsPerPost": 7,
+        "avgQuotesPerPost": 6,
+        "engagementRate": 0.073,
+        "accountAgeDays": 160,
+        "momentum7d": 16
+      }
+    },
+    {
+      "handle": "devdahlia",
+      "displayName": "Dahlia Scott",
+      "bio": "Shipping mobile-first utilities, posting real metrics, and slowly earning a strong founder audience.",
+      "followers": 1500,
+      "website": "https://devdahlia.com",
+      "previousRanks": { "rookie": 12 },
+      "metrics": {
+        "postsLast7d": 10,
+        "repliesLast7d": 14,
+        "avgLikesPerPost": 96,
+        "avgRepliesPerPost": 11,
+        "avgRepostsPerPost": 7,
+        "avgQuotesPerPost": 5,
+        "engagementRate": 0.076,
+        "accountAgeDays": 150,
+        "momentum7d": 20
+      }
+    },
+    {
+      "handle": "quietquestdev",
+      "displayName": "Nico Quinn",
+      "bio": "Quietly building a profitable niche app and posting high-signal weekly updates with no fluff.",
+      "followers": 1300,
+      "website": "https://quietquest.dev",
+      "previousRanks": { "rookie": 11 },
+      "metrics": {
+        "postsLast7d": 8,
+        "repliesLast7d": 13,
+        "avgLikesPerPost": 88,
+        "avgRepliesPerPost": 11,
+        "avgRepostsPerPost": 6,
+        "avgQuotesPerPost": 5,
+        "engagementRate": 0.074,
+        "accountAgeDays": 140,
+        "momentum7d": 15
+      }
+    },
+    {
+      "handle": "fullstackflo",
+      "displayName": "Flo Meyer",
+      "bio": "Technical rookie with small reach, strong consistency, and a growing audience of builders paying attention.",
+      "followers": 900,
+      "website": "https://fullstackflo.dev",
+      "previousRanks": { "rookie": 14 },
+      "metrics": {
+        "postsLast7d": 9,
+        "repliesLast7d": 12,
+        "avgLikesPerPost": 80,
+        "avgRepliesPerPost": 10,
+        "avgRepostsPerPost": 6,
+        "avgQuotesPerPost": 5,
+        "engagementRate": 0.078,
+        "accountAgeDays": 120,
+        "momentum7d": 18
+      }
+    },
+    {
+      "handle": "tinylabsrio",
+      "displayName": "Rio Santos",
+      "bio": "Building tiny tools, posting product gifs, and earning high trust from a very early audience.",
+      "followers": 700,
+      "website": "https://tinylabsrio.com",
+      "previousRanks": { "rookie": 13 },
+      "metrics": {
+        "postsLast7d": 8,
+        "repliesLast7d": 11,
+        "avgLikesPerPost": 74,
+        "avgRepliesPerPost": 9,
+        "avgRepostsPerPost": 5,
+        "avgQuotesPerPost": 4,
+        "engagementRate": 0.079,
+        "accountAgeDays": 110,
+        "momentum7d": 17
+      }
+    },
+    {
+      "handle": "nightbuildnico",
+      "displayName": "Nico Hart",
+      "bio": "Late-night maker posting tiny build logs, careful experiments, and a lot of promise in a tiny account.",
+      "followers": 450,
+      "website": "https://nightbuildnico.dev",
+      "previousRanks": { "rookie": 15 },
+      "metrics": {
+        "postsLast7d": 7,
+        "repliesLast7d": 10,
+        "avgLikesPerPost": 68,
+        "avgRepliesPerPost": 8,
+        "avgRepostsPerPost": 4,
+        "avgQuotesPerPost": 4,
+        "engagementRate": 0.081,
+        "accountAgeDays": 95,
+        "momentum7d": 19
+      }
+    }
+  ]
+}

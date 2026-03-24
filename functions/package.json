@@ -1,0 +1,17 @@
+{
+  "name": "indieranks-functions",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "scripts": {
+    "seed:devs": "node ./scripts/import-seed.js",
+    "rank:refresh": "node ./scripts/recalculate-ranks.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^5.1.1"
+  }
+}

@@ -1187,13 +1187,13 @@
 
   function buildPostSubmitLeaderboardUrl(project) {
     if (!project) {
-      return "./index.html";
+      return "./small-dev-leaderboard.html";
     }
 
     var bracket = typeof ui.getProjectMrrBracket === "function"
       ? ui.getProjectMrrBracket(project)
       : "all";
-    var url = buildUrl("./index.html", {
+    var url = buildUrl("./small-dev-leaderboard.html", {
       query: "",
       metric: "mrr",
       timeframe: "allTime",
@@ -1695,7 +1695,8 @@
     }
 
     var headerActions =
-      '<a href="./index.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Leaderboard</a>';
+      '<a href="./index.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Home</a>' +
+      '<a href="./small-dev-leaderboard.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Small Dev Leaderboard</a>';
 
     if (page !== "submit") {
       headerActions +=
@@ -1714,7 +1715,7 @@
       "</span>" +
       '<div>' +
       '<p class="text-[11px] uppercase tracking-[0.16em] text-white/45 brand-pill__text">IndieRanks</p>' +
-      '<p class="text-sm text-white/70 header-subtitle">Small app leaderboard</p>' +
+      '<p class="text-sm text-white/70 header-subtitle">Indie dev rankings</p>' +
       "</div>" +
       "</a>" +
       '<div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap sm:gap-3">' +
@@ -1742,7 +1743,7 @@
       "</span>" +
       '<span class="site-footer__brand-copy">' +
       '<span class="site-footer__brand-title">IndieRanks</span>' +
-      '<span class="site-footer__brand-text">The leaderboard for small indie apps.</span>' +
+      '<span class="site-footer__brand-text">Rank indie devs on X and keep the small app board close by.</span>' +
       "</span>" +
       "</a>" +
       "</div>" +
@@ -1751,7 +1752,7 @@
       '<p class="site-footer__label">Product</p>' +
       '<div class="site-footer__links">' +
       '<a href="./index.html">Home</a>' +
-      '<a href="./leaderboard.html">Leaderboard</a>' +
+      '<a href="./small-dev-leaderboard.html">Small Dev Leaderboard</a>' +
       '<a href="./submit.html">Add Project</a>' +
       "</div>" +
       "</div>" +
@@ -2497,7 +2498,7 @@
     }
 
     if (options.linkTarget) {
-      options.linkTarget.href = buildUrl("./leaderboard.html", state);
+      options.linkTarget.href = buildUrl("./small-dev-leaderboard.html", state);
     }
 
     return filtered;
@@ -2673,7 +2674,7 @@
     await normalizeBracketScopeForAuth(bracketToggle, state, syncBracketToggleLabel);
 
     function syncUrl() {
-      var url = buildUrl("./leaderboard.html", state);
+      var url = buildUrl("./small-dev-leaderboard.html", state);
       window.history.replaceState({}, "", url);
     }
 

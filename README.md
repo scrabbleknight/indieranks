@@ -1,57 +1,64 @@
 # IndieRanks
 
-A public leaderboard for small indie apps.
+IndieRanks is now an MVP for ranking indie developers on X, not just indie projects.
 
-IndieRanks is a lightweight web app for tracking traction, comparing progress by bracket, and helping small products get discovered.
+## What ships in this repo
 
-## Live demo
-
-[https://indieranks.com](https://indieranks.com)
+- New homepage with three always-visible buckets: Legends, Contenders, and Rookies
+- Developer profile pages at `dev.html?handle=levelsio`
+- Original project leaderboard moved to `small-dev-leaderboard.html`
+- Shared scoring engine and config in `shared/`
+- Seed data in `data/dev-seed.json`
+- Firebase Hosting + Firestore-ready client store
+- Seed import and ranking refresh tooling in `functions/`
+- Developer scoring now blends X performance with product shipping/build signals
 
 ## Local run
 
-Serve the repo with any static file server:
+Serve the repo with any static server:
 
 ```bash
 python3 -m http.server 4173
 ```
 
-Then open [http://localhost:4173/index.html](http://localhost:4173/index.html).
+Then open:
+
+- `http://localhost:4173/index.html`
+- `http://localhost:4173/small-dev-leaderboard.html`
+- `http://localhost:4173/dev.html?handle=levelsio`
 
 ## Firebase setup
 
-This repo ships with placeholder Firebase values on purpose. Use your own Firebase project before enabling reads, auth, or writes.
+Client config lives in `assets/js/firebase-config.js`.
 
-1. Create or select a Firebase project you control.
-2. Add a web app in Firebase and copy its client config.
-3. Update the placeholder values in `assets/js/firebase-config.js`, or inject `window.INDIERANKS_FIREBASE_CONFIG` before that file loads.
-4. Point the Firebase CLI at your own project:
+1. Create or select your Firebase project.
+2. Replace the client config values in `assets/js/firebase-config.js`, or inject `window.INDIERANKS_FIREBASE_CONFIG` before it loads.
+3. Review `firestore.rules`.
+4. Deploy hosting, Firestore rules, and functions with the Firebase CLI.
 
-```bash
-firebase login
-firebase use your-firebase-project-id
-```
+The front end will use Firestore if `devs` and `devMetrics` exist. Otherwise it falls back to the bundled seed JSON.
 
-5. Review `firestore.rules` before turning on public writes.
+## Functions and seed tooling
 
-Notes:
-
-- Firebase web app config is public by design. Do not treat it like a server secret.
-- Never paste private API keys or admin credentials into the client.
-- The default Firestore rules in this repo allow public reads for leaderboard data and authenticated creates for submissions.
-
-## Deployment warning
-
-Before you deploy, make sure you are logged into the correct Firebase account and the CLI is targeting your own project.
+Install dependencies inside `functions/`:
 
 ```bash
-firebase projects:list
-firebase use your-firebase-project-id
-firebase deploy
+cd functions
+npm install
 ```
 
-This repo should not be deployed while still pointed at someone else’s Firebase project.
+Seed the mock directory into Firestore:
 
-## Get listed
+```bash
+npm run seed:devs
+```
 
-Submit your app here: [https://indieranks.com](https://indieranks.com)
+Recalculate scores and rank snapshots from Firestore:
+
+```bash
+npm run rank:refresh
+```
+
+## Firestore schema notes
+
+See [docs/firebase-mvp.md](./docs/firebase-mvp.md) for the collection structure, hosting notes, and how the snapshot documents are written.
