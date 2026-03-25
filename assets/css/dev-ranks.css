@@ -917,6 +917,14 @@ body[data-page="dev-profile"] .avatar-badge {
   padding: 0.95rem 1rem;
 }
 
+.profile-signal-card__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: 0;
+  flex: 1;
+}
+
 .profile-breakdown-item__label {
   margin: 0;
   color: var(--leaderboard-title);
@@ -940,6 +948,12 @@ body[data-page="dev-profile"] .site-footer__bottom {
 .profile-breakdown-item__meta {
   margin: 0.3rem 0 0;
   font-size: 0.84rem;
+}
+
+.profile-signal-card__hint {
+  color: var(--text-soft);
+  font-size: 0.84rem;
+  line-height: 1.5;
 }
 
 .profile-peer {

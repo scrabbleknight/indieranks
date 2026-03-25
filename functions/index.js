@@ -7,6 +7,10 @@ import { importCandidatePool } from "./lib/candidate-pool.js";
 import { refreshRankingsFromFirestore } from "./lib/dev-rankings.js";
 import { syncProjectsFromProductHunt } from "./lib/product-hunt-import.js";
 import {
+  TWITTER_BEARER_TOKEN_SECRET,
+  X_BEARER_TOKEN_SECRET,
+} from "./lib/runtime-secrets.js";
+import {
   syncLegendCandidateProfilesFromX,
   syncLegendRosterFromX,
   syncLegendShortlistFromX,
@@ -15,6 +19,13 @@ import {
 
 const SUBMITTED_PROFILE_SYNC_COOLDOWN_MS = 15 * 60 * 1000;
 const FUNCTION_REGION = "europe-west2";
+const PUBLIC_CLIENT_CORS = [
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+  "https://indieranks.com",
+  "https://www.indieranks.com",
+];
+const X_FUNCTION_SECRETS = [X_BEARER_TOKEN_SECRET, TWITTER_BEARER_TOKEN_SECRET];
 
 setGlobalOptions({
   region: FUNCTION_REGION,
@@ -134,7 +145,7 @@ export const refreshIndieDevRankings = onRequest(async (request, response) => {
   }
 });
 
-export const syncLegendLeaderboardFromX = onRequest(async (request, response) => {
+export const syncLegendLeaderboardFromX = onRequest({ secrets: X_FUNCTION_SECRETS }, async (request, response) => {
   if (request.method !== "POST") {
     response.status(405).json({
       ok: false,
@@ -195,7 +206,7 @@ export const importLegendCandidatePool = onRequest(async (request, response) => 
   }
 });
 
-export const syncLegendCandidateProfiles = onRequest(async (request, response) => {
+export const syncLegendCandidateProfiles = onRequest({ secrets: X_FUNCTION_SECRETS }, async (request, response) => {
   if (request.method !== "POST") {
     response.status(405).json({
       ok: false,
@@ -230,7 +241,7 @@ export const syncLegendCandidateProfiles = onRequest(async (request, response) =
   }
 });
 
-export const syncLegendShortlist = onRequest(async (request, response) => {
+export const syncLegendShortlist = onRequest({ secrets: X_FUNCTION_SECRETS }, async (request, response) => {
   if (request.method !== "POST") {
     response.status(405).json({
       ok: false,
@@ -323,7 +334,11 @@ export const syncProjectsFromProductHuntSource = onRequest(async (request, respo
   }
 });
 
-export const submitCandidateProfileAndRank = onRequest({ cors: true }, async (request, response) => {
+export const submitCandidateProfileAndRank = onRequest({
+  cors: PUBLIC_CLIENT_CORS,
+  invoker: "public",
+  secrets: X_FUNCTION_SECRETS,
+}, async (request, response) => {
   if (request.method !== "POST") {
     response.status(405).json({
       ok: false,

@@ -1,9 +1,20 @@
+import {
+  readSecretValue,
+  TWITTER_BEARER_TOKEN_SECRET,
+  X_BEARER_TOKEN_SECRET,
+} from "./runtime-secrets.js";
+
 const X_API_BASE_URL = "https://api.x.com/2";
 const DEFAULT_TIMELINE_PAGE_SIZE = 100;
 const DEFAULT_TIMELINE_MAX_PAGES = 10;
 
 function getBearerToken() {
-  const token = process.env.X_BEARER_TOKEN || process.env.TWITTER_BEARER_TOKEN || "";
+  const token =
+    process.env.X_BEARER_TOKEN ||
+    process.env.TWITTER_BEARER_TOKEN ||
+    readSecretValue(X_BEARER_TOKEN_SECRET) ||
+    readSecretValue(TWITTER_BEARER_TOKEN_SECRET) ||
+    "";
   if (!token) {
     throw new Error("Missing X bearer token. Set X_BEARER_TOKEN or TWITTER_BEARER_TOKEN.");
   }

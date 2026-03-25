@@ -83,6 +83,68 @@ export function formatDate(value) {
   }).format(date);
 }
 
+function formatMaybeNumber(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? formatNumber(amount) : "—";
+}
+
+function formatActivityBasis(metrics = {}) {
+  const source = String(metrics.activitySource || "").trim();
+  const windowDays = Number(metrics.activityWindowDays) || 0;
+
+  if (source === "profile_delta") {
+    return {
+      title: "Profile delta",
+      note: windowDays > 0
+        ? `Based on tweet-count change over a ${windowDays.toFixed(1)} day X snapshot window.`
+        : "Based on tweet-count change between stored X profile snapshots.",
+    };
+  }
+
+  if (source === "lifetime_average") {
+    return {
+      title: "Lifetime average",
+      note: "Estimated from lifetime X output because there is not yet an older profile snapshot to compare against.",
+    };
+  }
+
+  if (source === "cached_profile") {
+    return {
+      title: "Cached profile",
+      note: "Reused the last known X profile snapshot because a fresh lookup was unavailable during sync.",
+    };
+  }
+
+  return {
+    title: "Stored profile snapshot",
+    note: "Derived from the current stored X profile metrics.",
+  };
+}
+
+function formatProductHuntStatus(signals = {}) {
+  const profileUsername = String(signals.productHuntProfileUsername || "").trim();
+  const researchStatus = String(signals.productHuntResearchStatus || "").trim();
+
+  if (profileUsername) {
+    return {
+      primary: `@${profileUsername}`,
+      secondary: "Verified public Product Hunt user profile",
+    };
+  }
+
+  if (researchStatus === "none_found") {
+    return {
+      primary: "None found",
+      secondary: "Checked direct handle and Product Hunt user search",
+    };
+  }
+
+  return {
+    primary: "Unverified",
+    secondary: "No public Product Hunt profile confirmed yet",
+  };
+}
+
 function renderAvatar(dev, sizeClass) {
   return `
     <span class="avatar-badge ${escapeHtml(sizeClass || "h-11 w-11")} shrink-0 rounded-2xl overflow-hidden">
@@ -425,47 +487,32 @@ function renderNearbyPeers(dev, peers) {
   `;
 }
 
-function renderTopPosts(topPosts) {
-  if (!topPosts.length) {
-    return `<p class="text-sm text-[var(--leaderboard-copy)]">Mock top posts will appear here once the X layer is connected.</p>`;
-  }
-
+function renderProfileSignalCard(label, value, hint = "") {
   return `
-    <div class="space-y-3">
-      ${topPosts
-        .map(
-          (post) => `
-            <a href="${escapeHtml(post.url)}" target="_blank" rel="noreferrer" class="profile-post">
-              <div class="flex items-center justify-between gap-3">
-                <span class="profile-post__time">${escapeHtml(formatDate(post.postedAt))}</span>
-                <span class="profile-post__metrics">${escapeHtml(formatCompactNumber(post.likes))} likes</span>
-              </div>
-              <p class="profile-post__body">${escapeHtml(post.text)}</p>
-              <div class="profile-post__engagement">
-                <span>${escapeHtml(formatCompactNumber(post.likes))} likes</span>
-                <span>${escapeHtml(formatCompactNumber(post.replies))} replies</span>
-                <span>${escapeHtml(formatCompactNumber(post.reposts))} reposts</span>
-                <span>${escapeHtml(formatCompactNumber(post.quotes))} quotes</span>
-              </div>
-            </a>
-          `
-        )
-        .join("")}
+    <div class="profile-signal-card">
+      <div class="profile-signal-card__copy">
+        <span class="profile-signal-card__label">${escapeHtml(label)}</span>
+        ${hint ? `<span class="profile-signal-card__hint">${escapeHtml(hint)}</span>` : ""}
+      </div>
+      <span class="profile-signal-card__value">${escapeHtml(value)}</span>
     </div>
   `;
 }
 
-export function renderProfile(viewModel, topPosts) {
-  const { dev, nearbyPeers } = viewModel;
+export function renderProfile(viewModel) {
+  const { dev, nearbyPeers, dataset } = viewModel;
   const scoreBreakdown = dev.scoreBreakdowns[dev.overallCategory] || [];
   const scoreExplainer = getScoreExplainer(dev.overallCategory);
   const activitySummary = formatActivitySummary(dev.metrics);
   const productHuntResearchStatus = String(dev.productSignals.productHuntResearchStatus || "").trim();
+  const productHuntStatus = formatProductHuntStatus(dev.productSignals);
+  const activityBasis = formatActivityBasis(dev.metrics);
+  const snapshotDate = dataset && dataset.snapshotDate ? formatDate(dataset.snapshotDate) : "Unknown";
   const verifiedProfileLaunchCount = String(dev.productSignals.productHuntProfileUsername || "").trim()
     ? formatNumber(dev.productSignals.productHuntLaunchesTotal)
     : productHuntResearchStatus === "none_found"
       ? "None found"
-      : formatProjectSignalValue(dev.productSignals.productHuntLaunchesTotal || dev.productSignals.productsShipped);
+      : formatNumber(dev.productSignals.productHuntLaunchesTotal || dev.productSignals.productsShipped || 0);
 
   return `
     <section class="panel leaderboard-panel profile-hero rounded-[2rem] p-6 sm:p-8">
@@ -532,45 +579,30 @@ export function renderProfile(viewModel, topPosts) {
         <h2 class="mt-3 text-2xl font-semibold tracking-tight text-[var(--leaderboard-title)]">Public Product Hunt launch history</h2>
         <p class="mt-3 text-sm leading-6 text-[var(--leaderboard-copy)]">This section uses public Product Hunt profile launch counts where we have verified them. Imported launch records give us extra metadata, but the headline number is the Product Hunt profile total when available.</p>
         <div class="mt-5 space-y-4">
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">PH launches on profile</span>
-            <span class="profile-signal-card__value">${escapeHtml(verifiedProfileLaunchCount)}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Imported PH launch records</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.productSignals.importedProjectRecords))}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Imported launches last 12m</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.productSignals.launchesLast12m))}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Imported launch impact</span>
-            <span class="profile-signal-card__value">${escapeHtml(
-              Number(dev.productSignals.productImpactScore) > 0 ? formatScore(dev.productSignals.productImpactScore) : "—"
-            )}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Output momentum</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatSignedPercent(dev.metrics.momentum7d))}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Avg weekly post count</span>
-            <span class="profile-signal-card__value">${escapeHtml(activitySummary.primary)}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Lifetime X output</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.metrics.tweetCountTotal))}</span>
-          </div>
+          ${renderProfileSignalCard("PH launches on profile", verifiedProfileLaunchCount)}
+          ${renderProfileSignalCard("PH profile status", productHuntStatus.primary, productHuntStatus.secondary)}
+          ${renderProfileSignalCard("Imported PH launch records", formatNumber(dev.productSignals.importedProjectRecords || 0))}
+          ${renderProfileSignalCard("Imported launches last 12m", formatNumber(dev.productSignals.launchesLast12m || 0))}
+          ${renderProfileSignalCard("Imported launch impact", formatScore(dev.productSignals.productImpactScore || 0))}
         </div>
       </article>
 
       <article class="panel rounded-[1.75rem] p-6">
-        <p class="indie-note-label">Top posts this week</p>
-        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-[var(--leaderboard-title)]">Mock X highlights</h2>
-        <p class="mt-3 text-sm leading-6 text-[var(--leaderboard-copy)]">Served through the placeholder X service layer so it can be swapped for the real API later.</p>
-        <div class="mt-5">
-          ${renderTopPosts(topPosts)}
+        <p class="indie-note-label">X profile snapshot</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-[var(--leaderboard-title)]">X profile metrics</h2>
+        <p class="mt-3 text-sm leading-6 text-[var(--leaderboard-copy)]">These fields come from stored X profile metrics and the current leaderboard snapshot.</p>
+        <div class="mt-5 space-y-4">
+          ${renderProfileSignalCard("Leaderboard snapshot", snapshotDate)}
+          ${renderProfileSignalCard("X follower count", formatCompactNumber(dev.followers))}
+          ${renderProfileSignalCard("Avg weekly post count", activitySummary.primary)}
+          ${renderProfileSignalCard("Output momentum", formatSignedPercent(dev.metrics.momentum7d))}
+          ${renderProfileSignalCard("Lifetime X output", formatProjectSignalValue(dev.metrics.tweetCountTotal))}
+          ${renderProfileSignalCard("Observed posts in last sync window", formatMaybeNumber(dev.metrics.tweetCountDelta))}
+          ${renderProfileSignalCard(
+            "Sync window length",
+            Number(dev.metrics.activityWindowDays) > 0 ? `${dev.metrics.activityWindowDays.toFixed(1)} days` : "—"
+          )}
+          ${renderProfileSignalCard("Activity basis", activityBasis.title, activityBasis.note)}
         </div>
       </article>
 

@@ -1,6 +1,5 @@
 import { initSiteShell } from "./shell.js";
 import { getDevProfile } from "./store.js";
-import { getUserPosts } from "./xApi.js";
 import { renderProfile, renderProfileEmpty, renderProfileSkeleton } from "./ui.js";
 
 function getRequestedHandle() {
@@ -31,9 +30,8 @@ async function init() {
     return;
   }
 
-  const topPosts = await getUserPosts(viewModel.dev.handle);
   document.title = `${viewModel.dev.displayName} | IndieRanks`;
-  container.innerHTML = renderProfile(viewModel, topPosts);
+  container.innerHTML = renderProfile(viewModel);
 }
 
 init();
