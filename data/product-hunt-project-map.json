@@ -1,47 +1,632 @@
 {
-  "updatedAt": "2026-03-24T23:05:00.000Z",
+  "updatedAt": "2026-03-25T16:40:24.134Z",
   "mappings": [
     {
-      "handle": "levelsio",
-      "profileUsername": "levelsio",
-      "profileLaunchCount": 40,
-      "postSlugs": ["interior-ai", "qr-menu-creator"],
-      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
-    },
-    {
-      "handle": "marclou",
-      "profileUsername": "marclou",
-      "profileLaunchCount": 31,
-      "postSlugs": ["logofast", "buddy-crush", "poopup"],
-      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
-    },
-    {
-      "handle": "tibo_maker",
-      "profileUsername": "thibaultll",
-      "profileLaunchCount": 4,
-      "postSlugs": ["outrank", "revid-ai", "geoleads"],
-      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
-    },
-    {
-      "handle": "yongfook",
-      "profileUsername": "yongfook",
-      "profileLaunchCount": 11,
+      "handle": "abrar_gist",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
       "postSlugs": [],
-      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "alexmano12",
+      "profileUsername": "alexmano12",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "angezanetti",
+      "profileUsername": "angezanetti",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
     },
     {
       "handle": "arvidkahl",
       "profileUsername": "arvidkahl",
       "profileLaunchCount": 1,
       "postSlugs": [],
+      "researchStatus": "verified_profile",
       "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "aryamansharda",
+      "profileUsername": "aryamansharda",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "benbarbersmith",
+      "profileUsername": "benbarbersmith",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "bkanber",
+      "profileUsername": "bkanber",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "boaticus",
+      "profileUsername": "boaticus",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "bobburch",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "caitlincjohnson",
+      "profileUsername": "caitlincjohnson",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "callumwooders",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "calvintalbot",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "cd_bara",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "colinbethea",
+      "profileUsername": "colinbethea",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "czue",
+      "profileUsername": "czue",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
     },
     {
       "handle": "dagorenouf",
       "profileUsername": "dagorenouf",
       "profileLaunchCount": 0,
       "postSlugs": [],
+      "researchStatus": "verified_profile",
       "notes": "Public Product Hunt profile shows no hunted-launch count on 2026-03-24."
+    },
+    {
+      "handle": "danest",
+      "profileUsername": "danest",
+      "profileLaunchCount": 6,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "davidonbits",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "denis__shatalin",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "dev_bre",
+      "profileUsername": "dev_bre",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "diaeygo",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "dpertsin",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "dr",
+      "profileUsername": "dr",
+      "profileLaunchCount": 11,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "dsabar",
+      "profileUsername": "dsabar",
+      "profileLaunchCount": 3,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "emmemaker",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "ertug_ca",
+      "profileUsername": "ertug_ca",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "excid3",
+      "profileUsername": "excid3",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-25."
+    },
+    {
+      "handle": "ferhat_gulbahar",
+      "profileUsername": "ferhat_gulbahar",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "firatcand",
+      "profileUsername": "firatcand",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "gabe_ragland",
+      "profileUsername": "gabe_ragland",
+      "profileLaunchCount": 5,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "gouthamjay8",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "harmansxndhu",
+      "profileUsername": "harmansxndhu",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "holfolioben",
+      "profileUsername": "holfolioben",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "ilyanovohatskyi",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "jakobgillich",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "janelsgm",
+      "profileUsername": "janelsgm",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "jorcus",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "joshahowarth",
+      "profileUsername": "joshahowarth",
+      "profileLaunchCount": 5,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "justinkuijpers",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "kattrisen",
+      "profileUsername": "kattrisen",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "kennethcassel",
+      "profileUsername": "kennethcassel",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-25."
+    },
+    {
+      "handle": "kylegawley",
+      "profileUsername": "kylegawley",
+      "profileLaunchCount": 4,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "leesteffen_",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "levelsio",
+      "profileUsername": "levelsio",
+      "profileLaunchCount": 40,
+      "postSlugs": [
+        "interior-ai",
+        "qr-menu-creator"
+      ],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "levinunnink",
+      "profileUsername": "levinunnink",
+      "profileLaunchCount": 7,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "lucianoviterale",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "lunchbag",
+      "profileUsername": "lunchbag",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "m1guelpf",
+      "profileUsername": "m1guelpf",
+      "profileLaunchCount": 14,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "manellayed",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "marclou",
+      "profileUsername": "marclou",
+      "profileLaunchCount": 31,
+      "postSlugs": [
+        "logofast",
+        "buddy-crush",
+        "poopup"
+      ],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "mariobalca",
+      "profileUsername": "mariobalca",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "matosdfm",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "matthew_reid",
+      "profileUsername": "matthew_reid",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "mcavaliere",
+      "profileUsername": "mcavaliere",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "mccrmx",
+      "profileUsername": "mccrmx",
+      "profileLaunchCount": 16,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "me22kar",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "mohsenkamranii",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "noahflk",
+      "profileUsername": "noahflk",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "onurgenes",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "petecodes",
+      "profileUsername": "petecodes",
+      "profileLaunchCount": 21,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-25."
+    },
+    {
+      "handle": "peternaft",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "pprousaloglou",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "pramodk73",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "ramiroruiz",
+      "profileUsername": "ramiroruiz",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "rick_blyth",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "rosiesherry",
+      "profileUsername": "rosiesherry",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "ryanb58",
+      "profileUsername": "ryanb58",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "sagunsh",
+      "profileUsername": "sagunsh",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "semdzh",
+      "profileUsername": "semdzh",
+      "profileLaunchCount": 2,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt user profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "stribny",
+      "profileUsername": "stribny",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "tdinh_me",
+      "profileUsername": "tony_dinh2",
+      "profileLaunchCount": 8,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from Tony Dinh's public Product Hunt profile on 2026-03-25 after tracing from the DriveStats.io launch page."
+    },
+    {
+      "handle": "tela",
+      "profileUsername": "tela",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "thatmattmorris",
+      "profileUsername": "",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "none_found",
+      "notes": "No public Product Hunt user profile could be verified via direct handle and user-search lookup on 2026-03-25."
+    },
+    {
+      "handle": "tibo_maker",
+      "profileUsername": "thibaultll",
+      "profileLaunchCount": 4,
+      "postSlugs": [
+        "outrank",
+        "revid-ai",
+        "geoleads"
+      ],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "toddpgood",
+      "profileUsername": "toddpgood",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "vincentdnl",
+      "profileUsername": "vincentdnl",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile via live Chrome session on 2026-03-25."
+    },
+    {
+      "handle": "yongfook",
+      "profileUsername": "yongfook",
+      "profileLaunchCount": 11,
+      "postSlugs": [],
+      "researchStatus": "verified_profile",
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
     }
   ]
 }

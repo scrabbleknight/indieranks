@@ -1,14 +1,14 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import rankingConfig from "../../shared/indie-ranks-config.mjs";
+import rankingConfig from "../shared/indie-ranks-config.mjs";
 import {
   buildRankingsFromRecords,
   buildProductSignalsFromProjects,
   getSnapshotDate,
   isLegendEligible,
   normalizeHandle,
-} from "../../shared/ranking-engine.mjs";
+} from "../shared/ranking-engine.mjs";
 import { loadApprovedCandidates, readCandidateSeed } from "./candidate-pool.js";
 import { loadRecordsFromFirestore, refreshRankingsFromFirestore } from "./dev-rankings.js";
 import { getTweetsByUserId, lookupUsersByUsernames } from "./x-api.js";
@@ -160,10 +160,13 @@ function mapCandidateToRosterRecord(candidate = {}) {
     updatedAt,
     xUserId: candidate.xUserId || "",
     isLegendOverride: false,
-    leaderboardPool: getRecordLegendPool(candidate, rankingConfig.candidatePool.defaultLegendPool),
+    leaderboardPool: candidate.dynamicPool ? "" : getRecordLegendPool(candidate, rankingConfig.candidatePool.defaultLegendPool),
+    candidatePool: getRecordLegendPool(candidate, rankingConfig.candidatePool.defaultLegendPool),
+    dynamicPool: Boolean(candidate.dynamicPool),
     sourceLabel: candidate.sourceLabel || "",
     sourceUrl: candidate.sourceUrl || "",
     notes: candidate.notes || "",
+    productHuntUsername: candidate.productHuntUsername || "",
   };
 }
 
@@ -390,6 +393,11 @@ async function writeCandidateProfileSync(
     const batch = db.batch();
 
     syncedRecords.slice(index, index + 200).forEach((record) => {
+      const explicitPool = String(record.leaderboardPool || "").trim().toLowerCase();
+      const candidatePool = String(record.candidatePool || explicitPool || pool || rankingConfig.candidatePool.defaultLegendPool)
+        .trim()
+        .toLowerCase() || rankingConfig.candidatePool.defaultLegendPool;
+
       batch.set(
         db.collection("devs").doc(record.handle),
         {
@@ -398,11 +406,11 @@ async function writeCandidateProfileSync(
           avatarUrl: record.avatarUrl,
           bio: record.bio,
           followers: record.followers,
-          category: record.leaderboardPool || "legend",
+          category: explicitPool,
           isLegendOverride: false,
           xUserId: record.xUserId,
           website: record.website,
-          leaderboardPool: record.leaderboardPool || rankingConfig.candidatePool.defaultLegendPool,
+          leaderboardPool: explicitPool,
           createdAt: record.createdAt,
           updatedAt: record.updatedAt,
         },
@@ -415,10 +423,12 @@ async function writeCandidateProfileSync(
           handle: record.handle,
           displayName: record.displayName,
           approved: true,
-          pool: record.leaderboardPool || rankingConfig.candidatePool.defaultLegendPool,
+          pool: candidatePool,
+          dynamicPool: Boolean(record.dynamicPool),
           sourceLabel: record.sourceLabel || "",
           sourceUrl: record.sourceUrl || "",
           notes: record.notes || "",
+          productHuntUsername: record.productHuntUsername || "",
           xUserId: record.xUserId,
           followers: record.followers,
           avatarUrl: record.avatarUrl,
@@ -468,6 +478,8 @@ async function writeCandidateProfileSync(
           },
           { merge: true }
         );
+        batch.delete(db.collection("devs").doc(handle));
+        batch.delete(db.collection("devMetrics").doc(handle));
       });
       await batch.commit();
     }
@@ -642,17 +654,11 @@ export async function syncCandidateProfilesFromX(db, options = {}) {
   const existingMetrics = await loadExistingMetricDocs(db, roster.map((record) => record.handle));
   const { usersByHandle, missingHandles } = await lookupUsersByUsernames(roster.map((record) => record.handle));
   const syncedRecords = [];
-  const cachedFallbackHandles = new Set();
 
   for (const rosterRecord of roster) {
     const handle = rosterRecord.handle;
     const user = usersByHandle.get(handle);
     if (!user) {
-      const cachedRecord = buildCachedProfileSyncRecord(rosterRecord, existingMetrics[handle] || {}, now);
-      if (cachedRecord) {
-        syncedRecords.push(cachedRecord);
-        cachedFallbackHandles.add(handle);
-      }
       continue;
     }
 
@@ -681,7 +687,7 @@ export async function syncCandidateProfilesFromX(db, options = {}) {
     throw new Error(`X returned no syncable ${requestedPool} candidates for the requested handles.`);
   }
 
-  const unresolvedMissingHandles = missingHandles.filter((handle) => !cachedFallbackHandles.has(handle));
+  const unresolvedMissingHandles = missingHandles;
 
   await writeCandidateProfileSync(db, syncedRecords, unresolvedMissingHandles, snapshotDate, requestedPool);
   const rankings = await refreshRankingsFromFirestore(db, snapshotDate);
@@ -691,7 +697,7 @@ export async function syncCandidateProfilesFromX(db, options = {}) {
     pool: requestedPool,
     syncedHandles: syncedRecords.map((record) => record.handle),
     missingHandles: unresolvedMissingHandles,
-    cachedHandles: Array.from(cachedFallbackHandles),
+    cachedHandles: [],
     rankings,
   };
 }
@@ -715,6 +721,114 @@ export async function syncRookieCandidateProfilesFromX(db, options = {}) {
     ...options,
     pool: "rookie",
   });
+}
+
+function normalizeProductHuntUsername(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^@+/, "")
+    .slice(0, 80);
+}
+
+function stringValue(value, fallback = "") {
+  return typeof value === "string" ? value.trim() : fallback;
+}
+
+export async function syncSubmittedProfileFromX(db, options = {}) {
+  const handle = normalizeHandle(options.handle);
+  if (!handle) {
+    throw new Error("A valid X handle is required.");
+  }
+
+  const now = getNow();
+  const snapshotDate = options.snapshotDate || getSnapshotDate(now);
+  const existingDevDocs = await loadExistingDevDocs(db, [handle]);
+  const existingMetricDocs = await loadExistingMetricDocs(db, [handle]);
+  const { usersByHandle } = await lookupUsersByUsernames([handle]);
+  const user = usersByHandle.get(handle);
+
+  if (!user) {
+    throw new Error(`X did not return a user for @${handle}.`);
+  }
+
+  const existingDev = existingDevDocs[handle] || {};
+  const existingMetrics = existingMetricDocs[handle] || {};
+  const updatedAt = now.toISOString();
+  const metrics = {
+    ...summarizeProfileMetrics(user, existingMetrics, now),
+    productsShipped: toNumber(existingMetrics.productsShipped),
+    activeProducts: toNumber(existingMetrics.activeProducts),
+    importedProjectRecords: toNumber(existingMetrics.importedProjectRecords),
+    launchesLast12m: toNumber(existingMetrics.launchesLast12m),
+    productImpactScore: toNumber(existingMetrics.productImpactScore),
+    productHuntLaunchesTotal: toNumber(existingMetrics.productHuntLaunchesTotal),
+    productHuntProfileUsername: normalizeProductHuntUsername(
+      options.productHuntUsername ||
+      existingMetrics.productHuntProfileUsername
+    ),
+  };
+  const record = {
+    handle,
+    displayName: user.name || existingDev.displayName || `@${handle}`,
+    avatarUrl: normalizeAvatarUrl(user.profile_image_url || existingDev.avatarUrl),
+    bio: user.description || existingDev.bio || "Indie developer shipping in public on X.",
+    followers: toNumber(user.public_metrics && user.public_metrics.followers_count, existingDev.followers),
+    isLegendOverride: false,
+    leaderboardPool: "",
+    candidatePool: "",
+    dynamicPool: true,
+    sourceLabel: "Homepage add profile",
+    sourceUrl: `https://x.com/${handle}`,
+    notes: stringValue(options.note, stringValue(existingDev.notes)),
+    productHuntUsername: metrics.productHuntProfileUsername,
+    xUserId: String(user.id || existingDev.xUserId || handle),
+    website: normalizeWebsite(options.websiteUrl || existingDev.website || user.url),
+    createdAt: existingDev.createdAt || updatedAt,
+    updatedAt,
+    metrics,
+  };
+
+  await writeCandidateProfileSync(db, [record], [], snapshotDate, "");
+  const rankings = await refreshRankingsFromFirestore(db, snapshotDate);
+  const rankedRecord = rankings.byHandle[handle];
+
+  if (!rankedRecord) {
+    throw new Error(`@${handle} synced from X, but was not found in the refreshed rankings.`);
+  }
+
+  const rankedPool = String(rankedRecord.overallCategory || "rookie").trim().toLowerCase() || "rookie";
+  await db.collection("devCandidates").doc(handle).set(
+    {
+      handle,
+      approved: true,
+      pool: rankedPool,
+      dynamicPool: true,
+      submittedVia: "homepage_add_profile",
+      sourceLabel: "Homepage add profile",
+      sourceUrl: `https://x.com/${handle}`,
+      displayName: rankedRecord.displayName,
+      xUserId: rankedRecord.xUserId,
+      followers: rankedRecord.followers,
+      avatarUrl: rankedRecord.avatarUrl,
+      bio: rankedRecord.bio,
+      website: rankedRecord.website || "",
+      notes: record.notes || "",
+      productHuntUsername: metrics.productHuntProfileUsername,
+      lastProfileSyncAt: updatedAt,
+      lastSyncSnapshotDate: snapshotDate,
+      lastLookupStatus: "ok",
+      updatedAt,
+      createdAt: existingDev.createdAt || updatedAt,
+    },
+    { merge: true }
+  );
+
+  return {
+    snapshotDate,
+    handle,
+    rankings,
+    rankedRecord,
+  };
 }
 
 export async function syncLegendRosterFromX(db, options = {}) {

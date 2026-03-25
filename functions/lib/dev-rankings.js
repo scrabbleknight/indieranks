@@ -2,13 +2,13 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { FieldPath } from "firebase-admin/firestore";
-import rankingConfig from "../../shared/indie-ranks-config.mjs";
+import rankingConfig from "../shared/indie-ranks-config.mjs";
 import {
   buildRankingsFromRecords,
   getSnapshotDate,
   mergeFirestoreCollections,
   toFirestorePayloads,
-} from "../../shared/ranking-engine.mjs";
+} from "../shared/ranking-engine.mjs";
 import { cleanupLegacyHandleDocs } from "./handle-cleanup.js";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));

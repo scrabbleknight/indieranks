@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { normalizeHandle } from "../../shared/ranking-engine.mjs";
+import { normalizeHandle } from "../shared/ranking-engine.mjs";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultCandidatePath = path.resolve(currentDirectory, "../../data/dev-candidates.json");

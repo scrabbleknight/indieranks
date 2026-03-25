@@ -1,4 +1,4 @@
-import { getSnapshotDate } from "../../shared/ranking-engine.mjs";
+import { getSnapshotDate } from "../shared/ranking-engine.mjs";
 import { getDb } from "../lib/admin.js";
 import { refreshRankingsFromFirestore } from "../lib/dev-rankings.js";
 

@@ -21,6 +21,7 @@
     "audit:x:handle": "node ./scripts/audit-x-handle.js",
     "x:budget": "node ./scripts/check-x-budget.js",
     "sync:product-hunt": "node ./scripts/sync-product-hunt-projects.js",
+    "sync:product-hunt:mapped": "node ./scripts/sync-product-hunt-mapped-handles.js",
     "cleanup:non-candidates": "node ./scripts/prune-non-candidate-devs.js"
   },
   "dependencies": {

@@ -170,12 +170,13 @@ function formatProductSummary(productSignals) {
   const launchCount = Number(signals.productHuntLaunchesTotal) || Number(signals.productsShipped) || 0;
   const importedRecords = Number(signals.importedProjectRecords) || 0;
   const profileUsername = String(signals.productHuntProfileUsername || "").trim();
+  const researchStatus = String(signals.productHuntResearchStatus || "").trim();
   const hasVerifiedProfile = Boolean(profileUsername);
 
   if (launchCount <= 0 && !hasVerifiedProfile) {
     return {
       primary: "—",
-      secondary: "No verified PH launch count",
+      secondary: researchStatus === "none_found" ? "No public PH profile found" : "No verified PH launch count",
     };
   }
 
@@ -249,12 +250,17 @@ function renderSectionPagination(category, pagination, visibleCount) {
   `;
 }
 
-function renderLeaderboardRow(dev) {
+function renderLeaderboardRow(dev, options = {}) {
   const productSummary = formatProductSummary(dev.productSignals);
   const activitySummary = formatActivitySummary(dev.metrics);
+  const isHighlighted = normalizeHandleForDom(options.highlightedHandle) === normalizeHandleForDom(dev.handle);
 
   return `
-    <a href="/dev.html?handle=${encodeURIComponent(dev.handle)}" class="indie-dev-row ${dev.rank <= 3 ? "indie-dev-row--podium" : ""}">
+    <a
+      href="/dev.html?handle=${encodeURIComponent(dev.handle)}"
+      class="indie-dev-row ${dev.rank <= 3 ? "indie-dev-row--podium" : ""} ${isHighlighted ? "indie-dev-row--highlighted" : ""}"
+      data-dev-handle="${escapeHtml(normalizeHandleForDom(dev.handle))}"
+    >
       <div class="indie-dev-row__rank">
         ${renderRankBadge(dev.rank)}
       </div>
@@ -320,11 +326,18 @@ export function renderLeaderboardSection(category, items, pagination = {}) {
         <span>Move</span>
       </div>
       <div class="indie-dev-table-body mt-2">
-        ${items.map((item) => renderLeaderboardRow(item)).join("")}
+        ${items.map((item) => renderLeaderboardRow(item, pagination)).join("")}
       </div>
       ${renderSectionPagination(category, pagination, items.length)}
     </section>
   `;
+}
+
+function normalizeHandleForDom(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^@+/, "");
 }
 
 export function renderSearchResults(results, query) {
@@ -447,9 +460,12 @@ export function renderProfile(viewModel, topPosts) {
   const scoreBreakdown = dev.scoreBreakdowns[dev.overallCategory] || [];
   const scoreExplainer = getScoreExplainer(dev.overallCategory);
   const activitySummary = formatActivitySummary(dev.metrics);
+  const productHuntResearchStatus = String(dev.productSignals.productHuntResearchStatus || "").trim();
   const verifiedProfileLaunchCount = String(dev.productSignals.productHuntProfileUsername || "").trim()
     ? formatNumber(dev.productSignals.productHuntLaunchesTotal)
-    : formatProjectSignalValue(dev.productSignals.productHuntLaunchesTotal || dev.productSignals.productsShipped);
+    : productHuntResearchStatus === "none_found"
+      ? "None found"
+      : formatProjectSignalValue(dev.productSignals.productHuntLaunchesTotal || dev.productSignals.productsShipped);
 
   return `
     <section class="panel leaderboard-panel profile-hero rounded-[2rem] p-6 sm:p-8">

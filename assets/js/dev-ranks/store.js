@@ -333,6 +333,11 @@ export async function getHomeDataset() {
   return loadDataset();
 }
 
+export async function refreshHomeDataset() {
+  cachedDatasetPromise = null;
+  return loadDataset();
+}
+
 export async function searchDevs(query) {
   const dataset = await loadDataset();
   return searchRankedRecords(dataset.directory, query, rankingConfig);

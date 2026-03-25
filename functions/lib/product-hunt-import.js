@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { getSnapshotDate, normalizeHandle } from "../../shared/ranking-engine.mjs";
+import { getSnapshotDate, normalizeHandle } from "../shared/ranking-engine.mjs";
 import { refreshRankingsFromFirestore } from "./dev-rankings.js";
 import { getProductHuntAccessToken, getProductHuntPostBySlug, listProductHuntPosts } from "./product-hunt-api.js";
 
@@ -94,6 +94,7 @@ async function readProductHuntMap(mapPath = defaultProductHuntMapPath) {
       handle: normalizeHandle(entry.handle),
       profileUsername: String(entry.profileUsername || "").trim(),
       profileLaunchCount: Math.max(0, toNumber(entry.profileLaunchCount)),
+      researchStatus: String(entry.researchStatus || (entry.profileUsername ? "verified_profile" : "")).trim(),
       postSlugs: Array.from(
         new Set(
           (Array.isArray(entry.postSlugs) ? entry.postSlugs : [])
@@ -103,7 +104,7 @@ async function readProductHuntMap(mapPath = defaultProductHuntMapPath) {
       ),
       notes: String(entry.notes || "").trim(),
     }))
-    .filter((entry) => entry.handle && (entry.postSlugs.length || entry.profileUsername || entry.profileLaunchCount >= 0));
+    .filter((entry) => entry.handle && (entry.postSlugs.length || entry.profileUsername || entry.researchStatus === "none_found" || entry.profileLaunchCount >= 0));
 }
 
 function isRedactedMaker(maker = {}) {
@@ -327,6 +328,7 @@ async function loadMappedPostsForTrackedDevs(trackedDevs, options = {}) {
       ...(trackedDevs.get(handle) || {}),
       productHuntProfileLaunchesTotal: entry.profileLaunchCount,
       productHuntProfileUsername: entry.profileUsername,
+      productHuntResearchStatus: entry.researchStatus,
     };
 
     for (const slug of entry.postSlugs) {
@@ -356,6 +358,7 @@ async function loadMappedPostsForTrackedDevs(trackedDevs, options = {}) {
         {
           productHuntLaunchesTotal: entry.profileLaunchCount,
           productHuntProfileUsername: entry.profileUsername,
+          productHuntResearchStatus: entry.researchStatus || "",
         },
       ])
     ),
@@ -375,6 +378,7 @@ async function writeProductHuntProfileSignals(db, trackedHandles = [], profileSi
         {
           productHuntLaunchesTotal: Math.max(0, toNumber(signal.productHuntLaunchesTotal)),
           productHuntProfileUsername: String(signal.productHuntProfileUsername || "").trim(),
+          productHuntResearchStatus: String(signal.productHuntResearchStatus || "").trim(),
         },
         { merge: true }
       );

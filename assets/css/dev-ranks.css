@@ -717,6 +717,13 @@ html[data-theme="dark"] .indie-pagination__button.is-active {
   background: rgba(255, 255, 255, 0.015);
 }
 
+.indie-dev-row--highlighted {
+  border-color: color-mix(in srgb, var(--signal) 55%, transparent);
+  background: color-mix(in srgb, var(--signal) 12%, var(--surface));
+  border-radius: 0.9rem;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--signal) 26%, transparent);
+}
+
 .indie-dev-row__rank {
   display: flex;
   align-items: center;

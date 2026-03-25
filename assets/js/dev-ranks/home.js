@@ -1,8 +1,8 @@
 import rankingConfig from "../../../shared/indie-ranks-config.mjs";
 import { normalizeHandle } from "../../../shared/ranking-engine.mjs";
-import { submitCandidateSubmission } from "./candidate-submissions.js";
+import { submitCandidateAndRank } from "./candidate-submissions.js";
 import { initSiteShell } from "./shell.js";
-import { getHomeDataset, searchDevs } from "./store.js";
+import { getHomeDataset, refreshHomeDataset, searchDevs } from "./store.js";
 import {
   formatDate,
   renderHomeSkeleton,
@@ -23,6 +23,7 @@ const state = {
     status: "idle",
     message: "",
   },
+  highlightedHandle: "",
 };
 
 const PAGE_SIZES = {
@@ -72,12 +73,12 @@ function renderCandidatePanel() {
       <div class="dev-ranks-add-profile__header">
         <div>
           <p class="indie-note-label">Add your profile</p>
-          <h2 class="dev-ranks-add-profile__title">Join the candidate pool</h2>
+          <h2 class="dev-ranks-add-profile__title">Add yourself to IndieRanks</h2>
         </div>
         <button type="button" class="dev-ranks-add-profile__close" data-close-add-profile aria-label="Close add profile panel">Close</button>
       </div>
       <p class="dev-ranks-add-profile__copy">
-        This button itself does not cost X money. It just adds a profile to the review queue. We only spend X credits when we later sync approved candidates.
+        We fetch your public X profile metrics, place you into the most appropriate bucket, and jump the leaderboard to your rank. This uses a light X profile sync rather than a timeline-heavy scan.
       </p>
       <form id="candidateSubmissionForm" class="dev-ranks-add-profile__form">
         <label class="dev-ranks-add-profile__field">
@@ -98,9 +99,9 @@ function renderCandidatePanel() {
         </label>
         <div class="dev-ranks-add-profile__actions">
           <button type="submit" class="search-action search-action--primary" ${state.candidateSubmission.status === "submitting" ? "disabled" : ""}>
-            ${state.candidateSubmission.status === "submitting" ? "Submitting..." : "Submit profile"}
+            ${state.candidateSubmission.status === "submitting" ? "Adding..." : "Add profile"}
           </button>
-          <p class="dev-ranks-add-profile__meta">Approved legend candidates are refreshed cheaply from profile data, so adding a profile does not trigger a timeline-heavy X sync.</p>
+          <p class="dev-ranks-add-profile__meta">This uses a cheap profile lookup from X. If you add the same handle again shortly after, we reuse the recent sync instead of spending more credits.</p>
         </div>
         <p class="dev-ranks-add-profile__status ${statusClass}" data-add-profile-status>${state.candidateSubmission.message || ""}</p>
       </form>
@@ -123,6 +124,7 @@ function getSectionPage(dataset, category) {
     page: currentPage,
     pageCount,
     pageSize,
+    highlightedHandle: state.highlightedHandle,
   };
 }
 
@@ -149,6 +151,39 @@ function renderHome(dataset) {
         ? "Live Firestore data + seed fallback"
         : "Seeded mock data"
   );
+}
+
+function focusHandleInLeaderboard(handle) {
+  const normalizedHandle = normalizeHandle(handle);
+  if (!normalizedHandle || !state.dataset || !state.dataset.byHandle || !state.dataset.byHandle[normalizedHandle]) {
+    return;
+  }
+
+  const dev = state.dataset.byHandle[normalizedHandle];
+  const category = dev.overallCategory;
+  const pageSize = PAGE_SIZES[category] || 1;
+  state.pages[category] = Math.max(1, Math.ceil((Number(dev.rank) || 1) / pageSize));
+  state.highlightedHandle = normalizedHandle;
+  renderHome(state.dataset);
+
+  window.setTimeout(() => {
+    const row = document.querySelector(`[data-dev-handle="${CSS.escape(normalizedHandle)}"]`);
+    if (row) {
+      row.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      const section = document.querySelector(`[data-category-section="${category}"]`);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  }, 60);
+
+  window.setTimeout(() => {
+    if (state.highlightedHandle === normalizedHandle) {
+      state.highlightedHandle = "";
+      renderHome(state.dataset);
+    }
+  }, 4200);
 }
 
 function setCandidateSubmissionState(nextState = {}) {
@@ -209,7 +244,7 @@ async function handleCandidateSubmit(event) {
   }
 
   if (state.dataset && state.dataset.byHandle && state.dataset.byHandle[handle]) {
-    window.location.href = `/dev.html?handle=${encodeURIComponent(handle)}`;
+    focusHandleInLeaderboard(handle);
     return;
   }
 
@@ -219,7 +254,7 @@ async function handleCandidateSubmit(event) {
   });
 
   try {
-    await submitCandidateSubmission({
+    const result = await submitCandidateAndRank({
       handle,
       productHuntUsername: formData.get("productHuntUsername"),
       websiteUrl: formData.get("websiteUrl"),
@@ -227,10 +262,15 @@ async function handleCandidateSubmit(event) {
     });
 
     form.reset();
+    state.dataset = await refreshHomeDataset();
+    renderHome(state.dataset);
     setCandidateSubmissionState({
       status: "success",
-      message: `@${handle} is in the review queue. We will only spend X credits if the profile gets approved for ranking.`,
+      message: result && result.ranked && result.ranked.rank
+        ? `@${handle} landed at #${result.ranked.rank} in ${String(result.ranked.category || "").replace(/^./, (char) => char.toUpperCase())}. Scrolling there now.`
+        : `@${handle} was added to the leaderboard.`,
     });
+    focusHandleInLeaderboard(handle);
   } catch (error) {
     setCandidateSubmissionState({
       status: "error",
