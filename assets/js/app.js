@@ -83,6 +83,29 @@
     return new URLSearchParams(window.location.search);
   }
 
+  function isSmallDevLeaderboardPage() {
+    var path = String((window.location && window.location.pathname) || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\/+$/, "");
+
+    return path === "/small-dev-leaderboard" || path === "/small-dev-leaderboard.html";
+  }
+
+  function filterSmallDevBoardProjects(projects) {
+    if (!isSmallDevLeaderboardPage()) {
+      return Array.isArray(projects) ? projects : [];
+    }
+
+    return (Array.isArray(projects) ? projects : []).filter(function (project) {
+      var founderSlug = String(project && project.founderSlug || "").trim().toLowerCase();
+      var founderName = String(project && project.founderName || "").trim().toLowerCase();
+      var founderXUsername = String(project && project.founderXUsername || "").trim().toLowerCase().replace(/^@+/, "");
+
+      return founderSlug === "arbio" || founderName === "arbio" || founderXUsername === "arbio";
+    });
+  }
+
   function isAnonymousUser(user) {
     return !!(user && user.isAnonymous);
   }
@@ -1696,7 +1719,7 @@
 
     var headerActions =
       '<a href="./index.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Home</a>' +
-      '<a href="./small-dev-leaderboard.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Small Dev Leaderboard</a>';
+      '<a href="./small-dev-leaderboard.html" class="chip-link rounded-full px-4 py-2 text-sm text-white/62">Small Dev MRR</a>';
 
     if (page !== "submit") {
       headerActions +=
@@ -1752,7 +1775,7 @@
       '<p class="site-footer__label">Product</p>' +
       '<div class="site-footer__links">' +
       '<a href="./index.html">Home</a>' +
-      '<a href="./small-dev-leaderboard.html">Small Dev Leaderboard</a>' +
+      '<a href="./small-dev-leaderboard.html">Small Dev MRR</a>' +
       '<a href="./submit.html">Add Project</a>' +
       "</div>" +
       "</div>" +
@@ -2028,6 +2051,7 @@
       users: [
         { value: "GitHub", label: "GitHub" },
         { value: "Firebase / GA4", label: "Firebase / GA4" },
+        { value: "Product Hunt", label: "Product Hunt" },
       ],
       downloads: [
         { value: "GitHub", label: "GitHub" },
@@ -2050,6 +2074,10 @@
   function getVerificationHelpText(metricType) {
     if (ui.normalizeMetricKey(metricType) === "mrr") {
       return "Use a live billing API key. We show provider-specific setup tips below the field.";
+    }
+
+    if (ui.normalizeMetricKey(metricType) === "users") {
+      return "Use a public proof source like Product Hunt, GitHub, or Firebase / GA4.";
     }
 
     return "";
@@ -2364,6 +2392,15 @@
       };
     }
 
+    if (source.indexOf("producthunt") >= 0 || source.indexOf("product hunt") >= 0) {
+      return {
+        label: "Product Hunt post URL",
+        placeholder: "https://www.producthunt.com/posts/your-product",
+        helpText: "Use the public Product Hunt launch URL used as the source of truth for this listing.",
+        inputType: "url",
+      };
+    }
+
     if (source.indexOf("github") >= 0) {
       return {
         label: metricKey === "users" ? "GitHub repo or app URL" : "GitHub repo URL",
@@ -2535,6 +2572,7 @@
     var allProjects = typeof store.getAllProjects === "function"
       ? await store.getAllProjects()
       : await store.getProjects();
+    allProjects = filterSmallDevBoardProjects(allProjects);
     var graduationState = buildGraduationExperienceState(allProjects, params);
     var projects = graduationState.activeProjects;
     var hallOfFameProjects = graduationState.hallOfFameProjects;
@@ -2648,6 +2686,7 @@
     var allProjects = typeof store.getAllProjects === "function"
       ? await store.getAllProjects()
       : await store.getProjects();
+    allProjects = filterSmallDevBoardProjects(allProjects);
     var graduationState = buildGraduationExperienceState(allProjects, params);
     var projects = graduationState.activeProjects;
     var hallOfFameProjects = graduationState.hallOfFameProjects;

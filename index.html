@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IndieRanks | Ranking indie devs on X</title>
   <meta name="description"
-    content="Track indie dev legends, contenders, and rookies on X using a transparent score built from product shipping, reach, engagement, consistency, and momentum." />
+    content="Track indie dev legends, contenders, and rookies on X using a transparent score built from Product Hunt launches, reach, recent output, and momentum." />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
   <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -55,8 +55,7 @@
         </div>
 
         <div class="dev-ranks-header__actions">
-          <a href="/small-dev-leaderboard.html" class="chip-link rounded-full px-5 py-3 text-sm">Small Dev
-            Leaderboard</a>
+          <a href="/small-dev-leaderboard.html" class="chip-link rounded-full px-5 py-3 text-sm">Small Dev MRR</a>
           <button type="button" data-theme-toggle class="theme-toggle"></button>
         </div>
       </div>
@@ -78,14 +77,18 @@
             The leaderboard for indie devs
           </h1>
           <p class="dev-ranks-hero__copy">
-            Ranked by product shipping, reach, engagement, consistency, and momentum, not just follower count.
+            Ranked by Product Hunt launches, reach, recent output, and momentum, not just follower count.
           </p>
 
           <div class="mx-auto mt-10 max-w-4xl">
             <div class="dev-ranks-search__grid">
               <input id="homeSearch" type="search" placeholder='Search "@levelsio", "Marc Lou", or "bootstrapped AI"'
                 class="search-input rounded-2xl px-5 py-4 text-base" />
+              <button id="homeAddProfileButton" type="button" class="search-action search-action--primary">
+                Add profile
+              </button>
             </div>
+            <div id="homeCandidatePanel" class="mt-3" hidden></div>
             <div id="homeSearchResults" class="mt-3"></div>
           </div>
 

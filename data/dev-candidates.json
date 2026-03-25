@@ -1,0 +1,1217 @@
+{
+  "seededAt": "2026-03-25T00:00:00.000Z",
+  "pool": "legend",
+  "notes": "Approved indie-dev candidate pools assembled from public Indie Hackers, Pete Codes, and founder profile pages.",
+  "candidates": [
+    {
+      "handle": "levelsio",
+      "displayName": "Pieter Levels",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Nomad List and Remote OK."
+    },
+    {
+      "handle": "ajlkn",
+      "displayName": "AJ",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Carrd."
+    },
+    {
+      "handle": "bentossell",
+      "displayName": "Ben Tossell",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Makerpad."
+    },
+    {
+      "handle": "patwalls",
+      "displayName": "Pat Walls",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Starter Story."
+    },
+    {
+      "handle": "d__raptis",
+      "displayName": "Dimitris Raptis",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder at MagicPattern."
+    },
+    {
+      "handle": "matteing",
+      "displayName": "Matt Wensing",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Maker of Makerlog."
+    },
+    {
+      "handle": "pierregillesl",
+      "displayName": "Pierre-Gilles Leymarie",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Gladys Assistant."
+    },
+    {
+      "handle": "dvassallo",
+      "displayName": "Daniel Vassallo",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Independent creator and bootstrapper."
+    },
+    {
+      "handle": "AndyGCook",
+      "displayName": "Andy Cook",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Co-founder of Tettra."
+    },
+    {
+      "handle": "mikerubin",
+      "displayName": "Mike Rubin",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Runs multiple SaaS products."
+    },
+    {
+      "handle": "Kev_Conti",
+      "displayName": "Kevin Conti",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of SoftwareIdeas.io."
+    },
+    {
+      "handle": "sarahhum",
+      "displayName": "Sarah Hum",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Canny."
+    },
+    {
+      "handle": "cogentgene",
+      "displayName": "Gene",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Swipe.page."
+    },
+    {
+      "handle": "josberco",
+      "displayName": "Josh Berkeley",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Maker of StartupBuilder."
+    },
+    {
+      "handle": "optemization",
+      "displayName": "Optemization",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Bootstrapped founder account."
+    },
+    {
+      "handle": "DruRly",
+      "displayName": "Dru Riley",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Trends.vc."
+    },
+    {
+      "handle": "JuliaEnthoven",
+      "displayName": "Julia Enthoven",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Co-founder of Kapwing."
+    },
+    {
+      "handle": "csallen",
+      "displayName": "Courtland Allen",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Indie Hackers."
+    },
+    {
+      "handle": "rrhoover",
+      "displayName": "Ryan Hoover",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers founders and makers list",
+      "sourceUrl": "https://www.indiehackers.com/post/100-people-to-follow-for-an-indie-hacker-updating-64800b6836",
+      "notes": "Founder of Product Hunt."
+    },
+    {
+      "handle": "nathanbarry",
+      "displayName": "Nathan Barry",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of ConvertKit."
+    },
+    {
+      "handle": "asmartbear",
+      "displayName": "Jason Cohen",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of SmartBear and WP Engine."
+    },
+    {
+      "handle": "MarieMartens",
+      "displayName": "Marie Martens",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Co-founder of Tally."
+    },
+    {
+      "handle": "helloitsolly",
+      "displayName": "Olly Meakings",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Co-founder of Senja."
+    },
+    {
+      "handle": "charlierward",
+      "displayName": "Charlie Ward",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Runs Ramen Space."
+    },
+    {
+      "handle": "alexwestco",
+      "displayName": "Alex West",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Builds CyberLeads."
+    },
+    {
+      "handle": "TaraReed_",
+      "displayName": "Tara Reed",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of Apps Without Code."
+    },
+    {
+      "handle": "arvidkahl",
+      "displayName": "Arvid Kahl",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Bootstrapped founder and author."
+    },
+    {
+      "handle": "robwalling",
+      "displayName": "Rob Walling",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "TinySeed co-founder and micro-SaaS investor."
+    },
+    {
+      "handle": "marckohlbrugge",
+      "displayName": "Marc Kohlbrugge",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of BetaList, Startup Jobs, and WIP."
+    },
+    {
+      "handle": "yongfook",
+      "displayName": "Jon Yongfook",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of Bannerbear and Browserbear."
+    },
+    {
+      "handle": "jakobgreenfeld",
+      "displayName": "Jakob Greenfeld",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of BusinessBrainstorms and Sales.co."
+    },
+    {
+      "handle": "philostar",
+      "displayName": "Phil",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of 4dayweek.io."
+    },
+    {
+      "handle": "JamesIvings",
+      "displayName": "James Ivings",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Bootstrapped founder and digital nomad."
+    },
+    {
+      "handle": "chddaniel",
+      "displayName": "Daniel Ch",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Builder growing in public."
+    },
+    {
+      "handle": "itsjustamar",
+      "displayName": "Amar Ghose",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of ZenMaid."
+    },
+    {
+      "handle": "rrmdp",
+      "displayName": "Rodrigo Rocco",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder building in public around job boards and AI tools."
+    },
+    {
+      "handle": "RandallKanna",
+      "displayName": "Randall Kanna",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Pete Codes bootstrapped founders list",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Developer educator and indie founder."
+    },
+    {
+      "handle": "petecodes",
+      "displayName": "Pete",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Pete Codes founder profile",
+      "sourceUrl": "https://www.petecodes.io/bootstrapped-founders-follow-twitter/",
+      "notes": "Founder of No CS Degree and High Signal."
+    },
+    {
+      "handle": "dr",
+      "displayName": "Dan Rowden",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Builder behind ilo.so and multiple side products."
+    },
+    {
+      "handle": "KennethCassel",
+      "displayName": "Kenneth Cassel",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Founder of vim.so and Slip."
+    },
+    {
+      "handle": "jdnoc",
+      "displayName": "Jordan O'Connor",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Founder of Closet Tools."
+    },
+    {
+      "handle": "noahwbragg",
+      "displayName": "Noah Bragg",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Founder of Potion and public builder."
+    },
+    {
+      "handle": "lunchbag",
+      "displayName": "Jen Tan",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Founder of Lunch Money."
+    },
+    {
+      "handle": "benbarbersmith",
+      "displayName": "Ben Barbersmith",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Builder of Observant and SQL teaching products."
+    },
+    {
+      "handle": "JanelSGM",
+      "displayName": "Janel",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers to Follow",
+      "sourceUrl": "https://indiehackers-to-follow.potion.so/",
+      "notes": "Creator of Newsletter OS and Podcast OS."
+    },
+    {
+      "handle": "tdinh_me",
+      "displayName": "Tony Dinh",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "high",
+      "sourceLabel": "Wisp indie hackers list",
+      "sourceUrl": "https://www.wisp.blog/blog/top-indie-hackers-to-follow-on-twitter-in-2024",
+      "notes": "Builder of TypingMind, Xnapper, and DevUtils."
+    },
+    {
+      "handle": "czue",
+      "displayName": "Cory Zue",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "high",
+      "sourceLabel": "Wisp indie hackers list",
+      "sourceUrl": "https://www.wisp.blog/blog/top-indie-hackers-to-follow-on-twitter-in-2024",
+      "notes": "Founder of SaaS Pegasus."
+    },
+    {
+      "handle": "TheRaymondYeh",
+      "displayName": "Raymond Yeh",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "high",
+      "sourceLabel": "Wisp indie hackers list",
+      "sourceUrl": "https://www.wisp.blog/blog/top-indie-hackers-to-follow-on-twitter-in-2024",
+      "notes": "Founder of Wisp CMS."
+    },
+    {
+      "handle": "qayyumrajan",
+      "displayName": "Qayyum Rajan",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "high",
+      "sourceLabel": "Wisp indie hackers list",
+      "sourceUrl": "https://www.wisp.blog/blog/top-indie-hackers-to-follow-on-twitter-in-2024",
+      "notes": "Bootstrapper behind Lancr, TopCheez, and related products."
+    },
+    {
+      "handle": "rosiesherry",
+      "displayName": "@rosiesherry",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "kylegawley",
+      "displayName": "@kylegawley",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "Mike_andreuzza",
+      "displayName": "@mike_andreuzza",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "joshahowarth",
+      "displayName": "@joshahowarth",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "HolfolioBen",
+      "displayName": "@holfolioben",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "colinbethea",
+      "displayName": "@colinbethea",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "dsabar",
+      "displayName": "@dsabar",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "danest",
+      "displayName": "@danest",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "ronpastore1",
+      "displayName": "@ronpastore1",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "levinunnink",
+      "displayName": "@levinunnink",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "bkanber",
+      "displayName": "@bkanber",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "gabe_ragland",
+      "displayName": "@gabe_ragland",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "excid3",
+      "displayName": "@excid3",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "stribny",
+      "displayName": "@stribny",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "mcavaliere",
+      "displayName": "@mcavaliere",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "denicmarko",
+      "displayName": "@denicmarko",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "vincentdnl",
+      "displayName": "@vincentdnl",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "mccrmx",
+      "displayName": "@mccrmx",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "tmalicet",
+      "displayName": "@tmalicet",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "RoshanChain",
+      "displayName": "@roshanchain",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "m1guelpf",
+      "displayName": "@m1guelpf",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "ertug_ca",
+      "displayName": "@ertug_ca",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "caitlincjohnson",
+      "displayName": "@caitlincjohnson",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "boaticus",
+      "displayName": "@boaticus",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "toddpgood",
+      "displayName": "@toddpgood",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "garretthenrym",
+      "displayName": "@garretthenrym",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "tela",
+      "displayName": "@tela",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "sagunsh",
+      "displayName": "@sagunsh",
+      "approved": true,
+      "pool": "contender",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers Twitter handles thread",
+      "sourceUrl": "https://www.indiehackers.com/post/whats-your-twitter-handle-a29e4af9c3",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "AlexMano12",
+      "displayName": "@alexmano12",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "BobBurch",
+      "displayName": "@bobburch",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "CallumWooders",
+      "displayName": "@callumwooders",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "Denis__Shatalin",
+      "displayName": "@denis__shatalin",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "EmmeMaker",
+      "displayName": "@emmemaker",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "JakobGillich",
+      "displayName": "@jakobgillich",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "JustinKuijpers",
+      "displayName": "@justinkuijpers",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "LucianoViterale",
+      "displayName": "@lucianoviterale",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "Matthew_Reid",
+      "displayName": "@matthew_reid",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "MohsenKamranii",
+      "displayName": "@mohsenkamranii",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "PProusaloglou",
+      "displayName": "@pprousaloglou",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "Ryanb58",
+      "displayName": "@ryanb58",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "abrar_gist",
+      "displayName": "@abrar_gist",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "angezanetti",
+      "displayName": "@angezanetti",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "arpitpandey735t",
+      "displayName": "@arpitpandey735t",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "aryamansharda",
+      "displayName": "@aryamansharda",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "billhinostroza",
+      "displayName": "@billhinostroza",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "calvintalbot",
+      "displayName": "@calvintalbot",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "cd_bara",
+      "displayName": "@cd_bara",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "davidonbits",
+      "displayName": "@davidonbits",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "dev_bre",
+      "displayName": "@dev_bre",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "diaeygo",
+      "displayName": "@diaeygo",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "dpertsin",
+      "displayName": "@dpertsin",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "ferhat_gulbahar",
+      "displayName": "@ferhat_gulbahar",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "firatcand",
+      "displayName": "@firatcand",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "gouthamjay8",
+      "displayName": "@gouthamjay8",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "hanzolocreates",
+      "displayName": "@hanzolocreates",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "ilyanovohatskyi",
+      "displayName": "@ilyanovohatskyi",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "jorcus",
+      "displayName": "@jorcus",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "kattrisen",
+      "displayName": "@kattrisen",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "mariobalca",
+      "displayName": "@mariobalca",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "matosdfm",
+      "displayName": "@matosdfm",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "me22kar",
+      "displayName": "@me22kar",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "noahflk",
+      "displayName": "@noahflk",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "onurgenes",
+      "displayName": "@onurgenes",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "peternaft",
+      "displayName": "@peternaft",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "ramiroruiz",
+      "displayName": "@ramiroruiz",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "rick_blyth",
+      "displayName": "@rick_blyth",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "selvarajashish",
+      "displayName": "@selvarajashish",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "semdzh",
+      "displayName": "@semdzh",
+      "approved": true,
+      "pool": "rookie",
+      "confidence": "medium",
+      "sourceLabel": "Indie Hackers growth thread",
+      "sourceUrl": "https://www.indiehackers.com/post/growing-on-twitter-lets-grow-together-5fe8aaace9",
+      "notes": "Public indie builder sourced from Indie Hackers."
+    },
+    {
+      "handle": "marclou",
+      "displayName": "Marc Lou",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Marc Lou founder profile",
+      "sourceUrl": "https://marclou.com/",
+      "notes": "Bootstrapped builder behind ShipFast and related products."
+    },
+    {
+      "handle": "tibo_maker",
+      "displayName": "Tibo",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Indie Hackers creator profile",
+      "sourceUrl": "https://www.indiehackers.com/post/creators/tibo-a-popular-solo-founder-squares-off-with-beehiiv-dSzqL6haECr2FutbXDdh",
+      "notes": "Solo founder behind Taplio and Feather."
+    },
+    {
+      "handle": "dannypostma",
+      "displayName": "Danny Postma",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Existing verified legend roster",
+      "sourceUrl": "https://x.com/dannypostma",
+      "notes": "Founder building AI products in public."
+    },
+    {
+      "handle": "dagorenouf",
+      "displayName": "Dagobert Renouf",
+      "approved": true,
+      "pool": "legend",
+      "confidence": "high",
+      "sourceLabel": "Existing verified legend roster",
+      "sourceUrl": "https://x.com/dagorenouf",
+      "notes": "Bootstrapped maker behind multiple product launches."
+    }
+  ]
+}

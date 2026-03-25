@@ -144,6 +144,10 @@
       return ["Stripe", "Lemon Squeezy", "RevenueCat"];
     }
 
+    if (metricKey === "users") {
+      return ["GitHub", "Firebase / GA4", "Product Hunt"];
+    }
+
     if (metricKey === "githubStars") {
       return ["GitHub"];
     }
@@ -176,6 +180,9 @@
     }
     if (current.indexOf("github") >= 0 || current.indexOf("star") >= 0) {
       return "GitHub";
+    }
+    if (current.indexOf("producthunt") >= 0 || current.indexOf("product hunt") >= 0) {
+      return "Product Hunt";
     }
 
     return options[0];

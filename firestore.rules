@@ -78,7 +78,7 @@ service cloud.firestore {
         request.resource.data.growthPercent >= -1000 &&
         request.resource.data.growthPercent <= 1000 &&
         request.resource.data.timeframe == "allTime" &&
-        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4"]) &&
+        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4", "Product Hunt"]) &&
         request.resource.data.verificationReference is string &&
         request.resource.data.verificationReference.size() <= 280 &&
         stringBetween(request.resource.data.websiteUrl, 1, 300) &&
@@ -158,13 +158,39 @@ service cloud.firestore {
         request.resource.data.growthPercent is number &&
         request.resource.data.growthPercent >= -1000 &&
         request.resource.data.growthPercent <= 1000 &&
-        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4"]) &&
+        oneOf(request.resource.data.verificationType, ["Stripe", "Lemon Squeezy", "Paddle", "GitHub", "Firebase / GA4", "Product Hunt"]) &&
         request.resource.data.verificationReference is string &&
         request.resource.data.verificationReference.size() <= 280 &&
         stringBetween(request.resource.data.websiteUrl, 1, 300) &&
         request.resource.data.logoUrl is string &&
         request.resource.data.logoUrl.size() <= 800000 &&
         request.resource.data.status == "received" &&
+        request.resource.data.submitterUid == request.auth.uid &&
+        request.resource.data.createdAt == request.time;
+    }
+
+    function validCandidateSubmissionCreate() {
+      return hasExactKeys([
+          "handle",
+          "note",
+          "websiteUrl",
+          "productHuntUsername",
+          "status",
+          "source",
+          "submitterUid",
+          "createdAt"
+        ]) &&
+        request.resource.data.handle is string &&
+        request.resource.data.handle.size() >= 1 &&
+        request.resource.data.handle.size() <= 15 &&
+        request.resource.data.note is string &&
+        request.resource.data.note.size() <= 400 &&
+        request.resource.data.websiteUrl is string &&
+        request.resource.data.websiteUrl.size() <= 300 &&
+        request.resource.data.productHuntUsername is string &&
+        request.resource.data.productHuntUsername.size() <= 80 &&
+        request.resource.data.status == "received" &&
+        request.resource.data.source == "homepage_add_profile" &&
         request.resource.data.submitterUid == request.auth.uid &&
         request.resource.data.createdAt == request.time;
     }
@@ -181,6 +207,14 @@ service cloud.firestore {
 
     match /submissions/{submissionId} {
       allow create: if isSignedIn() && validSubmissionCreate();
+    }
+
+    match /candidateSubmissions/{submissionId} {
+      allow create: if isSignedIn() && validCandidateSubmissionCreate();
+    }
+
+    match /devCandidates/{handle} {
+      allow read: if true;
     }
 
     match /devs/{handle} {

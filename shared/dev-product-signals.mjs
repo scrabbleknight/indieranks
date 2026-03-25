@@ -9,7 +9,7 @@ function normalizeHandle(value) {
 const seedProductSignals = {
   levelsio: { productsShipped: 18, activeProducts: 7, launchesLast12m: 4, productImpactScore: 98 },
   marclou: { productsShipped: 14, activeProducts: 6, launchesLast12m: 5, productImpactScore: 94 },
-  dannypostmaa: { productsShipped: 12, activeProducts: 5, launchesLast12m: 4, productImpactScore: 90 },
+  dannypostma: { productsShipped: 12, activeProducts: 5, launchesLast12m: 4, productImpactScore: 90 },
   arvidkahl: { productsShipped: 8, activeProducts: 3, launchesLast12m: 2, productImpactScore: 78 },
   yongfook: { productsShipped: 7, activeProducts: 2, launchesLast12m: 2, productImpactScore: 82 },
   dagorenouf: { productsShipped: 10, activeProducts: 4, launchesLast12m: 3, productImpactScore: 80 },

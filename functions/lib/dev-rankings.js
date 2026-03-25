@@ -9,6 +9,7 @@ import {
   mergeFirestoreCollections,
   toFirestorePayloads,
 } from "../../shared/ranking-engine.mjs";
+import { cleanupLegacyHandleDocs } from "./handle-cleanup.js";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultSeedPath = path.resolve(currentDirectory, "../../data/dev-seed.json");
@@ -88,6 +89,7 @@ async function commitOperations(db, payloads) {
 }
 
 export async function importSeedData(db, seedPath = defaultSeedPath) {
+  await cleanupLegacyHandleDocs(db);
   const seed = await readSeedFile(seedPath);
   const rankings = buildRankingsFromRecords(seed.records, rankingConfig, {
     snapshotDate: getSnapshotDate(seed.seededAt),
@@ -98,6 +100,7 @@ export async function importSeedData(db, seedPath = defaultSeedPath) {
 }
 
 export async function refreshRankingsFromFirestore(db, snapshotDate = getSnapshotDate()) {
+  await cleanupLegacyHandleDocs(db);
   const records = await loadRecordsFromFirestore(db);
   const rankings = buildRankingsFromRecords(records, rankingConfig, {
     snapshotDate,

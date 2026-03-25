@@ -84,23 +84,7 @@ function buildMockVariant(template, category, sequence, snapshotDate, usedHandle
   const engagementScale = [0.92, 0.97, 1, 1.05, 1.1][sequence % 5];
   const handle = buildMockHandle(template.handle, suffix, sequence, usedHandles);
   const metrics = template.metrics || {};
-  const productSignals = template.productSignals || {};
   const baseBio = String(template.bio || "").trim().replace(/\s+/g, " ");
-  const shipped = clampNumber(
-    Math.round((productSignals.productsShipped || 1) * scale) + Math.max(swing, 0),
-    1,
-    category === "legend" ? 24 : category === "contender" ? 18 : 10
-  );
-  const liveNow = clampNumber(
-    Math.round((productSignals.activeProducts || 1) * scale) + (sequence % 3 === 0 ? 1 : 0),
-    1,
-    shipped
-  );
-  const launchesLast12m = clampNumber(
-    Math.round((productSignals.launchesLast12m || 1) * scale) + (sequence % 2),
-    1,
-    shipped
-  );
 
   return {
     handle,
@@ -134,24 +118,12 @@ function buildMockVariant(template, category, sequence, snapshotDate, usedHandle
       avgQuotesPerPost: clampNumber(Math.round((metrics.avgQuotesPerPost || 1) * scale), 1, 90),
       engagementRate: clampNumber((metrics.engagementRate || 0.01) * engagementScale, 0.006, 0.06),
       momentum7d: clampNumber((metrics.momentum7d || 0) + [-9, -4, 0, 5, 10][sequence % 5], -25, 35),
-      productsShipped: shipped,
-      activeProducts: liveNow,
-      launchesLast12m,
-      productImpactScore: clampNumber(
-        Math.round((productSignals.productImpactScore || 48) + [-8, -4, -1, 3, 6, 9][sequence % 6]),
-        category === "legend" ? 62 : category === "contender" ? 48 : 36,
-        99
-      ),
     },
     productSignals: {
-      productsShipped: shipped,
-      activeProducts: liveNow,
-      launchesLast12m,
-      productImpactScore: clampNumber(
-        Math.round((productSignals.productImpactScore || 48) + [-8, -4, -1, 3, 6, 9][sequence % 6]),
-        category === "legend" ? 62 : category === "contender" ? 48 : 36,
-        99
-      ),
+      productsShipped: 0,
+      activeProducts: 0,
+      launchesLast12m: 0,
+      productImpactScore: 0,
     },
   };
 }
@@ -197,6 +169,36 @@ function mapQuerySnapshot(snapshot) {
   }));
 }
 
+function sleep(timeout) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, timeout);
+  });
+}
+
+async function getFirebaseServicesWithRetry(timeoutMs = 2500) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const services =
+      window.IndieRanks &&
+      typeof window.IndieRanks.getFirebaseServices === "function" &&
+      window.IndieRanks.getFirebaseServices();
+
+    if (services && services.db) {
+      return services;
+    }
+
+    await sleep(50);
+  }
+
+  return (
+    (window.IndieRanks &&
+      typeof window.IndieRanks.getFirebaseServices === "function" &&
+      window.IndieRanks.getFirebaseServices()) ||
+    null
+  );
+}
+
 async function loadLatestSnapshotRows(db) {
   if (!window.firebase || !window.firebase.firestore || !window.firebase.firestore.FieldPath) {
     return {
@@ -205,41 +207,56 @@ async function loadLatestSnapshotRows(db) {
     };
   }
 
-  const docId = window.firebase.firestore.FieldPath.documentId();
-  const snapshotCollection = await db.collection("rankSnapshots").orderBy(docId, "desc").limit(1).get();
+  try {
+    const docId = window.firebase.firestore.FieldPath.documentId();
+    const snapshotCollection = await db.collection("rankSnapshots").orderBy(docId, "desc").limit(1).get();
 
-  if (snapshotCollection.empty) {
+    if (snapshotCollection.empty) {
+      return {
+        snapshotDate: null,
+        rows: [],
+      };
+    }
+
+    const snapshotDoc = snapshotCollection.docs[0];
+    const rowsSnapshot = await snapshotDoc.ref.collection("rows").get();
+
+    return {
+      snapshotDate: snapshotDoc.id,
+      rows: mapQuerySnapshot(rowsSnapshot),
+    };
+  } catch (error) {
+    console.warn("Continuing without snapshot rows", error);
     return {
       snapshotDate: null,
       rows: [],
     };
   }
+}
 
-  const snapshotDoc = snapshotCollection.docs[0];
-  const rowsSnapshot = await snapshotDoc.ref.collection("rows").get();
-
-  return {
-    snapshotDate: snapshotDoc.id,
-    rows: mapQuerySnapshot(rowsSnapshot),
-  };
+async function loadProjects(db) {
+  try {
+    const projectSnapshot = await db.collection("projects").get();
+    return mapQuerySnapshot(projectSnapshot);
+  } catch (error) {
+    console.warn("Continuing without project signals", error);
+    return [];
+  }
 }
 
 async function loadFromFirestore() {
-  const services =
-    window.IndieRanks &&
-    typeof window.IndieRanks.getFirebaseServices === "function" &&
-    window.IndieRanks.getFirebaseServices();
+  const services = await getFirebaseServicesWithRetry();
 
   if (!services || !services.db) {
     return null;
   }
 
   try {
-    const [devSnapshot, metricSnapshot, latestSnapshot, projectSnapshot] = await Promise.all([
+    const [devSnapshot, metricSnapshot, latestSnapshot, projectDocs] = await Promise.all([
       services.db.collection("devs").get(),
       services.db.collection("devMetrics").get(),
       loadLatestSnapshotRows(services.db),
-      services.db.collection("projects").get(),
+      loadProjects(services.db),
     ]);
 
     if (devSnapshot.empty) {
@@ -250,7 +267,7 @@ async function loadFromFirestore() {
       mapQuerySnapshot(devSnapshot),
       mapQuerySnapshot(metricSnapshot),
       latestSnapshot.rows,
-      mapQuerySnapshot(projectSnapshot)
+      projectDocs
     );
 
     if (!mergedRecords.length) {
@@ -288,7 +305,9 @@ async function loadDataset() {
   if (!cachedDatasetPromise) {
     cachedDatasetPromise = (async () => {
       const firestorePayload = await loadFromFirestore();
-      const payload = firestorePayload || (await loadFromSeed());
+      const seedPayload = await loadFromSeed();
+      const payload = firestorePayload || seedPayload;
+
       const baseRankings = buildRankingsFromRecords(payload.records, rankingConfig, {
         snapshotDate: payload.snapshotDate,
       });

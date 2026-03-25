@@ -1,5 +1,4 @@
 import rankingConfig from "./indie-ranks-config.mjs";
-import { getSeedProductSignals } from "./dev-product-signals.mjs";
 
 const CATEGORY_META = {
   legend: {
@@ -21,11 +20,9 @@ const CATEGORY_META = {
 
 const BREAKDOWN_LABELS = {
   reachScore: "Reach",
-  engagementScore: "Engagement",
-  consistencyScore: "Consistency",
-  qualityScore: "Quality",
-  momentumScore: "Momentum",
-  shippingScore: "Shipping",
+  consistencyScore: "Activity",
+  momentumScore: "Output Momentum",
+  shippingScore: "PH Launches",
 };
 
 function safeNumber(value, fallback = 0) {
@@ -49,6 +46,14 @@ function formatHandleFallback(handle) {
     .toLowerCase();
 }
 
+function getExplicitCategory(record = {}) {
+  const pool = String(record.leaderboardPool || record.pool || "")
+    .trim()
+    .toLowerCase();
+
+  return Object.prototype.hasOwnProperty.call(CATEGORY_META, pool) ? pool : "";
+}
+
 function buildAvatarUrl(handle) {
   return `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(formatHandleFallback(handle) || "indieranks")}`;
 }
@@ -66,59 +71,36 @@ function getMetrics(raw = {}) {
     engagementRate: safeNumber(raw.engagementRate ?? metrics.engagementRate),
     accountAgeDays: safeNumber(raw.accountAgeDays ?? metrics.accountAgeDays),
     momentum7d: safeNumber(raw.momentum7d ?? metrics.momentum7d),
+    tweetCountTotal: safeNumber(raw.tweetCountTotal ?? metrics.tweetCountTotal),
+    tweetCountDelta: safeNumber(raw.tweetCountDelta ?? metrics.tweetCountDelta),
+    activityWindowDays: safeNumber(raw.activityWindowDays ?? metrics.activityWindowDays),
+    activitySource: String(raw.activitySource ?? metrics.activitySource ?? "").trim(),
   };
 }
 
 function getProductSignals(raw = {}) {
-  const metrics = raw.metrics || {};
   const rootSignals = raw.productSignals || {};
-  const metricSignals = metrics.productSignals || {};
-  const seededSignals = getSeedProductSignals(raw.handle || raw.id);
-  const productsShipped = Math.max(
-    0,
-    safeNumber(
-      raw.productsShipped ??
-        rootSignals.productsShipped ??
-        metrics.productsShipped ??
-        metricSignals.productsShipped ??
-        (seededSignals && seededSignals.productsShipped)
-    )
-  );
+  const importedProjectRecords = Math.max(0, safeNumber(rootSignals.importedProjectRecords ?? rootSignals.productsShipped));
+  const productHuntLaunchesTotal = Math.max(0, safeNumber(rootSignals.productHuntLaunchesTotal));
+  const productsShipped = Math.max(importedProjectRecords, productHuntLaunchesTotal);
   const activeProducts = Math.max(
     0,
-    safeNumber(
-      raw.activeProducts ??
-        rootSignals.activeProducts ??
-        metrics.activeProducts ??
-        metricSignals.activeProducts ??
-        (seededSignals && seededSignals.activeProducts)
-    )
+    safeNumber(rootSignals.activeProducts)
   );
   const launchesLast12m = Math.max(
     0,
-    safeNumber(
-      raw.launchesLast12m ??
-        rootSignals.launchesLast12m ??
-        metrics.launchesLast12m ??
-        metricSignals.launchesLast12m ??
-        (seededSignals && seededSignals.launchesLast12m)
-    )
+    safeNumber(rootSignals.launchesLast12m)
   );
-  const productImpactScore = clamp(
-    raw.productImpactScore ??
-      rootSignals.productImpactScore ??
-      metrics.productImpactScore ??
-      metricSignals.productImpactScore ??
-      (seededSignals && seededSignals.productImpactScore),
-    0,
-    100
-  );
+  const productImpactScore = clamp(rootSignals.productImpactScore, 0, 100);
 
   return {
     productsShipped,
     activeProducts,
+    importedProjectRecords,
     launchesLast12m,
     productImpactScore: round(productImpactScore, 2),
+    productHuntLaunchesTotal,
+    productHuntProfileUsername: String(rootSignals.productHuntProfileUsername || "").trim(),
   };
 }
 
@@ -185,6 +167,10 @@ function scoreProjectImpact(project = {}) {
   const users = getProjectMetric(project, "users");
   const downloads = getProjectMetric(project, "downloads");
   const githubStars = getProjectMetric(project, "githubStars");
+  const productHuntVotes = safeNumber(project.productHuntVotesCount);
+  const productHuntComments = safeNumber(project.productHuntCommentsCount);
+  const productHuntReviews = safeNumber(project.productHuntReviewsCount);
+  const productHuntRating = clamp(project.productHuntReviewsRating, 0, 5);
   const growthPercent = clamp(project.growthPercent, -100, 300);
   const tinyWins = Array.isArray(project.tinyWins) ? project.tinyWins.length : 0;
 
@@ -193,8 +179,13 @@ function scoreProjectImpact(project = {}) {
     Math.log10(users + 1) * 8 +
     Math.log10(downloads + 1) * 6 +
     Math.log10(githubStars + 1) * 6 +
+    Math.log10(productHuntVotes + 1) * 5 +
+    Math.log10(productHuntComments + 1) * 4 +
+    Math.log10(productHuntReviews + 1) * 3 +
+    productHuntRating * 2 +
     Math.max(0, growthPercent) * 0.12 +
     (project.verified ? 6 : 0) +
+    (project.featured ? 4 : 0) +
     (project.recent ? 4 : 0) +
     Math.min(tinyWins, 5) * 2
   );
@@ -210,8 +201,11 @@ export function buildProductSignalsFromProjects(projectDocs = []) {
     const entry = byHandle[handle] || {
       productsShipped: 0,
       activeProducts: 0,
+      importedProjectRecords: 0,
       launchesLast12m: 0,
       productImpactScore: 0,
+      productHuntLaunchesTotal: 0,
+      productHuntProfileUsername: "",
     };
     const hasActiveSignal =
       Boolean(project.recent) ||
@@ -220,8 +214,10 @@ export function buildProductSignalsFromProjects(projectDocs = []) {
       hasPositiveMetric(project.metrics || project.stats || {}) ||
       safeNumber(project.metricValue) > 0;
     const recentLaunch = Boolean(project.recent) || isWithinLastDays(project.createdAt, 365) || isWithinLastDays(project.updatedAt, 365);
+    const profileLaunchCount = Math.max(0, safeNumber(project.productHuntProfileLaunchesTotal));
 
     entry.productsShipped += 1;
+    entry.importedProjectRecords += 1;
     if (hasActiveSignal) {
       entry.activeProducts += 1;
     }
@@ -229,6 +225,12 @@ export function buildProductSignalsFromProjects(projectDocs = []) {
       entry.launchesLast12m += 1;
     }
     entry.productImpactScore += scoreProjectImpact(project);
+    if (profileLaunchCount > entry.productHuntLaunchesTotal) {
+      entry.productHuntLaunchesTotal = profileLaunchCount;
+    }
+    if (!entry.productHuntProfileUsername && project.productHuntProfileUsername) {
+      entry.productHuntProfileUsername = String(project.productHuntProfileUsername).trim();
+    }
 
     byHandle[handle] = entry;
     return byHandle;
@@ -252,32 +254,16 @@ export function calculateBaseScores(record) {
   const metrics = getMetrics(record);
   const productSignals = getProductSignals(record);
   const followers = Math.max(1, safeNumber(record.followers));
-
-  const engagementScore =
-    metrics.avgLikesPerPost * 1 +
-    metrics.avgRepliesPerPost * 3 +
-    metrics.avgRepostsPerPost * 2 +
-    metrics.avgQuotesPerPost * 2.5;
-
-  const consistencyScore =
-    Math.min(metrics.postsLast7d, 14) * 2 +
-    Math.min(metrics.repliesLast7d, 30) * 1.5;
+  const consistencyScore = Math.min(metrics.postsLast7d, 140) * 1.5;
 
   const reachScore = Math.log10(followers) * 20;
-  const momentumScore = clamp(metrics.momentum7d, -100, 100) * 0.5;
-  const qualityScore = metrics.engagementRate * 100;
-  const shippingScore =
-    Math.min(productSignals.productsShipped, 16) * 9 +
-    Math.min(productSignals.activeProducts, 8) * 11 +
-    Math.min(productSignals.launchesLast12m, 12) * 7 +
-    clamp(productSignals.productImpactScore, 0, 100) * 2;
+  const momentumScore = clamp(metrics.momentum7d, -100, 100) * 0.6;
+  const shippingScore = Math.min(productSignals.productsShipped, 50) * 10;
 
   return {
-    engagementScore: round(engagementScore, 2),
     consistencyScore: round(consistencyScore, 2),
     reachScore: round(reachScore, 2),
     momentumScore: round(momentumScore, 2),
-    qualityScore: round(qualityScore, 2),
     shippingScore: round(shippingScore, 2),
   };
 }
@@ -289,6 +275,10 @@ export function getLegacyBonus(followers, config = rankingConfig) {
 }
 
 export function isLegendEligible(record, config = rankingConfig) {
+  if (getExplicitCategory(record) === "legend") {
+    return true;
+  }
+
   const handle = normalizeHandle(record.handle);
   return (
     safeNumber(record.followers) >= safeNumber(config.thresholds.legendMinFollowers) ||
@@ -311,6 +301,11 @@ export function isContenderEligible(record, config = rankingConfig) {
 }
 
 export function getOverallCategory(record, config = rankingConfig) {
+  const explicitCategory = getExplicitCategory(record);
+  if (explicitCategory) {
+    return explicitCategory;
+  }
+
   if (isLegendEligible(record, config)) {
     return "legend";
   }
@@ -333,7 +328,7 @@ function scoreFromWeights(baseScores, weights = {}) {
 
 function buildBreakdown(category, baseScores, followers, config) {
   const weights = config.scoreWeights[category] || {};
-  const items = Object.entries(weights).map(([key, weight]) => {
+  return Object.entries(weights).map(([key, weight]) => {
     const raw = safeNumber(baseScores[key]);
     return {
       key,
@@ -343,19 +338,6 @@ function buildBreakdown(category, baseScores, followers, config) {
       contribution: round(raw * safeNumber(weight), 2),
     };
   });
-
-  if (category === "legend") {
-    const legacyBonus = getLegacyBonus(followers, config);
-    items.push({
-      key: "legacyBonus",
-      label: "Legacy Bonus",
-      raw: legacyBonus,
-      weight: 1,
-      contribution: legacyBonus,
-    });
-  }
-
-  return items;
 }
 
 function normalizeMovementValue(value, fallbackLabel) {
@@ -395,7 +377,7 @@ function getMovement(currentRank, previousRank, fallbackMovement, config) {
 export function calculateScores(record, config = rankingConfig) {
   const baseScores = calculateBaseScores(record);
   const followers = safeNumber(record.followers);
-  const legendScore = scoreFromWeights(baseScores, config.scoreWeights.legend) + getLegacyBonus(followers, config);
+  const legendScore = scoreFromWeights(baseScores, config.scoreWeights.legend);
   const contenderScore = scoreFromWeights(baseScores, config.scoreWeights.contender);
   const rookieScore = scoreFromWeights(baseScores, config.scoreWeights.rookie);
   const overallCategory = getOverallCategory(record, config);
@@ -442,6 +424,7 @@ function normalizeRecord(raw = {}) {
     isLegendOverride: Boolean(raw.isLegendOverride),
     xUserId: raw.xUserId || handle,
     website: raw.website || "",
+    leaderboardPool: getExplicitCategory(raw),
     createdAt: raw.createdAt || new Date().toISOString(),
     updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString(),
     previousRanks: raw.previousRanks || {},
@@ -462,9 +445,9 @@ function tieBreak(left, right) {
     return shippingDelta;
   }
 
-  const engagementDelta = safeNumber(right.metrics.engagementRate) - safeNumber(left.metrics.engagementRate);
-  if (engagementDelta !== 0) {
-    return engagementDelta;
+  const activityDelta = safeNumber(right.metrics.postsLast7d) - safeNumber(left.metrics.postsLast7d);
+  if (activityDelta !== 0) {
+    return activityDelta;
   }
 
   return left.displayName.localeCompare(right.displayName);
@@ -600,6 +583,15 @@ export function searchRankedRecords(records = [], query = "", config = rankingCo
 }
 
 export function mergeFirestoreCollections(devDocs = [], metricDocs = [], snapshotRows = [], projectDocs = []) {
+  function stripProductSignalFields(record = {}) {
+    const nextRecord = { ...record };
+    delete nextRecord.productsShipped;
+    delete nextRecord.activeProducts;
+    delete nextRecord.launchesLast12m;
+    delete nextRecord.productImpactScore;
+    return nextRecord;
+  }
+
   const metricsByHandle = new Map(
     (metricDocs || []).map((doc) => [normalizeHandle(doc.handle || doc.id), doc])
   );
@@ -610,7 +602,7 @@ export function mergeFirestoreCollections(devDocs = [], metricDocs = [], snapsho
 
   return (devDocs || []).map((doc) => {
     const handle = normalizeHandle(doc.handle || doc.id);
-    const metrics = metricsByHandle.get(handle) || {};
+    const metrics = stripProductSignalFields(metricsByHandle.get(handle) || {});
     const snapshot = snapshotsByHandle.get(handle) || {};
     const previousCategory = snapshot.category || metrics.overallCategory || doc.category || "";
     const previousRanks =
@@ -620,8 +612,15 @@ export function mergeFirestoreCollections(devDocs = [], metricDocs = [], snapsho
     const derivedProductSignals = projectSignalsByHandle[handle] || {};
     const mergedMetrics = {
       ...metrics,
-      ...derivedProductSignals,
     };
+    const mergedProductSignals = getProductSignals({
+      handle,
+      productSignals: {
+        ...derivedProductSignals,
+        productHuntLaunchesTotal: safeNumber(metrics.productHuntLaunchesTotal, derivedProductSignals.productHuntLaunchesTotal),
+        productHuntProfileUsername: metrics.productHuntProfileUsername || derivedProductSignals.productHuntProfileUsername || "",
+      },
+    });
 
     return {
       ...doc,
@@ -630,12 +629,7 @@ export function mergeFirestoreCollections(devDocs = [], metricDocs = [], snapsho
       previousRanks,
       movement: snapshot.movement || metrics.movement || "",
       metrics: mergedMetrics,
-      productSignals: getProductSignals({
-        ...doc,
-        ...mergedMetrics,
-        handle,
-        metrics: mergedMetrics,
-      }),
+      productSignals: mergedProductSignals,
     };
   });
 }
@@ -667,6 +661,7 @@ export function toFirestorePayloads(rankings, snapshotDate = getSnapshotDate()) 
         isLegendOverride: record.isLegendOverride,
         xUserId: record.xUserId,
         website: record.website,
+        leaderboardPool: record.leaderboardPool || "",
         createdAt: record.createdAt,
         updatedAt: new Date().toISOString(),
       },
@@ -682,10 +677,17 @@ export function toFirestorePayloads(rankings, snapshotDate = getSnapshotDate()) 
         avgQuotesPerPost: record.metrics.avgQuotesPerPost,
         engagementRate: record.metrics.engagementRate,
         momentum7d: record.metrics.momentum7d,
+        tweetCountTotal: record.metrics.tweetCountTotal,
+        tweetCountDelta: record.metrics.tweetCountDelta,
+        activityWindowDays: record.metrics.activityWindowDays,
+        activitySource: record.metrics.activitySource,
         productsShipped: record.productSignals.productsShipped,
         activeProducts: record.productSignals.activeProducts,
+        importedProjectRecords: record.productSignals.importedProjectRecords,
         launchesLast12m: record.productSignals.launchesLast12m,
         productImpactScore: record.productSignals.productImpactScore,
+        productHuntLaunchesTotal: record.productSignals.productHuntLaunchesTotal,
+        productHuntProfileUsername: record.productSignals.productHuntProfileUsername,
         legendScore: record.legendScore,
         contenderScore: record.contenderScore,
         rookieScore: record.rookieScore,

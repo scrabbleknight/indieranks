@@ -1,34 +1,36 @@
+import rankingConfig from "../../../shared/indie-ranks-config.mjs";
+
 const CATEGORY_META = {
   legend: {
     label: "Legend",
     sectionLabel: "Legends",
     toneClass: "is-legend",
     eyebrow: "Established names",
-    copy: "Well-known indie developers with proven product output, reach, and a long shipping history.",
+    copy: "Well-known indie developers with strong public launch history, reach, and a long track record of building in public.",
   },
   contender: {
     label: "Contender",
     sectionLabel: "Contenders",
     toneClass: "is-contender",
     eyebrow: "Rising fast",
-    copy: "Indie developers pairing recent launches with strong engagement, consistency, and visibility.",
+    copy: "Indie developers pairing recent launches with strong output pace, consistency, and visibility.",
   },
   rookie: {
     label: "Rookie",
     sectionLabel: "Rookies",
     toneClass: "is-rookie",
     eyebrow: "Early but high signal",
-    copy: "Low-follower accounts already shipping real products and looking stronger than their audience size.",
+    copy: "Low-follower accounts already launching real products and looking stronger than their audience size.",
   },
 };
 
 const SCORE_EXPLAINERS = {
   legend:
-    "Score blends shipping, reach, reaction volume, consistency, per-post engagement quality, and 7-day momentum. Legends lean most on shipping and reach, and established audiences add a small legacy bonus.",
+    "Score blends Product Hunt launch count, reach, recent output pace, and output momentum. Legends lean most on public launch history and reach.",
   contender:
-    "Score blends shipping, reach, reaction volume, consistency, per-post engagement quality, and 7-day momentum. Contenders lean most on shipping, while consistency and engagement quality matter more than raw reach.",
+    "Score blends Product Hunt launch count, reach, recent output pace, and output momentum. Contenders lean most on public launch history, while output pace matters more than raw reach.",
   rookie:
-    "Score blends shipping, reaction volume, consistency, per-post engagement quality, and 7-day momentum. Reach is intentionally left out so smaller accounts can still break through on product output and signal quality.",
+    "Score blends Product Hunt launch count, recent output pace, and output momentum. Reach is intentionally left out so smaller accounts can still break through on launch history and visible execution.",
 };
 
 export function escapeHtml(value) {
@@ -127,25 +129,76 @@ function renderRankBadge(rank) {
   return `<span class="indie-rank-chip">${rank}</span>`;
 }
 
+function formatWeightPercent(value) {
+  return `${Math.round((Number(value) || 0) * 100)}%`;
+}
+
+function getScoreTooltipCopy(category) {
+  const weights = rankingConfig.scoreWeights[category] || {};
+  const parts = [
+    `PH Launches ${formatWeightPercent(weights.shippingScore)}`,
+    typeof weights.reachScore === "number" ? `Reach ${formatWeightPercent(weights.reachScore)}` : "",
+    typeof weights.consistencyScore === "number" ? `Avg weekly post count ${formatWeightPercent(weights.consistencyScore)}` : "",
+    typeof weights.momentumScore === "number" ? `Momentum ${formatWeightPercent(weights.momentumScore)}` : "",
+  ].filter(Boolean);
+
+  return `Weighted blend of ${parts.join(", ")}. Avg weekly post count is estimated from X profile snapshots. Higher is better.`;
+}
+
+function renderScoreHeader(category) {
+  const tooltip = getScoreTooltipCopy(category);
+  const tooltipId = `indie-score-tooltip-${escapeHtml(category)}`;
+
+  return `
+    <span class="indie-head-help">
+      <span>Score</span>
+      <button
+        type="button"
+        class="indie-head-help__button"
+        aria-label="Explain score"
+        aria-describedby="${tooltipId}"
+      >
+        <span class="indie-head-help__glyph" aria-hidden="true">?</span>
+      </button>
+      <span class="indie-head-help__tooltip" id="${tooltipId}" role="tooltip">${escapeHtml(tooltip)}</span>
+    </span>
+  `;
+}
+
 function formatProductSummary(productSignals) {
   const signals = productSignals || {};
+  const launchCount = Number(signals.productHuntLaunchesTotal) || Number(signals.productsShipped) || 0;
+  const importedRecords = Number(signals.importedProjectRecords) || 0;
+  const profileUsername = String(signals.productHuntProfileUsername || "").trim();
+  const hasVerifiedProfile = Boolean(profileUsername);
+
+  if (launchCount <= 0 && !hasVerifiedProfile) {
+    return {
+      primary: "—",
+      secondary: "No verified PH launch count",
+    };
+  }
+
   return {
-    primary: `${formatNumber(signals.productsShipped)} shipped`,
-    secondary: `${formatNumber(signals.activeProducts)} live now`,
+    primary: `${formatNumber(launchCount)} PH launches`,
+    secondary:
+      profileUsername
+        ? `on @${profileUsername} Product Hunt profile`
+        : importedRecords > 0
+          ? `${formatNumber(importedRecords)} imported launch records`
+          : "on Product Hunt profile",
   };
 }
 
-function formatEngagementSummary(metrics) {
-  return {
-    primary: formatPercentRatio(metrics.engagementRate),
-    secondary: "avg per-post engagement",
-  };
+function formatProjectSignalValue(value) {
+  const amount = Number(value) || 0;
+  return amount > 0 ? formatNumber(amount) : "—";
 }
 
-function formatCadenceSummary(metrics) {
+function formatActivitySummary(metrics) {
   return {
-    primary: `${formatNumber(metrics.postsLast7d)} posts this week`,
-    secondary: `${formatNumber(metrics.repliesLast7d)} replies this week`,
+    primary: formatNumber(metrics.postsLast7d),
+    secondary: "avg weekly post count",
   };
 }
 
@@ -198,8 +251,7 @@ function renderSectionPagination(category, pagination, visibleCount) {
 
 function renderLeaderboardRow(dev) {
   const productSummary = formatProductSummary(dev.productSignals);
-  const engagementSummary = formatEngagementSummary(dev.metrics);
-  const cadenceSummary = formatCadenceSummary(dev.metrics);
+  const activitySummary = formatActivitySummary(dev.metrics);
 
   return `
     <a href="/dev.html?handle=${encodeURIComponent(dev.handle)}" class="indie-dev-row ${dev.rank <= 3 ? "indie-dev-row--podium" : ""}">
@@ -224,16 +276,12 @@ function renderLeaderboardRow(dev) {
         <span class="indie-dev-row__value">${escapeHtml(formatScore(dev.totalScore))}</span>
       </div>
       <div class="indie-dev-row__metric">
-        <span class="indie-mobile-label">Shipping</span>
+        <span class="indie-mobile-label">PH Launches</span>
         ${renderMetricSummary(productSummary.primary, productSummary.secondary)}
       </div>
       <div class="indie-dev-row__metric">
-        <span class="indie-mobile-label">Engagement</span>
-        ${renderMetricSummary(engagementSummary.primary, engagementSummary.secondary)}
-      </div>
-      <div class="indie-dev-row__metric">
         <span class="indie-mobile-label">Activity</span>
-        ${renderMetricSummary(cadenceSummary.primary, cadenceSummary.secondary)}
+        ${renderMetricSummary(activitySummary.primary, activitySummary.secondary)}
       </div>
       <div class="indie-dev-row__metric">
         <span class="indie-mobile-label">Move</span>
@@ -266,9 +314,8 @@ export function renderLeaderboardSection(category, items, pagination = {}) {
         <span>Rank</span>
         <span>Who</span>
         <span>Bucket</span>
-        <span>Score</span>
-        <span>Shipping</span>
-        <span>Engagement</span>
+        ${renderScoreHeader(category)}
+        <span>PH Launches</span>
         <span>Activity</span>
         <span>Move</span>
       </div>
@@ -399,8 +446,10 @@ export function renderProfile(viewModel, topPosts) {
   const { dev, nearbyPeers } = viewModel;
   const scoreBreakdown = dev.scoreBreakdowns[dev.overallCategory] || [];
   const scoreExplainer = getScoreExplainer(dev.overallCategory);
-  const engagementSummary = formatEngagementSummary(dev.metrics);
-  const cadenceSummary = formatCadenceSummary(dev.metrics);
+  const activitySummary = formatActivitySummary(dev.metrics);
+  const verifiedProfileLaunchCount = String(dev.productSignals.productHuntProfileUsername || "").trim()
+    ? formatNumber(dev.productSignals.productHuntLaunchesTotal)
+    : formatProjectSignalValue(dev.productSignals.productHuntLaunchesTotal || dev.productSignals.productsShipped);
 
   return `
     <section class="panel leaderboard-panel profile-hero rounded-[2rem] p-6 sm:p-8">
@@ -463,41 +512,39 @@ export function renderProfile(viewModel, topPosts) {
       </article>
 
       <article class="panel rounded-[1.75rem] p-6">
-        <p class="indie-note-label">Build signal</p>
-        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-[var(--leaderboard-title)]">What they actually ship</h2>
-        <p class="mt-3 text-sm leading-6 text-[var(--leaderboard-copy)]">The board now looks at shipped product output as well as audience performance, so builders are rewarded for what they make, not just how loudly they post.</p>
+        <p class="indie-note-label">Product Hunt signal</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-[var(--leaderboard-title)]">Public Product Hunt launch history</h2>
+        <p class="mt-3 text-sm leading-6 text-[var(--leaderboard-copy)]">This section uses public Product Hunt profile launch counts where we have verified them. Imported launch records give us extra metadata, but the headline number is the Product Hunt profile total when available.</p>
         <div class="mt-5 space-y-4">
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Products shipped</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatNumber(dev.productSignals.productsShipped))}</span>
+            <span class="profile-signal-card__label">PH launches on profile</span>
+            <span class="profile-signal-card__value">${escapeHtml(verifiedProfileLaunchCount)}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Still live</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatNumber(dev.productSignals.activeProducts))}</span>
+            <span class="profile-signal-card__label">Imported PH launch records</span>
+            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.productSignals.importedProjectRecords))}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Launches last 12m</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatNumber(dev.productSignals.launchesLast12m))}</span>
+            <span class="profile-signal-card__label">Imported launches last 12m</span>
+            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.productSignals.launchesLast12m))}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Product impact</span>
-            <span class="profile-signal-card__value">${escapeHtml(formatScore(dev.productSignals.productImpactScore))}</span>
+            <span class="profile-signal-card__label">Imported launch impact</span>
+            <span class="profile-signal-card__value">${escapeHtml(
+              Number(dev.productSignals.productImpactScore) > 0 ? formatScore(dev.productSignals.productImpactScore) : "—"
+            )}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Momentum 7d</span>
+            <span class="profile-signal-card__label">Output momentum</span>
             <span class="profile-signal-card__value">${escapeHtml(formatSignedPercent(dev.metrics.momentum7d))}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Per-post engagement</span>
-            <span class="profile-signal-card__value">${escapeHtml(engagementSummary.primary)} average rate</span>
+            <span class="profile-signal-card__label">Avg weekly post count</span>
+            <span class="profile-signal-card__value">${escapeHtml(activitySummary.primary)}</span>
           </div>
           <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Posts last 7 days</span>
-            <span class="profile-signal-card__value">${escapeHtml(cadenceSummary.primary)}</span>
-          </div>
-          <div class="profile-signal-card">
-            <span class="profile-signal-card__label">Replies last 7 days</span>
-            <span class="profile-signal-card__value">${escapeHtml(cadenceSummary.secondary)}</span>
+            <span class="profile-signal-card__label">Lifetime X output</span>
+            <span class="profile-signal-card__value">${escapeHtml(formatProjectSignalValue(dev.metrics.tweetCountTotal))}</span>
           </div>
         </div>
       </article>

@@ -8,7 +8,20 @@
   "main": "index.js",
   "scripts": {
     "seed:devs": "node ./scripts/import-seed.js",
-    "rank:refresh": "node ./scripts/recalculate-ranks.js"
+    "seed:candidates": "node ./scripts/import-dev-candidates.js",
+    "rank:refresh": "node ./scripts/recalculate-ranks.js",
+    "cleanup:legacy-handles": "node ./scripts/cleanup-legacy-handles.js",
+    "inspect:dev": "node ./scripts/inspect-dev-handle.js",
+    "sync:x:legends": "node ./scripts/sync-legends-from-x.js",
+    "sync:x:legend-profiles": "node ./scripts/sync-legend-candidate-profiles.js",
+    "sync:x:contenders": "node ./scripts/sync-contender-candidate-profiles.js",
+    "sync:x:rookies": "node ./scripts/sync-rookie-candidate-profiles.js",
+    "sync:x:legend-shortlist": "node ./scripts/sync-legend-shortlist.js",
+    "audit:x:legends": "node ./scripts/audit-legends-from-x.js",
+    "audit:x:handle": "node ./scripts/audit-x-handle.js",
+    "x:budget": "node ./scripts/check-x-budget.js",
+    "sync:product-hunt": "node ./scripts/sync-product-hunt-projects.js",
+    "cleanup:non-candidates": "node ./scripts/prune-non-candidate-devs.js"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0",

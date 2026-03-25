@@ -12,7 +12,7 @@ const POST_TEMPLATES = {
     "The fastest way to grow is still shipping something people can describe in one sentence.",
     "Good products compound. Good distribution compounds faster.",
   ],
-  dannypostmaa: [
+  dannypostma: [
     "People love AI demos. Customers pay for reliable workflows.",
     "Posting progress works best when the product keeps getting better in public too.",
     "The best launch asset is a result screenshot that needs no explanation.",

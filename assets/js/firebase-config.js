@@ -81,7 +81,10 @@
 
   IndieRanks.isFirebaseConfigured = isFirebaseConfigured;
   IndieRanks.getFirebaseServices = function () {
-    if (!IndieRanks.firebaseServices) {
+    if (
+      !IndieRanks.firebaseServices ||
+      (!IndieRanks.firebaseServices.configured && window.firebase && isFirebaseConfigured())
+    ) {
       IndieRanks.firebaseServices = initFirebase();
     }
     return IndieRanks.firebaseServices;

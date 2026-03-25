@@ -1,0 +1,47 @@
+{
+  "updatedAt": "2026-03-24T23:05:00.000Z",
+  "mappings": [
+    {
+      "handle": "levelsio",
+      "profileUsername": "levelsio",
+      "profileLaunchCount": 40,
+      "postSlugs": ["interior-ai", "qr-menu-creator"],
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "marclou",
+      "profileUsername": "marclou",
+      "profileLaunchCount": 31,
+      "postSlugs": ["logofast", "buddy-crush", "poopup"],
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "tibo_maker",
+      "profileUsername": "thibaultll",
+      "profileLaunchCount": 4,
+      "postSlugs": ["outrank", "revid-ai", "geoleads"],
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "yongfook",
+      "profileUsername": "yongfook",
+      "profileLaunchCount": 11,
+      "postSlugs": [],
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "arvidkahl",
+      "profileUsername": "arvidkahl",
+      "profileLaunchCount": 1,
+      "postSlugs": [],
+      "notes": "Profile count verified from public Product Hunt profile on 2026-03-24."
+    },
+    {
+      "handle": "dagorenouf",
+      "profileUsername": "dagorenouf",
+      "profileLaunchCount": 0,
+      "postSlugs": [],
+      "notes": "Public Product Hunt profile shows no hunted-launch count on 2026-03-24."
+    }
+  ]
+}
